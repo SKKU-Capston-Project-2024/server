@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Album;
-import site.mutopia.server.album.domain.MutopiaAlbum;
-import site.mutopia.server.album.repository.AlbumRepository;
+import site.mutopia.server.domain.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.repository.AlbumRepository;
 
 import java.io.IOException;
 
