@@ -9,6 +9,9 @@ spring:
     jpa:
       hibernate:
         ddl-auto: create
+  profiles:
+    include:
+      - spotify
 logging:
   level:
-    root: trace
+    root: info

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import site.mutopia.server.album.domain.MutopiaAlbum;
 import site.mutopia.server.album.repository.AlbumRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +18,11 @@ public class AlbumService {
     public void findAlbumById(String albumId) {
         MutopiaAlbum albumById = albumRepository.findAlbumById(albumId);
         log.info("albumById: {}", albumById);
+    }
+
+    public void findAlbumByAlbumName(String albumName) {
+        List<MutopiaAlbum> albumByAlbumName = albumRepository.findAlbumByKeyword(albumName, 0, 0);
+        log.info("albumByAlbumName: {}", albumByAlbumName.stream().map(MutopiaAlbum::getName).toList());
     }
 
 }
