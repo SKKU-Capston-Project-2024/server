@@ -3,7 +3,7 @@ package site.mutopia.server.spotify;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Image;
-import site.mutopia.server.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.domain.MutopiaAlbum;
 
 import java.util.Arrays;
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import se.michaelthelin.spotify.SpotifyApi;
-import site.mutopia.server.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.domain.MutopiaAlbum;
 
 import java.util.List;
 

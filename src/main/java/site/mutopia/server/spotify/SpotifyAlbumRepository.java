@@ -10,8 +10,8 @@ import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Album;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchAlbumsRequest;
-import site.mutopia.server.album.domain.MutopiaAlbum;
-import site.mutopia.server.album.repository.AlbumRepository;
+import site.mutopia.server.domain.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.repository.AlbumRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
