@@ -1,33 +1,17 @@
 package site.mutopia.server.domain.album.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import site.mutopia.server.domain.album.dto.AlbumTrackDto;
-import site.mutopia.server.domain.album.dto.RatingDistributionDto;
-import site.mutopia.server.domain.album.dto.ReviewPreviewDto;
 
-import java.util.List;
-
-@RequiredArgsConstructor
+@Builder
 @Getter
-@Setter
+@AllArgsConstructor
 public class MutopiaAlbum {
-    String albumId;
-    String albumName;
+    String id;
+    String name;
     String artistName;
-    String albumImg;
+    String coverImageUrl;
     String releaseDate;
-    String albumLength;
-    Long totalReviewCount;
-    List<ReviewPreviewDto> albumReviewList;
-    List<AlbumTrackDto> albumTrackList;
-    Long averageRating;
-    Long yourRating;
-    Long totalRatingCount;
-    Long likeCount;
-    List<ReviewPreviewDto> reviewPreviews;
-    List<RatingDistributionDto> starDistribution;
-
-
+    Long length;
 }

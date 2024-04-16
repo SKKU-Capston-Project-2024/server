@@ -12,4 +12,10 @@ public interface AlbumRepository {
     MutopiaAlbum findAlbumByArtistName(String artistName);
 
     MutopiaAlbum findAlbumByArtistNameOrAlbumName(String keyword);
+    List<MutopiaAlbum> findAlbumByArtistName(String artistName, int limit, int offset);
+
+    MutopiaAlbum findAlbumByArtistNameOrAlbumName(String keyword);
+
+
+    List<MutopiaAlbum> findAlbumByKeyword(String keyword, int limit, int offset);
 }
