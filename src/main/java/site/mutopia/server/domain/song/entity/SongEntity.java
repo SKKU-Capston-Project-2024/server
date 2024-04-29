@@ -9,7 +9,7 @@ public class SongEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_id")
-    private Integer songId;
+    private Long songId;
 
     @Column(name = "title")
     private String title;
@@ -20,5 +20,5 @@ public class SongEntity {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    // TODO: set relationships with other entities (album)
+    // TODO: set relationships with other entities (Album)
 }

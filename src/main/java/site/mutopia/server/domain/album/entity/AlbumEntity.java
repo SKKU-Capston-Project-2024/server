@@ -9,7 +9,7 @@ public class AlbumEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id")
-    private Integer albumId;
+    private Long albumId;
 
     @Column(name = "title")
     private String title;
