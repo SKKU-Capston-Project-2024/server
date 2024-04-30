@@ -1,7 +1,6 @@
 package site.mutopia.server.domain.albumReview.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "album_review")
@@ -23,12 +22,6 @@ public class AlbumReviewEntity {
     @Column(name = "like_count")
     private Integer likeCount;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // TODO: set relationships with other entities (User, Album)
+    // TODO: set relationships with other entities (Writer(UserEntity), Album)
 }
 

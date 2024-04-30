@@ -2,9 +2,6 @@ package site.mutopia.server.domain.user.entity;
 
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
@@ -26,7 +23,8 @@ public class UserEntity {
     @Column(name = "provider_id")
     private String providerId;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    // TODO: Use Spring Data JPA Auditing (createdAt, updatedAt)
+    // @CreationTimestamp
+    // @Column(name = "created_at")
+    // private LocalDateTime createdAt;
 }
