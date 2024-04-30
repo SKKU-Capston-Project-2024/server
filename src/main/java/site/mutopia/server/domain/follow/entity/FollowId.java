@@ -8,6 +8,6 @@ import java.io.Serializable;
 public class FollowId implements Serializable {
 
     // If user1(id:1) follows user2(id:2), follow(userId:1, followingId:2)
-    private Long userId;
-    private Long followingId;
+    private Long user;
+    private Long following;
 }
