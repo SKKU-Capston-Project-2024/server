@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.song.entity;
 
 import jakarta.persistence.*;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 import java.time.LocalDate;
 
 @Entity
@@ -20,5 +21,7 @@ public class SongEntity {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    // TODO: set relationships with other entities (Album)
+    @ManyToOne
+    @JoinColumn(name = "album_id")
+    private AlbumEntity album;
 }
