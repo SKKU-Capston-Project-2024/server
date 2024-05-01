@@ -1,6 +1,8 @@
 package site.mutopia.server.domain.albumReview.entity;
 
 import jakarta.persistence.*;
+import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 
 @Entity
 @Table(name = "album_review")
@@ -22,6 +24,12 @@ public class AlbumReviewEntity {
     @Column(name = "like_count")
     private Integer likeCount;
 
-    // TODO: set relationships with other entities (Writer(UserEntity), Album)
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private UserEntity writer;
+
+    @ManyToOne
+    @JoinColumn(name = "album_id")
+    private AlbumEntity album;
 }
 
