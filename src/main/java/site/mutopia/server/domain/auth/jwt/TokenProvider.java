@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import se.michaelthelin.spotify.exceptions.detailed.BadRequestException;
 import se.michaelthelin.spotify.exceptions.detailed.UnauthorizedException;
+import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.lang.reflect.MalformedParameterizedTypeException;
@@ -37,6 +39,7 @@ public class TokenProvider {
     private String key;
 
     private SecretKey secretKey;
+    private final UserRepository userRepository;
 
 
     private static final String KEY_ROLE = "role";
@@ -102,6 +105,11 @@ public class TokenProvider {
         catch (SecurityException e) {
             throw new IllegalArgumentException("Invalid jwt signature");
         }
+    }
+
+    public UserEntity getUserEntity(String token) {
+        Claims claims = parseClaim(token);
+        return userRepository.findById(claims.getSubject()).orElseThrow(() -> new IllegalArgumentException("Invalid Token"));
     }
 
 

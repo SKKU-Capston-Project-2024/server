@@ -9,9 +9,8 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @Setter
 @Builder
 public class AuthUserInfo {
-    private String username;
-    private String email;
     private String provider;
     private String providerId;
+    private String userId;
 
 }

@@ -1,0 +1,24 @@
+package site.mutopia.server.global.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import site.mutopia.server.domain.auth.jwt.TokenProvider;
+import site.mutopia.server.domain.auth.annotation.resolver.LoginUserResolver;
+
+import java.util.List;
+
+@Configuration
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer {
+
+
+    private final TokenProvider tokenProvider;
+
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new LoginUserResolver(tokenProvider));
+    }
+}

@@ -4,6 +4,7 @@ package site.mutopia.server.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "user")
@@ -11,9 +12,10 @@ import lombok.Setter;
 @Setter
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(name = "username")
     private String username;

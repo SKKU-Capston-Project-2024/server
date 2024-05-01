@@ -7,18 +7,14 @@ import java.util.function.Function;
 public enum OAuthAttributes {
     GOOGLE("google", (attributes) -> {
         return AuthUserInfo.builder()
-                .username((String) attributes.get("name"))
-                .email((String) attributes.get("email"))
                 .provider("google")
                 .providerId((String) attributes.get("sub"))
                 .build();
     }),
     KAKAO("kakao", (attributes) -> {
         return AuthUserInfo.builder()
-                .username((String) attributes.get("nickname"))
-                .email((String) attributes.get("email"))
                 .provider("kakao")
-                .providerId(String.valueOf(attributes.get("id")))
+                .providerId(attributes.get("id").toString())
                 .build();
     });
 

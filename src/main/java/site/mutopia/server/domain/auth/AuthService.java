@@ -1,5 +1,7 @@
 package site.mutopia.server.domain.auth;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -10,17 +12,21 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import static java.util.Collections.singletonMap;
+
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2User> {
 
+    private final UserRepository userRepository;
+
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User authUser = delegate.loadUser(userRequest);
@@ -40,31 +46,32 @@ public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2Us
 
         UserEntity user = saveOrUpdate(userInfo);
 
-        Map<String,Object> customAttributes = customAttributes(userInfo);
-
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("USER")),
-                customAttributes,
-                userNameAttributeName
+                singletonMap("userId", user.getUserId()),
+                "userId"
         );
 
     }
 
     private Map<String,Object> customAttributes(AuthUserInfo userInfo) {
         return Map.of("provider", userInfo.getProvider(),
-                "sub", userInfo.getProviderId(),
-                "email", userInfo.getEmail()
+                "sub", userInfo.getProviderId()
+
         );
     }
 
-    private UserEntity saveOrUpdate(AuthUserInfo userInfo) {
-        UserEntity user = new UserEntity();
-        user.setEmail(userInfo.getEmail());
-        user.setProvider(userInfo.getProvider());
-        user.setProviderId(userInfo.getProviderId());
-        user.setUsername(userInfo.getUsername());
+    protected UserEntity saveOrUpdate(AuthUserInfo userInfo) {
 
-        //userRepository.save(user);
-        return user;
+        log.info("provider:{} providerId:{}", userInfo.getProvider(), userInfo.getProviderId());
+        Optional<UserEntity> user = userRepository.findByProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
+        if (user.isPresent()) {
+            return user.get();
+        }
+        UserEntity newUser = new UserEntity();
+        newUser.setProvider(userInfo.getProvider());
+        newUser.setProviderId(userInfo.getProviderId());
+
+        return userRepository.save(newUser);
     }
 }
