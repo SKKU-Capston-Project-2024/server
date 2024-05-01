@@ -13,6 +13,8 @@ spring:
     include:
       - spotify
       - google
+      - kakao
+      - jwt
 logging:
   level:
-    root: debug
+    root: trace

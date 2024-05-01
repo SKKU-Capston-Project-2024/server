@@ -32,12 +32,13 @@ public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2Us
 
         Map<String, Object> attributes = authUser.getAttributes();
 
+        // log every attribute
+        log.info("attributes: {}", attributes.entrySet().stream().map(e -> e.getKey() + " : " + e.getValue()).reduce("", (a, b) -> a + b + "\n"));
+
         AuthUserInfo userInfo = OAuthAttributes.extract(registrationId, attributes);
         userInfo.setProvider(registrationId);
 
         UserEntity user = saveOrUpdate(userInfo);
-
-        log.info("user email: {}", user.getEmail());
 
         Map<String,Object> customAttributes = customAttributes(userInfo);
 
@@ -51,7 +52,7 @@ public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2Us
 
     private Map<String,Object> customAttributes(AuthUserInfo userInfo) {
         return Map.of("provider", userInfo.getProvider(),
-                "providerId", userInfo.getProviderId(),
+                "sub", userInfo.getProviderId(),
                 "email", userInfo.getEmail()
         );
     }
