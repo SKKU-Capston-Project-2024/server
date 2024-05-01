@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.topster.entity;
 
 import jakarta.persistence.*;
+import site.mutopia.server.domain.user.entity.UserEntity;
 
 @Entity
 @Table(name = "topster")
@@ -13,5 +14,7 @@ public class TopsterEntity {
     @Column(name = "title")
     private String title;
 
-    // TODO: Set relationships with other entities (User)
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private UserEntity user;
 }
