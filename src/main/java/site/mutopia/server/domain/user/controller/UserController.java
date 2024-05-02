@@ -20,4 +20,6 @@ public class UserController {
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
         return ResponseEntity.ok().body(userEntity);
     }
+
+
 }
