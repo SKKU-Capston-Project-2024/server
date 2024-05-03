@@ -18,8 +18,6 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import se.michaelthelin.spotify.exceptions.detailed.BadRequestException;
-import se.michaelthelin.spotify.exceptions.detailed.UnauthorizedException;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.repository.UserRepository;
 

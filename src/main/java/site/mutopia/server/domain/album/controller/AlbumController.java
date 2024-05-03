@@ -2,13 +2,12 @@ package site.mutopia.server.domain.album.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import site.mutopia.server.domain.album.domain.MutopiaAlbum;
+import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.dto.response.TrendingAlbumResDto;
 import site.mutopia.server.domain.album.service.AlbumService;
+import site.mutopia.server.domain.auth.annotation.LoginUser;
 
 import java.util.List;
 
@@ -24,14 +23,16 @@ public class AlbumController {
         return ResponseEntity.ok().body(null);
     }
 
-    @GetMapping("?album_Id={albumId}")
-    public ResponseEntity<TrendingAlbumResDto> getAlbum(String albumId) {
-        return ResponseEntity.ok().body(null);
+    @GetMapping("/info/{albumId}")
+    public ResponseEntity<AlbumDetailResDto> getAlbum(
+            @PathVariable String albumId) {
+        return ResponseEntity.ok().body(albumService.findAlbumById(albumId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MutopiaAlbum>> searchAlbum(@RequestParam String keyword) {
+    public ResponseEntity<List<AlbumEntity>> searchAlbum(@RequestParam String keyword) {
         return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword));
     }
+
 
 }

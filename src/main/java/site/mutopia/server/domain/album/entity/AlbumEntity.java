@@ -1,19 +1,46 @@
 package site.mutopia.server.domain.album.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
+@Builder
+@Getter
 @Entity
 @Table(name = "album")
+@AllArgsConstructor
+@NoArgsConstructor
 public class AlbumEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_id")
-    private Long albumId;
+    String id;
 
-    @Column(name = "title")
-    private String title;
+    @Column
+    String name;
 
-    @Column(name = "release_date")
-    private LocalDate releaseDate;
+    @Column
+    String artistName;
+
+    @Column
+    String coverImageUrl;
+
+    @Column
+    String releaseDate;
+
+    @Column
+    Long length;
+
+    @Formula("(select count(*) from album_review r where r.album_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    Long totalReviewCount;
+
+    @Formula("(select avg(r.rating) from album_rating r where r.album_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    Long averageRating;
+
+    @Formula("(select count(*) from album_like l where l.album_id = id)")
+    Long totalLikeCount;
 }

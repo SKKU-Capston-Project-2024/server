@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 
-@Data
+
 public class Albums{
     public String href;
     public int limit;

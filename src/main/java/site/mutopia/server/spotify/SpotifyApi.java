@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
+import site.mutopia.server.spotify.dto.item.Albums;
 
 @Slf4j
 @Component
@@ -21,8 +22,8 @@ public class SpotifyApi {
         client = manager.getSpotifyClient();
     }
 
-    public SearchAlbumsDto searchAlbums(String query, int limit,int offset) {
-        return client.get()
+    public Albums searchAlbums(String query, int limit, int offset) {
+        SearchAlbumsDto searchAlbumsDto = client.get()
                 .uri(uriBuilder -> uriBuilder.path("/search")
                         .queryParam("q", query)
                         .queryParam("type", "album")
@@ -34,5 +35,9 @@ public class SpotifyApi {
                 .retrieve()
                 .bodyToMono(SearchAlbumsDto.class)
                 .block();
+        if (searchAlbumsDto == null) {
+            throw new RuntimeException("Failed to search albums");
+        }
+        return searchAlbumsDto.getAlbums();
     }
 }

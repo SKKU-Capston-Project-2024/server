@@ -4,7 +4,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -19,14 +19,13 @@ spring:
       - oauth
       - jwt
       - cloud
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+      - db
 logging:
   level:
     root: debug
     org:
       hibernate:
-        SQL: off
+        SQL: debug
 client-info:
   host: "http://localhost:3000"
 

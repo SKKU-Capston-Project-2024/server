@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
+import site.mutopia.server.spotify.dto.item.Albums;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,8 +26,8 @@ class SpotifyApiTest {
 
     @Test
     void searchAlbums() {
-        SearchAlbumsDto bts = spotifyApi.searchAlbums("적재", 10, 0);
-        log.info("result :{}", bts.albums.items.stream().map(item -> item.name +"/"+item.artists.get(0).name).toList());
+        Albums bts = spotifyApi.searchAlbums("적재", 10, 0);
+        log.info("result :{}", bts.items.stream().map(item -> item.name +"/"+item.artists.get(0).name).toList());
         assertNotNull(bts);
     }
 }
