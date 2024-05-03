@@ -25,4 +25,9 @@ public class AlbumService {
         log.info("albumByAlbumName: {}", albumByAlbumName.stream().map(MutopiaAlbum::getName).toList());
     }
 
+    public List<MutopiaAlbum> searchAlbumByKeyword(String keyword) {
+        List<MutopiaAlbum> albumByKeyword = albumRepository.findAlbumByKeyword(keyword, 0, 0);
+        return albumByKeyword;
+    }
+
 }

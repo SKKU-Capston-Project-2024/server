@@ -20,55 +20,50 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SpotifyAlbumRepository implements AlbumRepository {
+public class SpotifyAlbumRepository {
 
     private final SpotifyApi spotifyApi;
 
-    @Override
-    public MutopiaAlbum findAlbumById(String albumId) {
+
+    public Album findAlbumById(String albumId) {
+
         try {
             Album album =
                     spotifyApi.getAlbum(albumId).build().execute();
-            return null;
+            return album;
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public MutopiaAlbum findAlbumByAlbumName(String albumName) {
+    public List<Album> findAlbumByAlbumName(String albumName) {
         return null;
     }
 
-    @Override
-    public List<MutopiaAlbum> findAlbumByArtistName(String artistName, int limit, int offset) {
+    public List<AlbumSimplified> findAlbumByArtistName(String artistName, int limit, int offset) {
         try {
             String query = "artist:" + artistName;
             SearchAlbumsRequest build = spotifyApi.searchAlbums(query).build();
             AlbumSimplified[] albums = build.execute().getItems();
             log.info("albums {}", albums);
 
-            List<MutopiaAlbum> list = Arrays.stream(albums).map(DomainConvertor::toMutopia).toList();
-            return list;
+            return Arrays.asList(albums);
         } catch (Exception e) {
             log.error("error", e);
             return null;
         }
     }
 
-    @Override
     public MutopiaAlbum findAlbumByArtistNameOrAlbumName(String keyword) {
         return null;
     }
 
-    @Override
-    public List<MutopiaAlbum> findAlbumByKeyword(String keyword, int limit, int offset) {
+    public List<AlbumSimplified> findAlbumByKeyword(String keyword, int limit, int offset) {
         try {
             SearchAlbumsRequest build =
                     spotifyApi.searchAlbums(keyword).market(CountryCode.KR).build();
             AlbumSimplified[] albums = build.execute().getItems();
-            List<MutopiaAlbum> list = Arrays.stream(albums).map(DomainConvertor::toMutopia).toList();
-            return list;
+            return Arrays.asList(albums);
         } catch (Exception e) {
             log.error("error", e);
             return null;

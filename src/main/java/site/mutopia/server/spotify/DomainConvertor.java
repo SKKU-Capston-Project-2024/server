@@ -1,5 +1,6 @@
 package site.mutopia.server.spotify;
 
+import se.michaelthelin.spotify.model_objects.specification.Album;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Image;
@@ -23,6 +24,22 @@ public class DomainConvertor {
                 .artistName(artistName)
                 .coverImageUrl(imageUrl)
                 .build();
+
+    }
+
+    public static MutopiaAlbum toMutopia(Album album){
+        Image[] images = album.getImages();
+        String imageUrl = images.length > 0 ? images[0].getUrl() : null;
+
+        String artistName = String.join(", ",
+                Arrays.stream(album.getArtists()).map(ArtistSimplified::getName).toArray(String[]::new));
+
+        return MutopiaAlbum.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .artistName(artistName)
+                .coverImageUrl(imageUrl)
+                .releaseDate(album.getReleaseDate()).build();
 
     }
 

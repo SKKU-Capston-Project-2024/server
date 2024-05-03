@@ -9,12 +9,11 @@ public interface AlbumRepository {
 
     MutopiaAlbum findAlbumById(String albumId);
 
-    MutopiaAlbum findAlbumByAlbumName(String albumName);
+    List<MutopiaAlbum> findAlbumByAlbumName(String albumName);
 
     List<MutopiaAlbum> findAlbumByArtistName(String artistName, int limit, int offset);
 
-    MutopiaAlbum findAlbumByArtistNameOrAlbumName(String keyword);
-
+    List<MutopiaAlbum> findAlbumsByArtistNameOrAlbumName(String keyword);
 
     List<MutopiaAlbum> findAlbumByKeyword(String keyword, int limit, int offset);
 }

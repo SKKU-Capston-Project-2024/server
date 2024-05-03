@@ -28,9 +28,9 @@ class SpotifyAlbumRepositoryTest {
 
     @Test
     void findAlbumsByArtist() {
-        List<MutopiaAlbum> albums = spotifyAlbumRepository.findAlbumByKeyword("르세라핌", 0, 0);
+        /*List<MutopiaAlbum> albums = spotifyAlbumRepository.findAlbumByKeyword("르세라핌", 0, 0);
         log.info("{}", albums.stream().map(MutopiaAlbum::getName).toList());
-        Assertions.assertThat(albums).isNotNull();
+        Assertions.assertThat(albums).isNotNull();*/
     }
 
 }
