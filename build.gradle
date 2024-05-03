@@ -48,6 +48,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
     implementation group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.12.712'
 
+
+    //webClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
