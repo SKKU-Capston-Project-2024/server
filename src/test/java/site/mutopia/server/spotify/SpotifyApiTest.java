@@ -25,8 +25,8 @@ class SpotifyApiTest {
 
     @Test
     void searchAlbums() {
-        SearchAlbumsDto bts = spotifyApi.searchAlbums("르세라핌", 10, 0);
-        log.info("result :{}", bts.albums.items.get(0).name);
+        SearchAlbumsDto bts = spotifyApi.searchAlbums("적재", 10, 0);
+        log.info("result :{}", bts.albums.items.stream().map(item -> item.name +"/"+item.artists.get(0).name).toList());
         assertNotNull(bts);
     }
 }
