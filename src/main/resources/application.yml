@@ -19,6 +19,8 @@ spring:
       - oauth
       - jwt
       - cloud
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 logging:
   level:
     root: debug

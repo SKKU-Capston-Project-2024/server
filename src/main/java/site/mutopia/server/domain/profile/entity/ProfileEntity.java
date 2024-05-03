@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
-@Entity
 @Setter
 @Getter
+@Entity
 @Table(name = "profile")
 public class ProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
-    private String profileId;
+    private Long profileId;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

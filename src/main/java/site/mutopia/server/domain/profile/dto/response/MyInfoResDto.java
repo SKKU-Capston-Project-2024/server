@@ -6,5 +6,7 @@ import lombok.Setter;
 public record MyInfoResDto (
         String id,
         String name,
-        String profileUrl
+        String profileUrl,
+        String bio,
+        Boolean isFirstLogin
 ){}

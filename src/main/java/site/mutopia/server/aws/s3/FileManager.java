@@ -55,8 +55,10 @@ public class FileManager {
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (AmazonServiceException e) {
             log.error("AmazonServiceException: {}", e.getMessage());
+            throw new IllegalArgumentException("Failed to upload file");
         } catch (SdkClientException e) {
             log.error("SdkClientException: {}", e.getMessage());
+            throw new IllegalArgumentException("Failed to upload file");
         }
 
         // Fetching object information
