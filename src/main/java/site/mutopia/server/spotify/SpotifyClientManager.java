@@ -16,10 +16,10 @@ import java.util.Base64;
 @Slf4j
 public class SpotifyClientManager {
 
-    @Value("${spotifies.client.id}")
+    @Value("${spotify.client.id}")
     private String clientId;
 
-    @Value("${spotifies.client.secret}")
+    @Value("${spotify.client.secret}")
     private String clientSecret;
 
     @Getter
