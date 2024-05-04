@@ -1,20 +1,19 @@
 package site.mutopia.server.domain.album.repository;
 
 
-import site.mutopia.server.domain.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 
 import java.util.List;
 
 public interface AlbumRepository {
 
-    MutopiaAlbum findAlbumById(String albumId);
+    AlbumEntity findAlbumById(String albumId);
 
-    MutopiaAlbum findAlbumByAlbumName(String albumName);
+    List<AlbumEntity> findAlbumByAlbumName(String albumName);
 
-    List<MutopiaAlbum> findAlbumByArtistName(String artistName, int limit, int offset);
+    List<AlbumEntity> findAlbumByArtistName(String artistName, int limit, int offset);
 
-    MutopiaAlbum findAlbumByArtistNameOrAlbumName(String keyword);
+    List<AlbumEntity> findAlbumsByArtistNameOrAlbumName(String keyword);
 
-
-    List<MutopiaAlbum> findAlbumByKeyword(String keyword, int limit, int offset);
+    List<AlbumEntity> findAlbumByKeyword(String keyword, int limit, int offset);
 }

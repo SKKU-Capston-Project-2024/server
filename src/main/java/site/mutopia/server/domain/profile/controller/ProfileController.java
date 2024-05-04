@@ -21,9 +21,9 @@ public class ProfileController {
         return ResponseEntity.ok().body(profileService.getMyInfo(userEntity));
     }
 
-    @PostMapping("/edit/profileImg")
-    public ResponseEntity<Void> editProfileImg(@LoginUser UserEntity userEntity, @RequestParam("file") MultipartFile file) {
-        profileService.editProfileImg(userEntity, file);
+    @PostMapping("/me/edit")
+    public ResponseEntity<Void> editProfile(@LoginUser UserEntity userEntity, @RequestParam(value = "userName",required = false) String username, @RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "bio",required = false) String bio) {
+        profileService.editProfile(userEntity, username,bio, file);
         return ResponseEntity.ok().build();
     }
 

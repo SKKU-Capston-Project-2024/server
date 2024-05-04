@@ -1,0 +1,43 @@
+package site.mutopia.server.spotify;
+
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import site.mutopia.server.spotify.dto.SearchAlbumsDto;
+import site.mutopia.server.spotify.dto.item.Albums;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class SpotifyApi {
+
+    private final SpotifyClientManager manager;
+
+    private WebClient client;
+
+    @PostConstruct
+    public void init() {
+        client = manager.getSpotifyClient();
+    }
+
+    public Albums searchAlbums(String query, int limit, int offset) {
+        SearchAlbumsDto searchAlbumsDto = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/search")
+                        .queryParam("q", query)
+                        .queryParam("type", "album")
+                        .queryParam("limit", limit)
+                        .queryParam("offset", offset)
+                        .queryParam("market", "KR")
+                        .queryParam("locale", "ko_KR")
+                        .build())
+                .retrieve()
+                .bodyToMono(SearchAlbumsDto.class)
+                .block();
+        if (searchAlbumsDto == null) {
+            throw new RuntimeException("Failed to search albums");
+        }
+        return searchAlbumsDto.getAlbums();
+    }
+}

@@ -3,7 +3,8 @@ package site.mutopia.server.domain.album.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.mutopia.server.domain.album.domain.MutopiaAlbum;
+import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 
 import java.util.List;
@@ -15,14 +16,19 @@ public class AlbumService {
 
     private final AlbumRepository albumRepository;
 
-    public void findAlbumById(String albumId) {
-        MutopiaAlbum albumById = albumRepository.findAlbumById(albumId);
-        log.info("albumById: {}", albumById);
+    public AlbumDetailResDto findAlbumById(String albumId) {
+        AlbumEntity albumEntity = albumRepository.findAlbumById(albumId);
+
+        return AlbumDetailResDto.toDto(albumEntity);
     }
 
     public void findAlbumByAlbumName(String albumName) {
-        List<MutopiaAlbum> albumByAlbumName = albumRepository.findAlbumByKeyword(albumName, 0, 0);
-        log.info("albumByAlbumName: {}", albumByAlbumName.stream().map(MutopiaAlbum::getName).toList());
+
+    }
+
+    public List<AlbumEntity> searchAlbumByKeyword(String keyword) {
+        List<AlbumEntity> albumByKeyword = albumRepository.findAlbumByKeyword(keyword, 10, 0);
+        return albumByKeyword;
     }
 
 }
