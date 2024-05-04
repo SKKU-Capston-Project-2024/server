@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.util.ArrayList;
 
-@Data
 public class Item{
     public String album_type;
     public int total_tracks;
