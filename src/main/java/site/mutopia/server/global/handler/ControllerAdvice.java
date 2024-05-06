@@ -1,13 +1,15 @@
 package site.mutopia.server.global.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import se.michaelthelin.spotify.exceptions.detailed.BadRequestException;
-import se.michaelthelin.spotify.exceptions.detailed.NotFoundException;
 import site.mutopia.server.domain.auth.exception.UnAuthorizedException;
 import site.mutopia.server.global.dto.ExceptionResponse;
+import site.mutopia.server.global.error.exception.EntityNotFoundException;
+
+import javax.swing.text.html.parser.Entity;
 
 @RestControllerAdvice
 @Slf4j
@@ -31,8 +33,8 @@ public class ControllerAdvice {
     }
 
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException exception) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(EntityNotFoundException exception) {
         log.error(exception.getClass().getName());
         log.error(exception.getMessage());
         return ResponseEntity.badRequest().body(new ExceptionResponse("Resource not found"));

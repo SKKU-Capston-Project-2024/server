@@ -1,6 +1,5 @@
 package site.mutopia.server.swagger.response;
 
-
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,10 +12,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@ApiResponse(
-        responseCode = "400",
-        description = "Bad Request",
-        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-)
-public @interface BadRequestResponse {
+@ApiResponse(responseCode = "401", description = "UnAuthorized", content = @Content(schema = @Schema(implementation =
+        ExceptionResponse.class)))
+public @interface UnAuthorizedResponse {
 }
