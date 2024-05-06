@@ -16,7 +16,7 @@ public class AlbumReviewController {
 
     private final AlbumReviewService albumReviewService;
 
-    @PostMapping("/write")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveDto saveDto) {
         albumReviewService.saveAlbumReview(loggedInUser.getUserId(), saveDto);
