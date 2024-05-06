@@ -7,7 +7,7 @@ COPY src src
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
-FROM adoptopenjdk:8-jdk-hotspot
+FROM openjdk:17-jdk-slim
 COPY --from=builder build/libs/*.jar app.jar
 
 # argument로 받은 ENVIRONMENT 값을 SPRING_PROFILES_ACTIVE에 적용
