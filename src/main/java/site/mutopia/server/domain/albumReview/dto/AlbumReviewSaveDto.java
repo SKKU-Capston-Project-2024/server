@@ -15,7 +15,6 @@ public class AlbumReviewSaveDto {
     private String title;
     private String content;
     private Integer rating;
-    private Integer likeCount;
     private String albumId;
 
     public AlbumReviewEntity toEntity(UserEntity writer, AlbumEntity album) {
