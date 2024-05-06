@@ -18,6 +18,7 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import site.mutopia.server.domain.auth.exception.UnAuthorizedException;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.repository.UserRepository;
 
@@ -107,7 +108,7 @@ public class TokenProvider {
 
     public UserEntity getUserEntity(String token) {
         Claims claims = parseClaim(token);
-        return userRepository.findById(claims.getSubject()).orElseThrow(() -> new IllegalArgumentException("Invalid Token"));
+        return userRepository.findById(claims.getSubject()).orElseThrow(() -> new UnAuthorizedException("Invalid Bearer Token"));
     }
 
 
