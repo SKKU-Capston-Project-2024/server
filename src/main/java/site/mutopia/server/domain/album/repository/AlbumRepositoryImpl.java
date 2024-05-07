@@ -5,12 +5,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
-import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.spotify.SpotifyApi;
 import site.mutopia.server.spotify.convertor.DomainConvertor;
 import site.mutopia.server.spotify.dto.item.Albums;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,8 +21,8 @@ public class AlbumRepositoryImpl implements AlbumRepository{
     private final AlbumEntityRepository AlbumEntityRepository;
 
     @Override
-    public AlbumEntity findAlbumById(String albumId) {
-        return AlbumEntityRepository.findById(albumId).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + albumId + " does not exist."));
+    public Optional<AlbumEntity> findAlbumById(String albumId) {
+        return AlbumEntityRepository.findById(albumId);
     }
 
     @Override
