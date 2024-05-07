@@ -3,7 +3,6 @@ package site.mutopia.server.domain.album.dto.response;
 import lombok.Builder;
 import lombok.Data;
 import site.mutopia.server.domain.album.dto.AlbumTrackDto;
-import site.mutopia.server.domain.album.dto.RatingDistributionDto;
 import site.mutopia.server.domain.album.dto.ReviewPreviewDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 
@@ -24,7 +23,7 @@ public class AlbumDetailResDto {
 
     List<AlbumTrackDto> albumTrackList;
 
-    Long averageRating;
+    Double averageRating;
 
     Long likeCount;
 

@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @EqualsAndHashCode
 public class SongCommentId implements Serializable {
-    private Long writer;
+    private String writer;
     private Long song;
 }

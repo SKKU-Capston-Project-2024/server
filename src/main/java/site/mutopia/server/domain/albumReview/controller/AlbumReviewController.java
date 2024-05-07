@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveDto;
 import site.mutopia.server.domain.albumReview.service.AlbumReviewService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
@@ -22,5 +23,10 @@ public class AlbumReviewController {
         albumReviewService.saveAlbumReview(loggedInUser.getId(), saveDto);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{albumReviewId}")
+    public ResponseEntity<AlbumReviewInfoDto> getAlbumReview(@PathVariable("albumReviewId") Long albumReviewId) {
+        return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(albumReviewId));
     }
 }

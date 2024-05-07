@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @EqualsAndHashCode
 public class PlaylistLikeId implements Serializable {
-    private Long user;
+    private String user;
     private Long playlist;
 }
