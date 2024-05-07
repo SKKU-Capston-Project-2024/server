@@ -6,5 +6,5 @@ import site.mutopia.server.domain.profile.entity.ProfileEntity;
 import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<ProfileEntity, String> {
-    Optional<ProfileEntity> findByUserUserId(String userId);
+    Optional<ProfileEntity> findByUserId(String userId);
 }

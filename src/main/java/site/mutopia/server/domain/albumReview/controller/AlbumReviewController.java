@@ -18,10 +18,9 @@ public class AlbumReviewController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveDto saveDto) {
-        albumReviewService.saveAlbumReview(loggedInUser.getUserId(), saveDto);
+    public ResponseEntity<Void> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveDto saveDto) {
+        albumReviewService.saveAlbumReview(loggedInUser.getId(), saveDto);
 
-        // TODO: Response 형식 재정의
-        return ResponseEntity.ok("Album review saved successfully");
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,14 +1,11 @@
 package site.mutopia.server.domain.albumLike.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
-@Entity
+@EqualsAndHashCode
 public class AlbumLikeEntityId implements Serializable {
-    @Id
-    private String albumId;
-    @Id
-    private String userId;
+    private String album;
+    private String user;
 }
