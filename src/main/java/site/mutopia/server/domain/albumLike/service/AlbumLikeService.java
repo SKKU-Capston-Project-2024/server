@@ -1,6 +1,5 @@
 package site.mutopia.server.domain.albumLike.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +8,7 @@ import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumLike.entity.AlbumLikeEntity;
 import site.mutopia.server.domain.albumLike.repository.AlbumLikeRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
 
 @Service
@@ -26,7 +26,7 @@ public class AlbumLikeService {
             return;
         }
 
-        UserEntity user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
         AlbumEntity album = albumRepository.findAlbumById(albumId);
 
         albumLikeRepository.save(AlbumLikeEntity.builder()
