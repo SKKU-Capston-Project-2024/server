@@ -21,12 +21,12 @@ public class ProfileService {
 
     @Transactional
     public MyInfoResDto getMyInfo(UserEntity userEntity) {
-        ProfileEntity profile = profileRepository.findByUserUserId(userEntity.getUserId()).orElse(null);
+        ProfileEntity profile = profileRepository.findByUserId(userEntity.getId()).orElse(null);
         if(profile==null){
             profile = saveNewUserProfile(userEntity);
-            return new MyInfoResDto(userEntity.getUserId(), userEntity.getUsername(), profile.getProfilePicUrl(),null,true);
+            return new MyInfoResDto(userEntity.getId(), userEntity.getUsername(), profile.getProfilePicUrl(),null,true);
         }
-        return new MyInfoResDto(userEntity.getUserId(), userEntity.getUsername(), profile.getProfilePicUrl(),profile.getBio(),false);
+        return new MyInfoResDto(userEntity.getId(), userEntity.getUsername(), profile.getProfilePicUrl(),profile.getBio(),false);
     }
 
     private ProfileEntity saveNewUserProfile(UserEntity userEntity){
@@ -44,12 +44,12 @@ public class ProfileService {
                 userEntity.setUsername(username);
                 userRepository.save(userEntity);
             }
-            ProfileEntity profile = profileRepository.findByUserUserId(userEntity.getUserId()).orElseThrow(() -> new IllegalArgumentException("Profile not found"));
+            ProfileEntity profile = profileRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new IllegalArgumentException("Profile not found"));
             if(bio!=null && !bio.isEmpty()){
                 profile.setBio(bio);
             }
             if(file!=null){
-                String uploadURL = fileManager.uploadFile(file, userEntity.getUserId());
+                String uploadURL = fileManager.uploadFile(file, userEntity.getId());
                 profile.setProfilePicUrl(uploadURL);
             }
             profileRepository.save(profile);

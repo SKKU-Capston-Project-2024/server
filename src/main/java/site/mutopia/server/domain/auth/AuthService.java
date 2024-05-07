@@ -48,7 +48,7 @@ public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2Us
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("USER")),
-                singletonMap("userId", user.getUserId()),
+                singletonMap("userId", user.getId()),
                 "userId"
         );
 
