@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.auth.annotation.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import site.mutopia.server.domain.auth.exception.UnAuthorizedException;
 
 
 public class AuthHeaderParser {
@@ -19,7 +20,7 @@ public class AuthHeaderParser {
             return authorizationHeader.substring(BEARER.length());
         }
 
-        throw new IllegalArgumentException("요청에서 Authorization Bearer 헤더를 찾을 수 없습니다.");
+        throw new UnAuthorizedException("No Bearer Token");
     }
 }
 
