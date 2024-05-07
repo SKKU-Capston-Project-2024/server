@@ -8,6 +8,7 @@ import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.dto.response.TrendingAlbumResDto;
 import site.mutopia.server.domain.album.service.AlbumService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
+import site.mutopia.server.swagger.response.NotFoundResponse;
 
 import java.util.List;
 
@@ -23,11 +24,13 @@ public class AlbumController {
         return ResponseEntity.ok().body(null);
     }
 
+    @NotFoundResponse
     @GetMapping("/info/{albumId}")
     public ResponseEntity<AlbumDetailResDto> getAlbum(
             @PathVariable String albumId) {
         return ResponseEntity.ok().body(albumService.findAlbumById(albumId));
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<AlbumEntity>> searchAlbum(@RequestParam String keyword) {

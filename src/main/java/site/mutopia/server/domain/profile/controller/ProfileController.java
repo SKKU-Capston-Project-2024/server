@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.profile.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,17 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/me")
-    public ResponseEntity<MyInfoResDto> getMyInfo(@LoginUser UserEntity userEntity) {
+    public ResponseEntity<MyInfoResDto> getMyInfo(
+            @LoginUser UserEntity userEntity) {
         return ResponseEntity.ok().body(profileService.getMyInfo(userEntity));
     }
 
-    @PostMapping("/me/edit")
-    public ResponseEntity<Void> editProfile(@LoginUser UserEntity userEntity, @RequestParam(value = "userName",required = false) String username, @RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "bio",required = false) String bio) {
+    @PatchMapping(value="/me", consumes = {"multipart/form-data"})
+    public ResponseEntity<Void> editProfile(
+            @LoginUser UserEntity userEntity,
+            @RequestParam(value = "userName",required = false) String username,
+            @RequestParam(value = "file",required = false) MultipartFile file,
+            @RequestParam(value = "bio",required = false) String bio) {
         profileService.editProfile(userEntity, username,bio, file);
         return ResponseEntity.ok().build();
     }
