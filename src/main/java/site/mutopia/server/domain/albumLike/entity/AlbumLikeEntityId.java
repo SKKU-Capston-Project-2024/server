@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @EqualsAndHashCode
 public class AlbumLikeEntityId implements Serializable {
-    private String albumId;
-    private String userId;
+    private String album;
+    private String user;
 }

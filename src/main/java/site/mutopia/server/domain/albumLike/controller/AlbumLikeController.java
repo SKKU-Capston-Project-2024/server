@@ -16,7 +16,7 @@ public class AlbumLikeController {
     private final AlbumLikeService albumLikeService;
 
     @PostMapping("/toggle")
-    public ResponseEntity<?> toggleLike(@RequestParam String albumId, @RequestParam String userId) {
+    public ResponseEntity<?> toggleLike(@RequestParam("albumId") String albumId, @RequestParam("userId") String userId) {
         albumLikeService.toggleAlbumLike(albumId, userId);
         return ResponseEntity.ok().build();
     }

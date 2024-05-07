@@ -18,12 +18,12 @@ public class AlbumLikeEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "album_id")
-    @MapsId("albumId")
-    private AlbumEntity albumId;
+    @MapsId("album")
+    private AlbumEntity album;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @MapsId("userId")
-    private UserEntity userId;
+    @MapsId("user")
+    private UserEntity user;
 }

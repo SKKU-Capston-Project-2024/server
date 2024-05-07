@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumLike.entity.AlbumLikeEntity;
 import site.mutopia.server.domain.albumLike.repository.AlbumLikeRepository;
@@ -27,11 +28,11 @@ public class AlbumLikeService {
         }
 
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
-        AlbumEntity album = albumRepository.findAlbumById(albumId);
+        AlbumEntity album = albumRepository.findAlbumById(albumId).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + albumId + " does not exist."));
 
         albumLikeRepository.save(AlbumLikeEntity.builder()
-                .albumId(album)
-                .userId(user)
+                .album(album)
+                .user(user)
                 .build());
     }
 }

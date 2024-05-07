@@ -6,7 +6,5 @@ import site.mutopia.server.domain.albumLike.entity.AlbumLikeEntity;
 import site.mutopia.server.domain.albumLike.entity.AlbumLikeEntityId;
 
 @Repository
-public interface AlbumLikeRepository extends JpaRepository<AlbumLikeEntity, AlbumLikeEntityId> {
-    boolean existsByAlbumIdAndUserId(String albumId, String userId);
-    void deleteByAlbumIdAndUserId(String albumId, String userId);
+public interface AlbumLikeRepository extends JpaRepository<AlbumLikeEntity, AlbumLikeEntityId>, AlbumLikeCustomRepository {
 }
