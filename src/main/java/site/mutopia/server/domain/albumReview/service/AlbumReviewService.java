@@ -3,6 +3,7 @@ package site.mutopia.server.domain.albumReview.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
@@ -21,7 +22,7 @@ public class AlbumReviewService {
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveDto reviewSaveDto) {
         UserEntity writer = userRepository.findById(writerId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + writerId));
-        AlbumEntity album = albumRepository.findAlbumById(reviewSaveDto.getAlbumId());
+        AlbumEntity album = albumRepository.findAlbumById(reviewSaveDto.getAlbumId()).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + reviewSaveDto.getAlbumId() + " does not exist."));
         AlbumReviewEntity albumReview = reviewSaveDto.toEntity(writer, album);
 
         return albumReviewRepository.save(albumReview);
