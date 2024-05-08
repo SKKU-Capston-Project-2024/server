@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.albumLike.dto.AlbumLikeToggleResDto;
+import site.mutopia.server.domain.albumLike.dto.AlbumLikeToggleResDto.AlbumLikeToggleStatus;
 import site.mutopia.server.domain.albumLike.service.AlbumLikeService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -21,8 +23,15 @@ public class AlbumLikeController {
     @PostMapping("/{albumId}/like/toggle")
     @Operation(summary = "좋아요 버튼 토글", description = "로그인 한 유저가 좋아요 버튼을 토글하는 API")
     @OkResponse
-    public ResponseEntity<?> toggleLike(@PathVariable("albumId") String albumId, @LoginUser UserEntity loggedInUser) {
+    public ResponseEntity<AlbumLikeToggleResDto> toggleLike(@PathVariable("albumId") String albumId, @LoginUser UserEntity loggedInUser) {
         albumLikeService.toggleAlbumLike(albumId, loggedInUser.getId());
-        return ResponseEntity.ok().build();
+        boolean albumLikeExists = albumLikeService.isAlbumLikeExists(albumId, loggedInUser.getId());
+
+        AlbumLikeToggleResDto resDto = AlbumLikeToggleResDto
+                .builder()
+                .likeStatus(albumLikeExists ? AlbumLikeToggleStatus.ON : AlbumLikeToggleStatus.OFF)
+                .build();
+
+        return ResponseEntity.ok().body(resDto);
     }
 }

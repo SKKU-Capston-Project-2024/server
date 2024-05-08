@@ -35,4 +35,8 @@ public class AlbumLikeService {
                 .user(user)
                 .build());
     }
+
+    public boolean isAlbumLikeExists(String albumId, String userId) {
+        return albumLikeRepository.existsByAlbumIdAndUserId(albumId, userId);
+    }
 }
