@@ -10,7 +10,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AlbumReviewSaveDto {
+public class AlbumReviewSaveReqDto {
 
     private String title;
     private String content;
