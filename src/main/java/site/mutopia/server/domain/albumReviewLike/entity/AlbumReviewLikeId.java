@@ -5,6 +5,6 @@ import java.io.Serializable;
 
 @EqualsAndHashCode
 public class AlbumReviewLikeId implements Serializable {
-    private Long user;
+    private String user;
     private Long review;
 }

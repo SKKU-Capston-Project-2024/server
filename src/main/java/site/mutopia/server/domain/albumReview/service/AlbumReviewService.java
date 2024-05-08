@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
+import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
@@ -26,5 +28,9 @@ public class AlbumReviewService {
         AlbumReviewEntity albumReview = reviewSaveDto.toEntity(writer, album);
 
         return albumReviewRepository.save(albumReview);
+    }
+
+    public AlbumReviewInfoDto getAlbumReviewInfoById(Long albumReviewId) {
+        return albumReviewRepository.findAlbumReviewInfoDto(albumReviewId).orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
     }
 }

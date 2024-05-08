@@ -15,7 +15,7 @@ import site.mutopia.server.domain.album.entity.AlbumEntity;
 public class AlbumReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_review_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "title")

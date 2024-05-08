@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 
 @Repository
-public interface AlbumReviewRepository extends JpaRepository<AlbumReviewEntity, Long> {
+public interface AlbumReviewRepository extends JpaRepository<AlbumReviewEntity, Long>, AlbumReviewCustomRepository {
 }

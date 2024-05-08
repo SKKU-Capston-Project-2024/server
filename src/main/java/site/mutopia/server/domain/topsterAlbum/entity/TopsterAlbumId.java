@@ -6,5 +6,5 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class TopsterAlbumId implements Serializable {
     private Long topster;
-    private Long album;
+    private String album;
 }
