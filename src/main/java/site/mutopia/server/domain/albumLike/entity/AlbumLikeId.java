@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 
 @EqualsAndHashCode
-public class AlbumLikeEntityId implements Serializable {
+public class AlbumLikeId implements Serializable {
     private String album;
     private String user;
 }
