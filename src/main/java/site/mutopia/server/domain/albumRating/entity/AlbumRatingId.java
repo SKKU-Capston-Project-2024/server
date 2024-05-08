@@ -1,11 +1,14 @@
 package site.mutopia.server.domain.albumRating.entity;
 
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 
 @EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class AlbumRatingId implements Serializable {
-    private Long user;
-    private Long album;
+    private String user;
+    private String album;
 }

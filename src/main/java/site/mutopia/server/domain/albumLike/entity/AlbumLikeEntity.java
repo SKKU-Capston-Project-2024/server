@@ -10,7 +10,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 
 @Entity
 @Table(name = "album_like")
-@IdClass(AlbumLikeEntityId.class)
+@IdClass(AlbumLikeId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder

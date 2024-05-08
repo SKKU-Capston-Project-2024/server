@@ -1,10 +1,7 @@
 package site.mutopia.server.domain.albumRating.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
@@ -14,6 +11,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 public class AlbumRatingEntity {
     @Id
     @ManyToOne
@@ -29,4 +27,8 @@ public class AlbumRatingEntity {
 
     @Column(name = "rating")
     private Integer rating;
+
+    public void modifyRating(Integer rating) {
+        this.rating = rating;
+    }
 }
