@@ -6,6 +6,6 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AlbumRatingSaveReqDto {
+public class AlbumRatingReqDto {
     private Integer rating;
 }

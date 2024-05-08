@@ -7,6 +7,8 @@ import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumRating.entity.AlbumRatingEntity;
+import site.mutopia.server.domain.albumRating.entity.AlbumRatingId;
+import site.mutopia.server.domain.albumRating.exception.AlbumRatingNotFoundException;
 import site.mutopia.server.domain.albumRating.repository.AlbumRatingRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
@@ -32,5 +34,15 @@ public class AlbumRatingService {
                 .build();
 
         albumRatingRepository.save(albumRating);
+    }
+
+    public void modifyAlbumRating(String albumId, String userId, Integer rating) {
+        AlbumEntity album = albumRepository.findAlbumById(albumId).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + albumId + " does not exist."));
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
+
+        AlbumRatingEntity albumRating = albumRatingRepository.findById(AlbumRatingId.builder().album(album.getId()).user(user.getId()).build())
+                .orElseThrow(() -> new AlbumRatingNotFoundException("Album rating not found. albumId: " + albumId + "userId: " + userId + " does not exist."));
+
+        albumRating.modifyRating(rating);
     }
 }

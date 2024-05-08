@@ -29,4 +29,8 @@ public class AlbumRatingEntity {
 
     @Column(name = "rating")
     private Integer rating;
+
+    public void modifyRating(Integer rating) {
+        this.rating = rating;
+    }
 }
