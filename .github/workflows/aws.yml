@@ -74,6 +74,7 @@ jobs:
         JWT_FILE: ${{ secrets.application_jwt }}
         OAUTH_FILE: ${{ secrets.application_oauth }}
         SPOTIFY_FILE: ${{ secrets.application_spotify }}
+        APPLICATION_YML: ${{ secrets.application }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
@@ -83,6 +84,8 @@ jobs:
         echo $JWT_FILE | base64 --decode >> ./src/main/resources/application-jwt.yml
         echo $OAUTH_FILE | base64 --decode >> ./src/main/resources/application-oauth.yml
         echo $SPOTIFY_FILE | base64 --decode >> ./src/main/resources/application-spotify.yml
+        rm ./src/main/resources/application.yml
+        echo $APPLICATION_YML | base64 --decode >> ./src/main/resources/application.yml
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
