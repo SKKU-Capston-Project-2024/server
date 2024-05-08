@@ -45,4 +45,11 @@ public class AlbumRatingService {
 
         albumRating.modifyRating(rating);
     }
+
+    public Integer getAlbumRating(String userId, String albumId) {
+        AlbumRatingEntity albumRating = albumRatingRepository.findByUserIdAndAlbumId(userId, albumId)
+                .orElseThrow(() -> new AlbumRatingNotFoundException("Album rating not found. albumId: " + albumId + "userId: " + userId + " does not exist."));
+
+        return albumRating.getRating();
+    }
 }
