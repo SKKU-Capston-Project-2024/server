@@ -1,15 +1,13 @@
 package site.mutopia.server.domain.albumReview.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 
 @Entity
 @Table(name = "album_review")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlbumReviewEntity {

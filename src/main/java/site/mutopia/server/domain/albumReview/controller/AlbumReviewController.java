@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
-import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveDto;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveResDto;
+import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 import site.mutopia.server.domain.albumReview.service.AlbumReviewService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -23,10 +25,9 @@ public class AlbumReviewController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @CreatedResponse
-    public ResponseEntity<Void> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveDto saveDto) {
-        albumReviewService.saveAlbumReview(loggedInUser.getId(), saveDto);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AlbumReviewSaveResDto> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveReqDto saveDto) {
+        AlbumReviewEntity albumReviewEntity = albumReviewService.saveAlbumReview(loggedInUser.getId(), saveDto);
+        return ResponseEntity.ok().body(AlbumReviewSaveResDto.builder().albumReviewId(albumReviewEntity.getId()).build());
     }
 
     @GetMapping("/{albumReviewId}")
