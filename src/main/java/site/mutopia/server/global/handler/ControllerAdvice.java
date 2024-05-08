@@ -27,8 +27,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException exception) {
-        log.error(exception.getClass().getName());
-        log.error(exception.getMessage());
+        log.error(exception.getClass().getName(), exception);
         return ResponseEntity.badRequest().body(new ExceptionResponse(BAD_REQUEST_ERROR_MSG));
     }
 

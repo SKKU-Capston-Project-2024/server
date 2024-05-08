@@ -5,11 +5,18 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 @Component
@@ -22,22 +29,44 @@ public class SpotifyClientManager {
     @Value("${spotify.client.secret}")
     private String clientSecret;
 
+    private String accessToken = null;
+    private LocalDateTime accessTokenExpiredTime = null;
+
     @Getter
     private WebClient spotifyClient;
+
 
     @PostConstruct
     public void initWebClient() {
         this.spotifyClient = WebClient.builder()
                 .baseUrl("https://api.spotify.com/v1")
-                .defaultHeader("Authorization", "Bearer " + getAccessToken())
+                .filter(authHeaderFilter())
                 .build();
+        this.accessToken = getAccessToken();
     }
+
+    private ExchangeFilterFunction authHeaderFilter() {
+        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
+                    // 요청 전에 헤더를 설정
+                    ClientRequest request = ClientRequest.from(clientRequest)
+                            .headers(headers -> headers.setBearerAuth(getAccessToken()))
+                            .build();
+                    return Mono.just(request);
+                });
+    }
+
+
 
     private String getAccessToken() {
 
+        if (accessTokenExpiredTime != null) {
+            if (LocalDateTime.now().isBefore(accessTokenExpiredTime.minusMinutes(10))) {
+                return accessToken;
+            }
+        }
+
         String client64 = Base64.getEncoder().encodeToString((clientId+":"+clientSecret).getBytes());
         String auth = "Basic " + client64;
-
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://accounts.spotify.com/api")
@@ -54,8 +83,9 @@ public class SpotifyClientManager {
             throw new RuntimeException("Failed to get access token");
         }
 
-        log.info("Access token: {}", authResponse.access_token);
-        return authResponse.access_token;
+        accessToken = authResponse.access_token;
+        accessTokenExpiredTime = LocalDateTime.now().plusSeconds(authResponse.expires_in);
+        return accessToken;
     }
 
     private static class AuthResponse {
@@ -66,6 +96,6 @@ public class SpotifyClientManager {
         String token_type;
 
         @JsonProperty("expires_in")
-        String expires_in;
+        Long expires_in;
     }
 }
