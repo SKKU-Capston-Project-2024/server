@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.albumReview.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
@@ -16,6 +17,7 @@ import site.mutopia.server.domain.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AlbumReviewService {
 
     private final AlbumReviewRepository albumReviewRepository;
