@@ -67,7 +67,12 @@ public class AlbumRepositoryImpl implements AlbumRepository{
         Albums spotifyAlbums = spotifyApi.searchAlbums(keyword, limit, offset);
         List<AlbumEntity> albums = spotifyAlbums.items.stream().map(DomainConvertor::toDomain).toList();
 
-        albumEntityRepository.saveAll(albums);
+        for(AlbumEntity album : albums) {
+            Optional<AlbumEntity> albumEntity = albumEntityRepository.findById(album.getId());
+            if (albumEntity.isEmpty()) {
+                albumEntityRepository.save(album);
+            }
+        }
 
         return albums;
     }
