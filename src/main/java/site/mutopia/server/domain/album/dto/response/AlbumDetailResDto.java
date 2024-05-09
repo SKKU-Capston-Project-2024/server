@@ -1,28 +1,33 @@
 package site.mutopia.server.domain.album.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import site.mutopia.server.domain.album.dto.AlbumTrackDto;
 import site.mutopia.server.domain.album.dto.ReviewPreviewDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.song.entity.SongEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AlbumDetailResDto {
     String albumId;
     String albumName;
     String artistName;
     String albumImg;
     String releaseDate;
-    String albumLength;
+    Long albumLength;
     Long totalReviewCount;
 
     List<ReviewPreviewDto> albumReviewList;
 
-    List<SongEntity> albumTrackList;
+    List<AlbumTrackDto> albumTrackList;
 
     Double averageRating;
 
@@ -30,18 +35,17 @@ public class AlbumDetailResDto {
 
     public static AlbumDetailResDto toDto(AlbumEntity entity){
         return AlbumDetailResDto.builder()
+                .albumLength(entity.getLength())
                 .albumId(entity.getId())
                 .albumName(entity.getName())
                 .artistName(entity.getArtistName())
                 .albumImg(entity.getCoverImageUrl())
                 .releaseDate(entity.getReleaseDate())
-                .albumLength(null)
                 .totalReviewCount(entity.getTotalReviewCount())
                 .averageRating(entity.getAverageRating())
                 .likeCount(entity.getTotalLikeCount())
-                .albumTrackList(entity.getSongs())
+                .albumTrackList(entity.getSongs().stream().map(AlbumTrackDto::new).collect(Collectors.toList()))
                 .build();
-
     }
 
 }

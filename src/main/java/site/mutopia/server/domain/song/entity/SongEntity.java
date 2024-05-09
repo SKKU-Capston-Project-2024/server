@@ -25,6 +25,9 @@ public class SongEntity {
     @ManyToOne
     private AlbumEntity album;
 
+    @Column(name = "track_number")
+    private Integer trackNumber;
+
     public SongEntity() {
 
     }

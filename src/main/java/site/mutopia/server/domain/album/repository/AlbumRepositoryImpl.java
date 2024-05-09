@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class AlbumRepositoryImpl implements AlbumRepository{
 
     private final SpotifyApi spotifyApi;
-    private final AlbumEntityRepository AlbumEntityRepository;
+    private final AlbumEntityRepository albumEntityRepository;
     private final SongRepository songRepository;
 
     @Override
     public Optional<AlbumEntity> findAlbumById(String albumId) {
-        Optional<AlbumEntity> album = AlbumEntityRepository.findById(albumId);
+        Optional<AlbumEntity> album = albumEntityRepository.findById(albumId);
         if(album.isEmpty()){
             return Optional.empty();
         }
@@ -36,11 +36,11 @@ public class AlbumRepositoryImpl implements AlbumRepository{
         if(songs == null||songs.isEmpty()){
             List<SongEntity> tracks = spotifyApi.getAlbumTracks(albumId).getItems()
                     .stream().map(item -> DomainConvertor.toDomain(item, album.get().getId())).collect(Collectors.toList());
-            log.info("sss track 1: {}", tracks.get(0));
-
+            long sumOfDuration = tracks.stream().mapToLong(SongEntity::getDuration).sum();
+            album.get().setLength(sumOfDuration);
             songRepository.saveAll(tracks);
             album.get().setSongs(tracks);
-            AlbumEntityRepository.save(album.get());
+            albumEntityRepository.save(album.get());
         }
         return album;
     }
@@ -67,7 +67,7 @@ public class AlbumRepositoryImpl implements AlbumRepository{
         Albums spotifyAlbums = spotifyApi.searchAlbums(keyword, limit, offset);
         List<AlbumEntity> albums = spotifyAlbums.items.stream().map(DomainConvertor::toDomain).toList();
 
-        AlbumEntityRepository.saveAll(albums);
+        albumEntityRepository.saveAll(albums);
 
         return albums;
     }
