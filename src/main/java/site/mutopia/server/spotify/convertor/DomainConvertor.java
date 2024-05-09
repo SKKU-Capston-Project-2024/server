@@ -21,7 +21,9 @@ public class DomainConvertor {
 
     public static SongEntity toDomain(Track track,String albumId){
         return SongEntity.builder()
-                .title(track.getId())
+                .title(track.getName())
+                .albumId(albumId)
+                .songId(track.getId())
                 .duration(track.getDuration_ms()/1000)
                 .build();
     }

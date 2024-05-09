@@ -5,6 +5,7 @@ import lombok.Data;
 import site.mutopia.server.domain.album.dto.AlbumTrackDto;
 import site.mutopia.server.domain.album.dto.ReviewPreviewDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.song.entity.SongEntity;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class AlbumDetailResDto {
 
     List<ReviewPreviewDto> albumReviewList;
 
-    List<AlbumTrackDto> albumTrackList;
+    List<SongEntity> albumTrackList;
 
     Double averageRating;
 
@@ -38,6 +39,7 @@ public class AlbumDetailResDto {
                 .totalReviewCount(entity.getTotalReviewCount())
                 .averageRating(entity.getAverageRating())
                 .likeCount(entity.getTotalLikeCount())
+                .albumTrackList(entity.getSongs())
                 .build();
 
     }

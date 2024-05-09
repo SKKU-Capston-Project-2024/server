@@ -3,23 +3,28 @@ package site.mutopia.server.domain.album.repository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.song.entity.SongEntity;
+import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.spotify.SpotifyApi;
 import site.mutopia.server.spotify.convertor.DomainConvertor;
 import site.mutopia.server.spotify.dto.item.Albums;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class AlbumRepositoryImpl implements AlbumRepository{
 
     private final SpotifyApi spotifyApi;
     private final AlbumEntityRepository AlbumEntityRepository;
+    private final SongRepository songRepository;
 
     @Override
     public Optional<AlbumEntity> findAlbumById(String albumId) {
@@ -29,10 +34,11 @@ public class AlbumRepositoryImpl implements AlbumRepository{
         }
         List<SongEntity> songs = album.get().getSongs();
         if(songs == null||songs.isEmpty()){
-            List<SongEntity> tracks = spotifyApi.getAlbumTracks(albumId).getItems().stream().map(item -> {
-                return DomainConvertor.toDomain(item, album.get().getId());
-            }).toList();
+            List<SongEntity> tracks = spotifyApi.getAlbumTracks(albumId).getItems()
+                    .stream().map(item -> DomainConvertor.toDomain(item, album.get().getId())).collect(Collectors.toList());
+            log.info("sss track 1: {}", tracks.get(0));
 
+            songRepository.saveAll(tracks);
             album.get().setSongs(tracks);
             AlbumEntityRepository.save(album.get());
         }
