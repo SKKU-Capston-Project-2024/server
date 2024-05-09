@@ -21,11 +21,9 @@ public class SongEntity {
     @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "release_date")
-    private LocalDate releaseDate;
-
-    @Column(name = "album_id")
-    private String albumId;
+    @JoinColumn(name = "album_id")
+    @ManyToOne
+    private AlbumEntity album;
 
     public SongEntity() {
 

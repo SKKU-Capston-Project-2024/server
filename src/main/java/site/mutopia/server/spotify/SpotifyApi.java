@@ -47,6 +47,7 @@ public class SpotifyApi {
                         .queryParam("market", "KR")
                         .queryParam("limit", 30)
                         .queryParam("offset", 0)
+                        .queryParam("locale", "ko_KR")
                         .build(albumId))
                 .retrieve()
                 .bodyToMono(PagedTracks.class)
