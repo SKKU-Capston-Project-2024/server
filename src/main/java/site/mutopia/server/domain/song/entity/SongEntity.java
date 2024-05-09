@@ -1,10 +1,15 @@
 package site.mutopia.server.domain.song.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import java.time.LocalDate;
 
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "song")
 public class SongEntity {
     @Id
@@ -21,7 +26,10 @@ public class SongEntity {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    @ManyToOne
-    @JoinColumn(name = "album_id")
-    private AlbumEntity album;
+    @Column(name = "album_id")
+    private String albumId;
+
+    public SongEntity() {
+
+    }
 }

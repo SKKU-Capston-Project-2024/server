@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.spotify.SpotifyApi;
 import site.mutopia.server.spotify.convertor.DomainConvertor;
 import site.mutopia.server.spotify.dto.item.Albums;
@@ -22,7 +23,20 @@ public class AlbumRepositoryImpl implements AlbumRepository{
 
     @Override
     public Optional<AlbumEntity> findAlbumById(String albumId) {
-        return AlbumEntityRepository.findById(albumId);
+        Optional<AlbumEntity> album = AlbumEntityRepository.findById(albumId);
+        if(album.isEmpty()){
+            return Optional.empty();
+        }
+        List<SongEntity> songs = album.get().getSongs();
+        if(songs == null||songs.isEmpty()){
+            List<SongEntity> tracks = spotifyApi.getAlbumTracks(albumId).getItems().stream().map(item -> {
+                return DomainConvertor.toDomain(item, album.get().getId());
+            }).toList();
+
+            album.get().setSongs(tracks);
+            AlbumEntityRepository.save(album.get());
+        }
+        return album;
     }
 
     @Override

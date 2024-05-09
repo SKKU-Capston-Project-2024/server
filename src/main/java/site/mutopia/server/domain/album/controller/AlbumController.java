@@ -33,7 +33,7 @@ public class AlbumController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<List<AlbumEntity>> searchAlbum(@RequestParam String keyword) {
+    public ResponseEntity<List<AlbumEntity>> searchAlbum(@RequestParam(value = "keyword") String keyword) {
         return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword));
     }
 

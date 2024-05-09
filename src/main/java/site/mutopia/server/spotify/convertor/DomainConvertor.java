@@ -1,7 +1,10 @@
 package site.mutopia.server.spotify.convertor;
 
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.spotify.dto.item.Item;
+import site.mutopia.server.spotify.dto.item.Track;
+
 
 public class DomainConvertor {
     public static AlbumEntity toDomain(Item item){
@@ -14,5 +17,12 @@ public class DomainConvertor {
                 .length(0L)
                 .build();
 
+    }
+
+    public static SongEntity toDomain(Track track,String albumId){
+        return SongEntity.builder()
+                .title(track.getId())
+                .duration(track.getDuration_ms()/1000)
+                .build();
     }
 }

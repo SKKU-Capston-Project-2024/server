@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import site.mutopia.server.spotify.dto.PagedTracks;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
 import site.mutopia.server.spotify.dto.item.Albums;
 
@@ -28,5 +29,12 @@ class SpotifyApiTest {
     void searchAlbums() {
         Albums bts = spotifyApi.searchAlbums("적재", 10, 0);
         assertNotNull(bts);
+    }
+
+    @Test
+    void getAlbumTracks() {
+        PagedTracks albumTracks = spotifyApi.getAlbumTracks("7z61DsZtWO2S4nC5xd0b9p");
+        log.info("albumTracks: {}", albumTracks);
+        assertNotNull(albumTracks);
     }
 }

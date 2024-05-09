@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import site.mutopia.server.spotify.dto.PagedTracks;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
 import site.mutopia.server.spotify.dto.item.Albums;
 
@@ -40,4 +41,17 @@ public class SpotifyApi {
         }
         return searchAlbumsDto.getAlbums();
     }
+    public PagedTracks getAlbumTracks(String albumId) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/albums/{id}/tracks")
+                        .queryParam("market", "KR")
+                        .queryParam("limit", 30)
+                        .queryParam("offset", 0)
+                        .build(albumId))
+                .retrieve()
+                .bodyToMono(PagedTracks.class)
+                .block();
+    }
+
+
 }
