@@ -1,12 +1,8 @@
-package site.mutopia.server.domain.topsterAlbum.entity;
+package site.mutopia.server.domain.topster.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
-import site.mutopia.server.domain.topster.entity.TopsterEntity;
 
 @Entity
 @Table(name = "topster_album")
@@ -14,6 +10,7 @@ import site.mutopia.server.domain.topster.entity.TopsterEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 public class TopsterAlbumEntity {
     @Id
     @ManyToOne

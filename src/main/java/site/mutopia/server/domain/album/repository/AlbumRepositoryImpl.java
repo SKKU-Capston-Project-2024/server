@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Transactional
-public class AlbumRepositoryImpl implements AlbumRepository{
+public class AlbumRepositoryImpl implements AlbumRepository {
 
     private final SpotifyApi spotifyApi;
     private final AlbumEntityRepository AlbumEntityRepository;
