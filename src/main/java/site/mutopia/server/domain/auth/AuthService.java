@@ -51,29 +51,25 @@ public class AuthService implements OAuth2UserService<OAuth2UserRequest,OAuth2Us
                 singletonMap("userId", user.getId()),
                 "userId"
         );
-
     }
 
-
-
     private Map<String,Object> customAttributes(AuthUserInfo userInfo) {
-        return Map.of("provider", userInfo.getProvider(),
-                "sub", userInfo.getProviderId()
-
-        );
+        return Map.of("provider", userInfo.getProvider(), "sub", userInfo.getProviderId());
     }
 
     protected UserEntity saveOrUpdate(AuthUserInfo userInfo) {
-
         log.info("provider:{} providerId:{}", userInfo.getProvider(), userInfo.getProviderId());
+
         Optional<UserEntity> user = userRepository.findByProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
         if (user.isPresent()) {
             return user.get();
         }
-        UserEntity newUser = new UserEntity();
-        newUser.setProvider(userInfo.getProvider());
-        newUser.setProviderId(userInfo.getProviderId());
-        newUser.setUsername(randomUsername());
+
+        UserEntity newUser = UserEntity.builder()
+                .provider(userInfo.getProvider())
+                .providerId(userInfo.getProviderId())
+                .username(randomUsername())
+                .build();
 
         return userRepository.save(newUser);
     }
