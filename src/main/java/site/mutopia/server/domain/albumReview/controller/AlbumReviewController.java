@@ -35,10 +35,10 @@ public class AlbumReviewController {
         return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(albumReviewId));
     }
 
-    @GetMapping("/my")
+    /*@GetMapping("/my")
     public ResponseEntity<AlbumReviewEntity> getMyAlbumReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
         return ResponseEntity.ok().body(albumReviewService.getMyAlbumReview(loggedInUser.getId(), albumId));
-    }
+    }*/
 
 
 }
