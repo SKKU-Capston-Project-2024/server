@@ -81,4 +81,32 @@ public class TopsterService {
                 .topsterAlbums(topsterAlbumInfoDtoList)
                 .build();
     }
+
+    public boolean userOwnsTopster(String userId, Long topsterId) {
+        return topsterRepository.existsByUserIdAndTopsterId(userId, topsterId);
+    }
+
+    public List<String> deleteAlbumsFromTopster(Long topsterId, List<String> albumIds) {
+        topsterAlbumRepository.deleteByTopsterIdAndAlbumIds(topsterId, albumIds);
+
+        // return remain albums in topster
+        return topsterAlbumRepository.findByTopsterId(topsterId).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
+    }
+
+    public List<String> appendAlbumsInTopster(Long topsterId, List<String> albumIds) {
+        TopsterEntity topster = topsterRepository.findById(topsterId)
+                .orElseThrow(() -> new TopsterNotFoundException("Topster not found. TopsterId: " + topsterId + " does not exist."));
+
+        List<AlbumEntity> albums = albumRepository.findAllById(albumIds);
+
+        List<TopsterAlbumEntity> topsterAlbums = albums.stream().map(album -> TopsterAlbumEntity.builder()
+                .album(album)
+                .topster(topster)
+                .build()).toList();
+
+        topsterAlbumRepository.saveAll(topsterAlbums);
+
+        // return remain albums in topster
+        return topsterAlbumRepository.findByTopsterId(topsterId).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
+    }
 }

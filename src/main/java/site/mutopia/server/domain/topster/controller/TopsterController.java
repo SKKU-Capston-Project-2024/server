@@ -6,13 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
-import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
-import site.mutopia.server.domain.topster.dto.TopsterSaveReqDto;
-import site.mutopia.server.domain.topster.dto.TopsterSaveResDto;
+import site.mutopia.server.domain.topster.dto.*;
 import site.mutopia.server.domain.topster.entity.TopsterEntity;
 import site.mutopia.server.domain.topster.service.TopsterService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.CreatedResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/topster")
@@ -34,5 +34,40 @@ public class TopsterController {
     public ResponseEntity<TopsterInfoDto> getTopsterById(@PathVariable("topsterId") Long topsterId) {
         TopsterInfoDto topsterInfo = topsterService.getTopsterInfo(topsterId);
         return ResponseEntity.ok().body(topsterInfo);
+    }
+
+
+    @DeleteMapping("/{topsterId}/album")
+    public ResponseEntity<?> deleteAlbumsFromTopster(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId, @RequestBody TopsterAlbumDeleteReqDto dto) {
+        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
+
+        if (!userOwnsTopster) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
+        }
+
+        List<String> remainAlbumIds = topsterService.deleteAlbumsFromTopster(topsterId, dto.getAlbumIds());
+
+        return ResponseEntity.ok().body(
+                TopsterAlbumDeleteResDto.builder()
+                        .remainAlbumIds(remainAlbumIds)
+                        .build()
+        );
+    }
+
+    @PostMapping("/{topsterId}/album")
+    public ResponseEntity<?> appendAlbumsInTopster(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId, @RequestBody TopsterAlbumAppendReqDto dto) {
+        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
+
+        if (!userOwnsTopster) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
+        }
+
+        List<String> remainAlbumIds = topsterService.appendAlbumsInTopster(topsterId, dto.getAlbumIds());
+
+        return ResponseEntity.ok().body(
+                TopsterAlbumAppendResDto.builder()
+                        .remainAlbumIds(remainAlbumIds)
+                        .build()
+        );
     }
 }
