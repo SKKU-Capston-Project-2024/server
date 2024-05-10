@@ -36,6 +36,17 @@ public class TopsterController {
         return ResponseEntity.ok().body(topsterInfo);
     }
 
+    @DeleteMapping("/{topsterId}")
+    public ResponseEntity<?> removeTopsterById(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId) {
+        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
+
+        if (!userOwnsTopster) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
+        }
+
+        topsterService.removeTopsterById(topsterId);
+        return ResponseEntity.ok().build();
+    }
 
     @DeleteMapping("/{topsterId}/album")
     public ResponseEntity<?> deleteAlbumsFromTopster(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId, @RequestBody TopsterAlbumDeleteReqDto dto) {
