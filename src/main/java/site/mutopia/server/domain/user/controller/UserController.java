@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.service.AlbumReviewService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
+import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
+import site.mutopia.server.domain.songComment.service.SongCommentService;
 import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
 import site.mutopia.server.domain.topster.service.TopsterService;
 import site.mutopia.server.domain.user.dto.UserAggregationInfoResDto;
@@ -22,6 +24,7 @@ public class UserController {
     private final UserService userService;
     private final TopsterService topsterService;
     private final AlbumReviewService albumReviewService;
+    private final SongCommentService songCommentService;
 
     @GetMapping("/info")
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
@@ -42,9 +45,16 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/album/review")
-    public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReview(@PathVariable("userId") String userId,
+    public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(@PathVariable("userId") String userId,
                                                @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
         List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(userId, limit);
         return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/{userId}/song/comment")
+    public ResponseEntity<List<SongCommentInfoResDto>> getUserSongComments(@PathVariable("userId") String userId,
+                                                 @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, limit);
+        return ResponseEntity.ok().body(userSongComments);
     }
 }
