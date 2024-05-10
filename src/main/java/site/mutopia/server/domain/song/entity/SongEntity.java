@@ -2,6 +2,9 @@ package site.mutopia.server.domain.song.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import java.time.LocalDate;
 
@@ -10,6 +13,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @Table(name = "song")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SongEntity {
     @Id
     @Column(name = "song_id")

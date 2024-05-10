@@ -2,14 +2,16 @@ package site.mutopia.server.domain.user.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "user")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -28,6 +30,18 @@ public class UserEntity {
 
     @Column(name = "provider_id")
     private String providerId;
+
+    public void modifyUsername(String username) {
+        this.username = username;
+    }
+
+    @Builder
+    public UserEntity(String username, String email, String provider, String providerId) {
+        this.username = username;
+        this.email = email;
+        this.provider = provider;
+        this.providerId = providerId;
+    }
 
     // TODO: Use Spring Data JPA Auditing (createdAt, updatedAt)
     // @CreationTimestamp

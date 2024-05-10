@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AlbumRepositoryImpl implements AlbumRepository{
+public class AlbumRepositoryImpl implements AlbumRepository {
 
     private final SpotifyApi spotifyApi;
     private final AlbumEntityRepository albumEntityRepository;

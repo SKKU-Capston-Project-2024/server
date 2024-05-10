@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.albumReview.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
@@ -13,9 +14,11 @@ import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AlbumReviewService {
 
     private final AlbumReviewRepository albumReviewRepository;
@@ -37,5 +40,9 @@ public class AlbumReviewService {
     public AlbumReviewEntity getMyAlbumReview(String writerId, String albumId) {
         return albumReviewRepository.findByAlbumIdAndUserId(writerId, albumId)
                 .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. writerId: " + writerId + " albumId: " + albumId + " does not exist."));
+
+    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit) {
+        return albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, limit);
+
     }
 }

@@ -1,4 +1,4 @@
-package site.mutopia.server.domain.topsterAlbum.entity;
+package site.mutopia.server.domain.topster.entity;
 
 import lombok.EqualsAndHashCode;
 import java.io.Serializable;
