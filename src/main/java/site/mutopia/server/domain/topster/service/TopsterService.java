@@ -54,10 +54,21 @@ public class TopsterService {
     }
 
     // 나중에 성능 튜닝
-    public TopsterInfoDto getTopsterInfo(Long topsterId) {
+    public TopsterInfoDto getTopsterInfoById(Long topsterId) {
         TopsterEntity topsterEntity = topsterRepository.findById(topsterId)
                 .orElseThrow(() -> new TopsterNotFoundException("Topster not found. TopsterId: " + topsterId + " does not exist."));
 
+        return getTopsterDetails(topsterEntity);
+    }
+
+    public TopsterInfoDto getTopsterInfoByUserId(String userId) {
+        TopsterEntity topsterEntity = topsterRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+                .orElseThrow(() -> new TopsterNotFoundException("Topster that matches to userId: " + userId + " does not exist."));
+
+        return getTopsterDetails(topsterEntity);
+    }
+
+    private TopsterInfoDto getTopsterDetails(TopsterEntity topsterEntity) {
         UserInfoDto userInfoDto = UserInfoDto.builder().id(topsterEntity.getUser().getId()).username(topsterEntity.getUser().getUsername()).build();
         TopsterInfoDetailDto topsterInfoDto = TopsterInfoDetailDto.builder().id(topsterEntity.getId()).title(topsterEntity.getTitle()).build();
 

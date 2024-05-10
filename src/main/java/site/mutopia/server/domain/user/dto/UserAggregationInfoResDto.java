@@ -1,4 +1,4 @@
-package site.mutopia.server.domain.profile.dto.response;
+package site.mutopia.server.domain.user.dto;
 
 import lombok.*;
 

@@ -2,7 +2,9 @@ package site.mutopia.server.domain.topster.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "topster")
@@ -20,6 +22,10 @@ public class TopsterEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Builder
     public TopsterEntity(String title, UserEntity user) {

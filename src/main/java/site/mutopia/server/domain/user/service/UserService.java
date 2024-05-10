@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.mutopia.server.domain.albumRating.repository.AlbumRatingRepository;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.follow.repository.FollowRepository;
-import site.mutopia.server.domain.profile.dto.response.UserAggregationInfoResDto;
+import site.mutopia.server.domain.user.dto.UserAggregationInfoResDto;
 
 @Service
 @RequiredArgsConstructor

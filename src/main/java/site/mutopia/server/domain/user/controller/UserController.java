@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
-import site.mutopia.server.domain.profile.dto.response.UserAggregationInfoResDto;
+import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
+import site.mutopia.server.domain.topster.service.TopsterService;
+import site.mutopia.server.domain.user.dto.UserAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.service.UserService;
+import site.mutopia.server.swagger.response.NotFoundResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ import site.mutopia.server.domain.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final TopsterService topsterService;
 
     @GetMapping("/info")
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
@@ -29,4 +33,10 @@ public class UserController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/{userId}/topster")
+    @NotFoundResponse
+    public ResponseEntity<TopsterInfoDto> getUserTopster(@PathVariable("userId") String userId) {
+        TopsterInfoDto topster = topsterService.getTopsterInfoByUserId(userId);
+        return ResponseEntity.ok().body(topster);
+    }
 }
