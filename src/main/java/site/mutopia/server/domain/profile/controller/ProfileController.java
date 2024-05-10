@@ -1,6 +1,5 @@
 package site.mutopia.server.domain.profile.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/profile")
+@RequestMapping("/profile")  // TODO: /user/profile이 더 restful 함, breaking change라 나중에 바꾸기
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -32,5 +31,4 @@ public class ProfileController {
         profileService.editProfile(userEntity, username,bio, file);
         return ResponseEntity.ok().build();
     }
-
 }

@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface AlbumRatingRepository extends JpaRepository<AlbumRatingEntity, AlbumRatingId> {
 
     Optional<AlbumRatingEntity> findByUserIdAndAlbumId(String userId, String albumId);
+
+    Long countByUserId(String userId);
 }
