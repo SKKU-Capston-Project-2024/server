@@ -6,4 +6,5 @@ import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 
 @Repository
 public interface AlbumReviewRepository extends JpaRepository<AlbumReviewEntity, Long>, AlbumReviewCustomRepository {
+    Long countByWriterId(String writerId);
 }

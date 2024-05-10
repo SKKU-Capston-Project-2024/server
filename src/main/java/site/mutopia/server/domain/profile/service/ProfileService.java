@@ -7,54 +7,53 @@ import org.springframework.web.multipart.MultipartFile;
 import site.mutopia.server.aws.s3.FileManager;
 import site.mutopia.server.domain.profile.dto.response.MyInfoResDto;
 import site.mutopia.server.domain.profile.entity.ProfileEntity;
+import site.mutopia.server.domain.profile.exception.ProfileNotFoundException;
 import site.mutopia.server.domain.profile.repository.ProfileRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
-import site.mutopia.server.domain.user.repository.UserRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final FileManager fileManager;
-    private final UserRepository userRepository;
 
-    @Transactional
     public MyInfoResDto getMyInfo(UserEntity userEntity) {
-        ProfileEntity profile = profileRepository.findByUserId(userEntity.getId()).orElse(null);
-        if(profile==null){
-            profile = saveNewUserProfile(userEntity);
-            return new MyInfoResDto(userEntity.getId(), userEntity.getUsername(), profile.getProfilePicUrl(),null,true);
+        Optional<ProfileEntity> profile = profileRepository.findByUserId(userEntity.getId());
+
+        if (profile == null) {
+            ProfileEntity savedProfile = saveNewUserProfile(userEntity);
+            return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(savedProfile.getProfilePicUrl()).bio(null).isFirstLogin(true).build();
         }
-        return new MyInfoResDto(userEntity.getId(), userEntity.getUsername(), profile.getProfilePicUrl(),profile.getBio(),false);
+
+        return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(profile.get().getProfilePicUrl()).bio(profile.get().getBio()).isFirstLogin(false).build();
     }
 
-    private ProfileEntity saveNewUserProfile(UserEntity userEntity){
-        ProfileEntity profile = new ProfileEntity();
-        profile.setProfilePicUrl("https://mutopia.s3.ap-northeast-2.amazonaws.com/default/defaultProfile.svg");
-        profile.setUser(userEntity);
-        profileRepository.save(profile);
-        return profile;
+    private ProfileEntity saveNewUserProfile(UserEntity userEntity) {
+        // TODO: extract default profile img url to env
+        return profileRepository.save(ProfileEntity.newUserProfile(userEntity, "https://mutopia.s3.ap-northeast-2.amazonaws.com/default/defaultProfile.svg"));
     }
 
-    @Transactional
     public void editProfile(UserEntity userEntity, String username, String bio, MultipartFile file) {
-        try{
-            if(username!=null && !username.isEmpty()){
-                userEntity.setUsername(username);
-                userRepository.save(userEntity);
+        try {
+            if (username != null && !username.isEmpty()) {
+                userEntity.modifyUsername(username);
             }
-            ProfileEntity profile = profileRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new IllegalArgumentException("Profile not found"));
-            if(bio!=null && !bio.isEmpty()){
-                profile.setBio(bio);
+
+            ProfileEntity profile = profileRepository.findByUserId(userEntity.getId()).orElseThrow(() -> new ProfileNotFoundException("Profile not found that matches to userId: " + userEntity.getId()));
+
+            if (bio != null && !bio.isEmpty()) {
+                profile.modifyBio(bio);
             }
-            if(file!=null){
-                String uploadURL = fileManager.uploadFile(file, userEntity.getId());
-                profile.setProfilePicUrl(uploadURL);
+
+            if (file != null) {
+                profile.modifyProfilePicUrl(fileManager.uploadFile(file, userEntity.getId()));
             }
-            profileRepository.save(profile);
-        }
-        catch (Exception e){
+
+        } catch (Exception e) {
             throw new IllegalArgumentException("Failed to upload file");
         }
     }

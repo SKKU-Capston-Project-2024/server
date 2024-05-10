@@ -1,8 +1,8 @@
 package site.mutopia.server.domain.profile.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
+@Builder
 public record MyInfoResDto (
         String id,
         String name,

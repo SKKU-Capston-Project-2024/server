@@ -32,7 +32,7 @@ public class TopsterController {
 
     @GetMapping("/{topsterId}")
     public ResponseEntity<TopsterInfoDto> getTopsterById(@PathVariable("topsterId") Long topsterId) {
-        TopsterInfoDto topsterInfo = topsterService.getTopsterInfo(topsterId);
+        TopsterInfoDto topsterInfo = topsterService.getTopsterInfoById(topsterId);
         return ResponseEntity.ok().body(topsterInfo);
     }
 
