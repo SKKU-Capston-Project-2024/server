@@ -19,4 +19,9 @@ public interface TopsterAlbumRepository extends JpaRepository<TopsterAlbumEntity
     @Transactional
     @Query("DELETE FROM TopsterAlbumEntity ta WHERE ta.topster.id = :topsterId AND ta.album.id IN :albumIds")
     void deleteByTopsterIdAndAlbumIds(@Param("topsterId") Long topsterId, @Param("albumIds") List<String> albumIds);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TopsterAlbumEntity ta WHERE ta.topster.id = :topsterId")
+    void deleteByTopsterId(@Param("topsterId") Long topsterId);
 }

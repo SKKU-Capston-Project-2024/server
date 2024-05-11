@@ -120,4 +120,9 @@ public class TopsterService {
         // return remain albums in topster
         return topsterAlbumRepository.findByTopsterId(topsterId).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
     }
+
+    public void removeTopsterById(Long topsterId) {
+        topsterAlbumRepository.deleteByTopsterId(topsterId);
+        topsterRepository.deleteById(topsterId);
+    }
 }
