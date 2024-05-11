@@ -27,7 +27,7 @@ public class AlbumService {
 
     }
 
-    public List<AlbumEntity> searchAlbumByKeyword(String keyword) {
+    public List<AlbumEntity> searchAlbumByKeyword(String keyword ,int offset) {
         List<AlbumEntity> albumByKeyword = albumRepository.findAlbumByKeyword(keyword, 10, 0);
         return albumByKeyword;
     }

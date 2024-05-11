@@ -2,6 +2,7 @@ package site.mutopia.server.domain.album.controller;
 
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
@@ -34,10 +35,12 @@ public class AlbumController {
         return ResponseEntity.ok().body(albumService.findAlbumById(albumId));
     }
 
-
+    @Description("앨범 검색, 10개씩 반환, offset 으로 페이징 가능")
     @GetMapping("/search")
-    public ResponseEntity<List<AlbumEntity>> searchAlbum(@RequestParam(value = "keyword") String keyword) {
-        return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword));
+    public ResponseEntity<List<AlbumEntity>> searchAlbum(
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
+        return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword, offset));
     }
 
 
