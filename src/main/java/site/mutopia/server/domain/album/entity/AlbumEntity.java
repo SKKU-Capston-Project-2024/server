@@ -1,14 +1,15 @@
 package site.mutopia.server.domain.album.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Formula;
+import site.mutopia.server.domain.song.entity.SongEntity;
+
+import java.util.List;
 
 @Builder
 @Getter
+@Setter
 @Entity
 @Table(name = "album")
 @AllArgsConstructor
@@ -32,6 +33,10 @@ public class AlbumEntity {
 
     @Column
     Long length;
+
+    @OneToMany
+    @JoinColumn(name = "album_id")
+    List<SongEntity> songs;
 
     @Formula("(select count(*) from album_review r where r.album_id = id)")
     @Basic(fetch = FetchType.LAZY)

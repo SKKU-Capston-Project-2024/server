@@ -34,4 +34,11 @@ public class AlbumReviewController {
     public ResponseEntity<AlbumReviewInfoDto> getAlbumReview(@PathVariable("albumReviewId") Long albumReviewId) {
         return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(albumReviewId));
     }
+
+    /*@GetMapping("/my")
+    public ResponseEntity<AlbumReviewEntity> getMyAlbumReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
+        return ResponseEntity.ok().body(albumReviewService.getMyAlbumReview(loggedInUser.getId(), albumId));
+    }*/
+
+
 }

@@ -37,7 +37,12 @@ public class AlbumReviewService {
         return albumReviewRepository.findAlbumReviewInfoDto(albumReviewId).orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
     }
 
+    public AlbumReviewEntity getMyAlbumReview(String writerId, String albumId) {
+        return albumReviewRepository.findByAlbumIdAndUserId(writerId, albumId)
+                .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. writerId: " + writerId + " albumId: " + albumId + " does not exist."));
+
     public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit) {
         return albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, limit);
+
     }
 }

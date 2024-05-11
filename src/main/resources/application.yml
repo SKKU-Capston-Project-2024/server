@@ -28,5 +28,5 @@ logging:
       hibernate:
         SQL: debug
 client-info:
-  host: "http://localhost:3000"
+  host: "https://mutopia.site"
 
