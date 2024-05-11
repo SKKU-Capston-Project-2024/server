@@ -7,5 +7,5 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class SongCommentId implements Serializable {
     private String writer;
-    private Long song;
+    private String song;
 }

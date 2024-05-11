@@ -26,14 +26,14 @@ public class SongEntity {
     @Column(name = "duration")
     private Integer duration;
 
-    @JoinColumn(name = "album_id")
+    @Column(name = "release_date")
+    private LocalDate releaseDate;
+
     @ManyToOne
+    @JoinColumn(name = "album_id")
     private AlbumEntity album;
 
     @Column(name = "track_number")
     private Integer trackNumber;
 
-    public SongEntity() {
-
-    }
 }
