@@ -30,7 +30,7 @@ public class AlbumController {
     @OkResponse
     @GetMapping("/info/{albumId}")
     public ResponseEntity<AlbumDetailResDto> getAlbum(
-            @PathVariable("albumId") String albumId) {
+            @PathVariable(value = "albumId") String albumId) {
         return ResponseEntity.ok().body(albumService.findAlbumById(albumId));
     }
 

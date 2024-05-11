@@ -27,7 +27,7 @@ public class SongCommentInfoResDto {
     @Builder
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SongInfo {
-        private Long id;
+        private String id;
         private String title;
         private Integer duration;
         private LocalDate releaseDate;

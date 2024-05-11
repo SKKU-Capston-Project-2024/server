@@ -20,7 +20,7 @@ public class PlaylistInfoDto {
     @Builder
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SongBriefInfo {
-        private Long songId;
+        private String songId;
         private String title;
         private Integer trackOrder;
     }
