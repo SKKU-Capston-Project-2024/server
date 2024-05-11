@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveResDto;
@@ -33,5 +34,11 @@ public class AlbumReviewController {
     @GetMapping("/{albumReviewId}")
     public ResponseEntity<AlbumReviewInfoDto> getAlbumReview(@PathVariable("albumReviewId") Long albumReviewId) {
         return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(albumReviewId));
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<AlbumReviewCheckResDto> checkUserHasWrittenReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
+        AlbumReviewCheckResDto result = albumReviewService.checkReviewExistence(loggedInUser.getId(), albumId);
+        return ResponseEntity.ok().body(result);
     }
 }
