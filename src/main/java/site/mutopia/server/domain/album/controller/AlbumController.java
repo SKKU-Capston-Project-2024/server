@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.album.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Description;
@@ -35,7 +36,7 @@ public class AlbumController {
         return ResponseEntity.ok().body(albumService.findAlbumById(albumId));
     }
 
-    @Description("앨범 검색, 10개씩 반환, offset 으로 페이징 가능")
+    @Operation(summary = "앨범 검색", description = "keyword로 검색, offset으로 페이징 가장 관련도 높은 순으로 정렬")
     @GetMapping("/search")
     public ResponseEntity<List<AlbumEntity>> searchAlbum(
             @RequestParam(value = "keyword") String keyword,
