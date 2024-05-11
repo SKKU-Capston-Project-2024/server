@@ -41,4 +41,9 @@ public class AlbumReviewController {
         AlbumReviewCheckResDto result = albumReviewService.checkReviewExistence(loggedInUser.getId(), albumId);
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<AlbumReviewEntity> getMyAlbumReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
+        return ResponseEntity.ok().body(albumReviewService.getMyAlbumReview(loggedInUser.getId(), albumId));
+    }
 }
