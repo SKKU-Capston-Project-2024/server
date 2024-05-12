@@ -7,5 +7,5 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class PlaylistSongId implements Serializable {
     private Long playlist;
-    private Long song;
+    private String song;
 }
