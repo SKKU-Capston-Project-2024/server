@@ -13,11 +13,11 @@ public class AlbumReviewInfoDto {
     private AlbumInfoDto album;
 
     // Constructor used by JPQL to create instances
-    public AlbumReviewInfoDto(String title, String content, Integer rating, String albumId,
+    public AlbumReviewInfoDto(Long reviewId, String title, String content, Integer rating, String albumId,
                               String writerId, String username,
                               String name, String artistName, String coverImageUrl, String releaseDate,
                               Long length, Long totalReviewCount, Double averageRating, Long totalLikeCount) {
-        this.review = new ReviewInfoDto(title, content, rating);
+        this.review = new ReviewInfoDto(reviewId,title, content, rating, false);
         this.writer = new WriterInfoDto(writerId, username);
         this.album = new AlbumInfoDto(albumId, name, artistName, coverImageUrl, releaseDate,
                 length, totalReviewCount, averageRating, totalLikeCount);
@@ -27,9 +27,12 @@ public class AlbumReviewInfoDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ReviewInfoDto {
+        private Long id;
         private String title;
         private String content;
         private Integer rating;
+        @Setter
+        private Boolean isLiked;
     }
 
     @Getter

@@ -2,6 +2,7 @@ package site.mutopia.server.domain.album.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/album")
+@Tag(name = "Album", description = "앨범 관련 API")
 @RequiredArgsConstructor
 public class AlbumController {
 

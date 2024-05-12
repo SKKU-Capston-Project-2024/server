@@ -23,11 +23,9 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.repository.UserRepository;
 
 import javax.crypto.SecretKey;
+import javax.swing.text.html.Option;
 import java.lang.reflect.MalformedParameterizedTypeException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -106,9 +104,12 @@ public class TokenProvider {
         }
     }
 
-    public UserEntity getUserEntity(String token) {
+    public Optional<UserEntity> getUserEntity(String token) {
+        if(token == null || StringUtils.isEmpty(token)){
+            return Optional.empty();
+        }
         Claims claims = parseClaim(token);
-        return userRepository.findById(claims.getSubject()).orElseThrow(() -> new UnAuthorizedException("Invalid Bearer Token"));
+        return userRepository.findById(claims.getSubject());
     }
 
 

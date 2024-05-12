@@ -6,11 +6,15 @@ import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.albumLike.repository.AlbumLikeRepository;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
+import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeId;
+import site.mutopia.server.domain.albumReviewLike.repository.AlbumReviewLikeRepository;
+import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
@@ -22,6 +26,7 @@ import java.util.List;
 public class AlbumReviewService {
 
     private final AlbumReviewRepository albumReviewRepository;
+    private final AlbumReviewLikeRepository reviewLikeRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
 
@@ -33,16 +38,28 @@ public class AlbumReviewService {
         return albumReviewRepository.save(albumReview);
     }
 
-    public AlbumReviewInfoDto getAlbumReviewInfoById(Long albumReviewId) {
-        return albumReviewRepository.findAlbumReviewInfoDto(albumReviewId).orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
+    public AlbumReviewInfoDto getAlbumReviewInfoById(UserEntity user,Long albumReviewId) {
+
+        AlbumReviewInfoDto albumReviewInfoDto = albumReviewRepository.findAlbumReviewInfoDto(albumReviewId).orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
+        if(user != null) {
+            albumReviewInfoDto.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(user.getId(),albumReviewId)).isPresent());
+        }
+        return albumReviewInfoDto;
     }
 
     public AlbumReviewEntity getMyAlbumReview(String writerId, String albumId) {
         return albumReviewRepository.findByAlbumIdAndUserId(writerId, albumId)
                 .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. writerId: " + writerId + " albumId: " + albumId + " does not exist."));
     }
-    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit) {
-        return albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, limit);
+    
+    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(UserEntity loggingUser, String userId, Integer limit) {
+        List<AlbumReviewInfoDto> review = albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, limit);
+        if (loggingUser != null) {
+            review.forEach(r -> {
+                r.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(loggingUser.getId(), r.getReview().getId())).isPresent());
+            });
+        }
+        return review;
 
     }
 }

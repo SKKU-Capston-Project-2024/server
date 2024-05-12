@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.profile.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import site.mutopia.server.domain.profile.service.ProfileService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
 @RestController
+@Tag(name = "Profile", description = "Profile APIs")
 @RequiredArgsConstructor
 @RequestMapping("/profile")  // TODO: /user/profile이 더 restful 함, breaking change라 나중에 바꾸기
 public class ProfileController {

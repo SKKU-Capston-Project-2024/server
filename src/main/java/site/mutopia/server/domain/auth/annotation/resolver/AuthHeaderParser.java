@@ -20,7 +20,7 @@ public class AuthHeaderParser {
             return authorizationHeader.substring(BEARER.length());
         }
 
-        throw new UnAuthorizedException("No Bearer Token");
+        return null;
     }
 }
 
