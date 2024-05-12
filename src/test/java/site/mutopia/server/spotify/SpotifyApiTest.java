@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import site.mutopia.server.spotify.dto.PagedTracks;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
 import site.mutopia.server.spotify.dto.item.Albums;
+import site.mutopia.server.spotify.dto.track.Tracks;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,4 +38,12 @@ class SpotifyApiTest {
         log.info("albumTracks: {}", albumTracks);
         assertNotNull(albumTracks);
     }
+
+    @Test
+    void searchTracks() {
+        Tracks tracks = spotifyApi.searchTracks("강남스타일", 10, 0);
+        log.info("tracks: {}", tracks.items.stream().map(track -> track.name).toArray());
+        assertNotNull(tracks);
+    }
+
 }

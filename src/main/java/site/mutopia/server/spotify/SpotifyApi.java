@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import site.mutopia.server.spotify.dto.PagedTracks;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
 import site.mutopia.server.spotify.dto.item.Albums;
+import site.mutopia.server.spotify.dto.track.SearchTracksDto;
+import site.mutopia.server.spotify.dto.track.Tracks;
 
 @Slf4j
 @Component
@@ -41,6 +43,26 @@ public class SpotifyApi {
         }
         return searchAlbumsDto.getAlbums();
     }
+
+    public Tracks searchTracks(String query, int limit, int offset) {
+        SearchTracksDto searchTracksDto = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/search")
+                        .queryParam("q", query)
+                        .queryParam("type", "track")
+                        .queryParam("limit", limit)
+                        .queryParam("offset", offset)
+                        .queryParam("market", "KR")
+                        .queryParam("locale", "ko_KR")
+                        .build())
+                .retrieve()
+                .bodyToMono(SearchTracksDto.class)
+                .block();
+        if (searchTracksDto == null) {
+            throw new RuntimeException("Failed to search tracks");
+        }
+        return searchTracksDto.tracks;
+    }
+
     public PagedTracks getAlbumTracks(String albumId) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/albums/{id}/tracks")
@@ -53,6 +75,8 @@ public class SpotifyApi {
                 .bodyToMono(PagedTracks.class)
                 .block();
     }
+
+
 
 
 }
