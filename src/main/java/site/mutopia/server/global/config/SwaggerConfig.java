@@ -39,6 +39,8 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components()).info(apiInfo())
                 .addSecurityItem(securityRequirement)
+                .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("http://localhost:8080"))
+                .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("https://mutopia.site"))
                 .components(components);
     }
 
