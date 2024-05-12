@@ -30,7 +30,7 @@ public class DomainConvertor {
                 .build();
     }
 
-    public static SongEntity toDomain(TrackSearch item){
+    public static SongEntity toDomain(TrackSearch item) {
         return SongEntity.builder()
                 .title(item.name)
                 .songId(item.id)
