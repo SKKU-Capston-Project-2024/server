@@ -1,6 +1,8 @@
 package site.mutopia.server.domain.album.exception;
 
-public class AlbumNotFoundException extends RuntimeException {
+import site.mutopia.server.global.error.exception.EntityNotFoundException;
+
+public class AlbumNotFoundException extends EntityNotFoundException {
     public AlbumNotFoundException(String message) {
         super(message);
     }

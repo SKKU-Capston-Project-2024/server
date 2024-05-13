@@ -33,7 +33,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             return Optional.empty();
         }
         List<SongEntity> songs = album.get().getSongs();
-        if(songs == null||songs.isEmpty()){
+        if(songs == null||songs.isEmpty()||album.get().getLength() == null){
             List<SongEntity> tracks = spotifyApi.getAlbumTracks(albumId).getItems()
                     .stream().map(item -> DomainConvertor.toDomain(item, album.get().getId())).collect(Collectors.toList());
             long sumOfDuration = tracks.stream().mapToLong(SongEntity::getDuration).sum();
