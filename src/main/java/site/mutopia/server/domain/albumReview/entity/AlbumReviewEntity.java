@@ -26,9 +26,6 @@ public class AlbumReviewEntity {
     @Column(name = "rating")
     private Integer rating;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private UserEntity writer;
@@ -43,7 +40,6 @@ public class AlbumReviewEntity {
         this.title = title;
         this.content = content;
         this.rating = rating;
-        this.likeCount = 0;
         this.writer = writer;
         this.album = album;
     }
