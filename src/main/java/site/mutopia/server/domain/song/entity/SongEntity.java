@@ -17,8 +17,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SongEntity {
     @Id
-    @Column(name = "song_id")
-    private String songId;
+    @Column(name = "id")
+    private String id;
 
     @Column(name = "title")
     private String title;

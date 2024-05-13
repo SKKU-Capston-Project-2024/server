@@ -16,4 +16,5 @@ public interface AlbumReviewRepository extends JpaRepository<AlbumReviewEntity, 
 
     Long countByWriterId(String writerId);
 
+    Optional<AlbumReviewEntity> findByWriterIdAndAlbumId(String writerId, String albumId);
 }

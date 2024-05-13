@@ -13,7 +13,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @RestController
 @Tag(name = "Profile", description = "Profile APIs")
 @RequiredArgsConstructor
-@RequestMapping("/profile")  // TODO: /user/profile이 더 restful 함, breaking change라 나중에 바꾸기
+@RequestMapping("/user/profile")
 public class ProfileController {
 
     private final ProfileService profileService;
