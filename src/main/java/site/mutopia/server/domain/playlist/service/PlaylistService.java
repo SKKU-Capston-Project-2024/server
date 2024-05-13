@@ -30,7 +30,7 @@ public class PlaylistService {
 
     private List<PlaylistInfoDto.SongBriefInfo> fetchSongsForPlaylist(Long playlistId) {
         return playlistSongRepository.findByPlaylistId(playlistId).stream()
-                .map(playlistSong -> new PlaylistInfoDto.SongBriefInfo(playlistSong.getSong().getSongId(),
+                .map(playlistSong -> new PlaylistInfoDto.SongBriefInfo(playlistSong.getSong().getId(),
                         playlistSong.getSong().getTitle(),
                         playlistSong.getListTrackOrder()))
                 .collect(Collectors.toList());
