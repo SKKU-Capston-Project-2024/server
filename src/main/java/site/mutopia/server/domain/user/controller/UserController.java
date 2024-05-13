@@ -18,6 +18,8 @@ import site.mutopia.server.domain.user.dto.UserAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.service.UserService;
 import site.mutopia.server.swagger.response.NotFoundResponse;
+import site.mutopia.server.swagger.response.OkResponse;
+
 import java.util.List;
 
 @RestController
@@ -45,6 +47,7 @@ public class UserController {
 
     @GetMapping("/{userId}/topster")
     @NotFoundResponse
+    @OkResponse
     public ResponseEntity<TopsterInfoDto> getUserTopster(@PathVariable("userId") String userId) {
         TopsterInfoDto topster = topsterService.getTopsterInfoByUserId(userId);
         return ResponseEntity.ok().body(topster);
