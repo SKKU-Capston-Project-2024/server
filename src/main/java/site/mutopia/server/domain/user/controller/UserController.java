@@ -1,5 +1,7 @@
 package site.mutopia.server.domain.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import site.mutopia.server.swagger.response.NotFoundResponse;
 import java.util.List;
 
 @RestController
+@Tag(name = "User", description = "User APIs")
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
@@ -47,10 +50,13 @@ public class UserController {
         return ResponseEntity.ok().body(topster);
     }
 
+    @Operation(summary = "리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
     @GetMapping("/{userId}/album/review")
-    public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(@PathVariable("userId") String userId,
-                                               @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(userId, limit);
+    public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(loggedInUser, userId, limit);
         return ResponseEntity.ok(reviews);
     }
 

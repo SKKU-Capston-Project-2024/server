@@ -16,6 +16,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
     @Override
     public Optional<AlbumReviewInfoDto> findAlbumReviewInfoDto(Long albumReviewId) {
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
+                "CAST(review.id AS long), " +
                 "review.title, review.content, review.rating, " +
                 "album.id, writer.id, writer.username, " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
@@ -41,6 +42,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
     @Override
     public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit) {
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
+                "CAST(review.id AS long)," +
                 "review.title, review.content, review.rating, " +
                 "album.id, writer.id, writer.username, " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
