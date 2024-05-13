@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
@@ -13,10 +14,10 @@ import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundExcep
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeId;
 import site.mutopia.server.domain.albumReviewLike.repository.AlbumReviewLikeRepository;
-import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+
 import java.util.List;
 import java.util.Optional;
 

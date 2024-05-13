@@ -13,7 +13,7 @@ public class SongSearchResDto {
     String artistName;
 
     public SongSearchResDto(SongEntity songEntity, String albumCoverUrl, String artistName) {
-        this.id = songEntity.getSongId();
+        this.id = songEntity.getId();
         this.name = songEntity.getTitle();
         this.albumCoverUrl = albumCoverUrl;
         this.artistName = artistName;

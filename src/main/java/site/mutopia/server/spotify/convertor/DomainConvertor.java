@@ -32,10 +32,10 @@ public class DomainConvertor {
 
     public static SongEntity toDomain(TrackSearch item) {
         return SongEntity.builder()
+                .id(item.id)
                 .title(item.name)
-                .songId(item.id)
                 .trackNumber(item.track_number)
-                .duration(item.duration_ms/1000)
+                .duration(item.duration_ms / 1000)
                 .build();
     }
 
