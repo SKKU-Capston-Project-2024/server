@@ -19,12 +19,12 @@ public class DomainConvertor {
 
     }
 
-    public static SongEntity toDomain(Track track,String albumId){
+    public static SongEntity toDomain(Track track, String albumId) {
         return SongEntity.builder()
                 .title(track.getName())
-                .songId(track.getId())
+                .id(track.getId())
                 .trackNumber(track.getTrack_number())
-                .duration(track.getDuration_ms()/1000)
+                .duration(track.getDuration_ms() / 1000)
                 .build();
     }
 }

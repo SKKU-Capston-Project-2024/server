@@ -3,7 +3,6 @@ package site.mutopia.server.domain.album.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.song.entity.SongEntity;
 
 @AllArgsConstructor
@@ -18,7 +17,7 @@ public class AlbumTrackDto
     String length;
 
     public AlbumTrackDto(SongEntity songEntity) {
-        this.id = songEntity.getSongId();
+        this.id = songEntity.getId();
         this.name = songEntity.getTitle();
         this.trackNumber = songEntity.getTrackNumber();
         this.rating = null;
