@@ -16,7 +16,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.CreatedResponse;
 
 @RestController
-@RequestMapping("/album/review")
+@RequestMapping
 @RequiredArgsConstructor
 @Tag(name = "Album Review", description = "Album Review APIs")
 public class AlbumReviewController {
@@ -24,7 +24,7 @@ public class AlbumReviewController {
     private final AlbumReviewService albumReviewService;
 
     @Operation(summary = "앨범 리뷰 저장하기", description = "로그인 한 사용자는 앨범에 대한 리뷰를 작성할 수 있습니다.")
-    @PostMapping
+    @PostMapping("/album/review")
     @CreatedResponse
     public ResponseEntity<AlbumReviewSaveResDto> saveAlbumReview(@LoginUser UserEntity loggedInUser, @RequestBody AlbumReviewSaveReqDto saveDto) {
         AlbumReviewEntity albumReviewEntity = albumReviewService.saveAlbumReview(loggedInUser.getId(), saveDto);
@@ -32,14 +32,14 @@ public class AlbumReviewController {
     }
 
     @Operation(summary = "앨범 리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
-    @GetMapping("/{albumReviewId}")
+    @GetMapping("/album/review/{albumReviewId}")
     public ResponseEntity<AlbumReviewInfoDto> getAlbumReview(@LoginUser(require = false) UserEntity loggedInUser, @PathVariable("albumReviewId") Long albumReviewId) {
         return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(loggedInUser,albumReviewId));
     }
 
     @Operation(summary = "유저가 어떤 앨범에 대해 리뷰를 썼는지 체크하기", description = "로그인 한 사용자는 어떤 앨범에 대해 자신이 리뷰를 썼는지 여부를 체크할 수 있습니다.")
-    @GetMapping("/check")
-    public ResponseEntity<AlbumReviewCheckResDto> checkUserHasWrittenReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
+    @GetMapping("/album/{albumId}/review/check")
+    public ResponseEntity<AlbumReviewCheckResDto> checkUserHasWrittenReview(@LoginUser UserEntity loggedInUser, @PathVariable("albumId") String albumId) {
         AlbumReviewCheckResDto result = albumReviewService.checkReviewExistence(loggedInUser.getId(), albumId);
         return ResponseEntity.ok().body(result);
     }

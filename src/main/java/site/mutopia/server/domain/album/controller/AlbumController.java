@@ -1,17 +1,14 @@
 package site.mutopia.server.domain.album.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
-import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.dto.response.TrendingAlbumResDto;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.service.AlbumService;
-import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.swagger.response.NotFoundResponse;
 import site.mutopia.server.swagger.response.OkResponse;
 
@@ -45,6 +42,4 @@ public class AlbumController {
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
         return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword, offset));
     }
-
-
 }
