@@ -20,7 +20,6 @@ public class TopsterInfoDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TopsterInfoDetailDto {
         private Long id;
-        private String title;
     }
 
     @Getter

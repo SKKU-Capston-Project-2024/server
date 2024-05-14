@@ -14,5 +14,5 @@ public interface TopsterRepository extends JpaRepository<TopsterEntity, Long> {
     @Query("SELECT COUNT(t) > 0 FROM TopsterEntity t WHERE t.user.id = :userId AND t.id = :topsterId")
     boolean existsByUserIdAndTopsterId(@Param("userId") String userId, @Param("topsterId") Long topsterId);
 
-    Optional<TopsterEntity> findFirstByUserIdOrderByCreatedAtDesc(String userId);
+    Optional<TopsterEntity> findByUserId(String userId);
 }
