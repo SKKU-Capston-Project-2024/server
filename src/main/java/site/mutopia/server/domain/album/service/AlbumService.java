@@ -7,6 +7,7 @@ import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 
 import java.util.List;
 

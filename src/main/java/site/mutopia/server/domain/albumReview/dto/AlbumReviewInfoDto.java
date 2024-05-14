@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.albumReview.dto;
 
 import lombok.*;
+import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 
 
 @Getter
@@ -21,6 +22,27 @@ public class AlbumReviewInfoDto {
         this.writer = new WriterInfoDto(writerId, username);
         this.album = new AlbumInfoDto(albumId, name, artistName, coverImageUrl, releaseDate,
                 length, totalReviewCount, averageRating, totalLikeCount);
+    }
+
+    public static AlbumReviewInfoDto fromEntity(AlbumReviewEntity entity){
+        return new AlbumReviewInfoDto(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getContent(),
+                entity.getRating(),
+                entity.getAlbum().getId(),
+                entity.getWriter().getId(),
+                entity.getWriter().getUsername(),
+                entity.getAlbum().getName(),
+                entity.getAlbum().getArtistName(),
+                entity.getAlbum().getCoverImageUrl(),
+                entity.getAlbum().getReleaseDate(),
+                entity.getAlbum().getLength(),
+                entity.getAlbum().getTotalReviewCount(),
+                entity.getAlbum().getAverageRating(),
+                entity.getAlbum().getTotalLikeCount()
+        );
+
     }
 
     @Getter

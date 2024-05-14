@@ -2,12 +2,15 @@ package site.mutopia.server.domain.albumReview.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 
 @Entity
 @Table(name = "album_review")
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlbumReviewEntity {
@@ -34,6 +37,8 @@ public class AlbumReviewEntity {
     @JoinColumn(name = "album_id")
     private AlbumEntity album;
 
+    @CreatedDate
+    private Long createdAt;
 
     @Builder
     public AlbumReviewEntity(String title, String content, Integer rating, UserEntity writer, AlbumEntity album) {
