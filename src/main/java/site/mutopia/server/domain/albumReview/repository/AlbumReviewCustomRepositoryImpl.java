@@ -19,6 +19,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 "CAST(review.id AS long), " +
                 "review.title, review.content, review.rating, " +
                 "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
                 "album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
@@ -45,6 +46,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 "CAST(review.id AS long)," +
                 "review.title, review.content, review.rating, " +
                 "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
                 "album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
