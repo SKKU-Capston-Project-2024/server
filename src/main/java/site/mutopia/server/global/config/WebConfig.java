@@ -2,6 +2,7 @@ package site.mutopia.server.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,6 +12,7 @@ import site.mutopia.server.domain.auth.annotation.resolver.LoginUserResolver;
 import java.util.List;
 
 @Configuration
+@EnableJpaAuditing
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 

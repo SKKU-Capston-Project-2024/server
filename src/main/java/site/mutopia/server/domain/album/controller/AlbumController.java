@@ -9,6 +9,10 @@ import site.mutopia.server.domain.album.dto.response.AlbumDetailResDto;
 import site.mutopia.server.domain.album.dto.response.TrendingAlbumResDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.service.AlbumService;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
+import site.mutopia.server.domain.albumReview.service.AlbumReviewService;
+import site.mutopia.server.domain.auth.annotation.LoginUser;
+import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.NotFoundResponse;
 import site.mutopia.server.swagger.response.OkResponse;
 
@@ -21,6 +25,7 @@ import java.util.List;
 public class AlbumController {
 
     private final AlbumService albumService;
+    private final AlbumReviewService albumReviewService;
 
     @GetMapping("/trending")
     public ResponseEntity<TrendingAlbumResDto> trending() {
@@ -42,4 +47,14 @@ public class AlbumController {
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
         return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword, offset));
     }
+
+    @Operation(summary = "앨범의 최근 리뷰 조회", description = "앨범의 최근 리뷰를 조회합니다.")
+    @GetMapping("/{albumId}/review/recent")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReviews(
+            @LoginUser(require = false) UserEntity userEntity,
+            @PathVariable("albumId") String albumId, @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
+        return ResponseEntity.ok().body(albumReviewService.getRecentAlbumReviews(userEntity,albumId,offset));
+    }
+
+
 }

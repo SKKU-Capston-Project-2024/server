@@ -20,6 +20,7 @@ import site.mutopia.server.domain.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +78,20 @@ public class AlbumReviewService {
         }
 
         return AlbumReviewCheckResDto.builder().userHasReviewed(false).albumReviewId(null).build();
+    }
+
+
+    public List<AlbumReviewInfoDto> getRecentAlbumReviews(UserEntity userEntity, String albumId,int offset) {
+
+        List<AlbumReviewEntity> recentReviewByAlbumId = albumReviewRepository.findRecentReviewByAlbumId(albumId, 10, offset);
+        List<AlbumReviewInfoDto> list = recentReviewByAlbumId.stream()
+                .map(AlbumReviewInfoDto::fromEntity).toList();
+        if(userEntity!=null){
+            list.forEach(r -> {
+                r.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(userEntity.getId(), r.getReview().getId())).isPresent());
+            });
+        }
+        return list;
     }
 
 }
