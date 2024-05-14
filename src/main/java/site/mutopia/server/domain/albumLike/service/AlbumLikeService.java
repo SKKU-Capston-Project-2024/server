@@ -12,8 +12,6 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,6 +20,11 @@ public class AlbumLikeService {
     private final AlbumLikeRepository albumLikeRepository;
     private final AlbumRepository albumRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public Long countLikesByAlbumId(String albumId) {
+        return albumRepository.countLikesByAlbumId(albumId);
+    }
 
     public void toggleAlbumLike(String albumId, String userId) {
         if (albumLikeRepository.existsByAlbumIdAndUserId(albumId, userId)) {
@@ -41,11 +44,5 @@ public class AlbumLikeService {
     @Transactional(readOnly = true)
     public boolean isAlbumLikeExists(String albumId, String userId) {
         return albumLikeRepository.existsByAlbumIdAndUserId(albumId, userId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean checkAlbumLikeStatus(String albumId, UserEntity user) {
-        Optional<AlbumEntity> album = albumRepository.findAlbumById(albumId);
-        return album.map(a -> albumLikeRepository.findByAlbumAndUser(a, user).isPresent()).orElse(false);
     }
 }

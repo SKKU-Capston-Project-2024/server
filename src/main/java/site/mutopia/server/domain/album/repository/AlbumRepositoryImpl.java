@@ -1,6 +1,8 @@
 package site.mutopia.server.domain.album.repository;
 
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     private final SpotifyApi spotifyApi;
     private final AlbumEntityRepository albumEntityRepository;
     private final SongRepository songRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Optional<AlbumEntity> findAlbumById(String albumId) {
@@ -77,5 +80,11 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return albums;
     }
 
-
+    @Override
+    public Long countLikesByAlbumId(String albumId) {
+        Query query = entityManager.createQuery(
+                "SELECT count(al) FROM AlbumLikeEntity al WHERE al.album.id = :albumId");
+        query.setParameter("albumId", albumId);
+        return (Long) query.getSingleResult();
+    }
 }
