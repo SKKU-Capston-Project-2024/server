@@ -77,4 +77,5 @@ public class UserController {
         List<PlaylistInfoDto> userPlaylists = playlistService.getUserPlaylists(userId, limit);
         return ResponseEntity.ok().body(userPlaylists);
     }
+
 }
