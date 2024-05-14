@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
+import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
@@ -31,6 +32,7 @@ public class AlbumReviewService {
     private final AlbumReviewLikeRepository reviewLikeRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
+    private final AlbumEntityRepository albumEntityRepository;
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveReqDto reviewSaveDto) {
         // TODO: 작성자가 해당 앨범에 대한 리뷰를 작성한 적이 있는지 체크하는 로직 추가하기
@@ -86,12 +88,20 @@ public class AlbumReviewService {
         List<AlbumReviewEntity> recentReviewByAlbumId = albumReviewRepository.findRecentReviewByAlbumId(albumId, 10, offset);
         List<AlbumReviewInfoDto> list = recentReviewByAlbumId.stream()
                 .map(AlbumReviewInfoDto::fromEntity).toList();
-        if(userEntity!=null){
-            list.forEach(r -> {
-                r.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(userEntity.getId(), r.getReview().getId())).isPresent());
-            });
+        return list.stream().map(r -> addIsLikedToReview(userEntity, r)).toList();
+    }
+
+    public List<AlbumReviewInfoDto> getRecentAlbumReview(UserEntity userEntity, int offset) {
+        List<AlbumReviewEntity> review = albumReviewRepository.findRecentReview(10, offset);
+        List<AlbumReviewInfoDto> list = review.stream().map(AlbumReviewInfoDto::fromEntity).toList();
+        return list.stream().map(r -> addIsLikedToReview(userEntity, r)).toList();
+    }
+
+    private AlbumReviewInfoDto addIsLikedToReview(UserEntity user, AlbumReviewInfoDto review) {
+        if (user != null) {
+            review.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(user.getId(), review.getReview().getId())).isPresent());
         }
-        return list;
+        return review;
     }
 
 }
