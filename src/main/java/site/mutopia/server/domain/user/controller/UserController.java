@@ -39,6 +39,8 @@ public class UserController {
         return ResponseEntity.ok().body(userEntity);
     }
 
+    @NotFoundResponse
+    @OkResponse
     @GetMapping("/{userId}/profile/aggregation")
     public ResponseEntity<UserAggregationInfoResDto> getUserAggregationInfo(@PathVariable("userId") String userId) {
         UserAggregationInfoResDto result = userService.aggregateUserInfo(userId);
