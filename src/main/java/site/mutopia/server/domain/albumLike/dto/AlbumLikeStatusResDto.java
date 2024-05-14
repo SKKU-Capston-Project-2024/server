@@ -3,16 +3,19 @@ package site.mutopia.server.domain.albumLike.dto;
 import lombok.*;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class AlbumLikeStatusResDto {
-    private AlbumLikeStatus status;
+    private IsUserLoggedIn isUserLoggedIn;
+    private AlbumLikeToggleStatus likeStatus;
+    private Long likeCount;
 
-    public AlbumLikeStatusResDto(boolean status) {
-        if(status) this.status = AlbumLikeStatus.ON;
-        else this.status = AlbumLikeStatus.OFF;
+    public enum AlbumLikeToggleStatus {
+        ON, OFF, NULL,
     }
 
-    public enum AlbumLikeStatus {
-        ON, OFF
+    public enum IsUserLoggedIn {
+        YES, NO,
     }
 }

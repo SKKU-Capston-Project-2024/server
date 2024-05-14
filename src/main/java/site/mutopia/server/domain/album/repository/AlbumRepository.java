@@ -17,4 +17,6 @@ public interface AlbumRepository {
     List<AlbumEntity> findAlbumsByArtistNameOrAlbumName(String keyword);
 
     List<AlbumEntity> findAlbumByKeyword(String keyword, int limit, int offset);
+
+    Long countLikesByAlbumId(String albumId);
 }

@@ -7,10 +7,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlbumLikeToggleResDto {
-    private AlbumLikeToggleStatus likeStatus;
+    private AlbumLikeToggleResStatus likeStatus;
+    private Long likeCount;
 
-    public enum AlbumLikeToggleStatus {
-        ON, OFF,
+    public enum AlbumLikeToggleResStatus {
+        ON, OFF, NULL,
     }
 }
 
