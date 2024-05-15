@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TopsterSaveReqDto {
-    private String topsterTitle;
     private List<String> albumIds;
 }
 
