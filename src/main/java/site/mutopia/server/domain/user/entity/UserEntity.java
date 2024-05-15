@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import site.mutopia.server.domain.profile.entity.ProfileEntity;
 
 @Entity
 @Table(name = "user")
@@ -30,6 +31,11 @@ public class UserEntity {
 
     @Column(name = "provider_id")
     private String providerId;
+
+
+    @JoinColumn(name = "id", referencedColumnName = "user_id")
+    @OneToOne
+    private ProfileEntity profile;
 
     public void modifyUsername(String username) {
         this.username = username;
