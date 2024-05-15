@@ -46,7 +46,7 @@ public class AlbumReviewController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/review/recent")
+    @GetMapping("/album/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReview(
             @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
         return ResponseEntity.ok().body(albumReviewService.getRecentAlbumReview(loggedInUser, offset));
