@@ -40,7 +40,6 @@ public class TopsterService {
                 .user(user)
                 .build());
 
-        // (저장하고자 하는 Topster)에 속한 ALBUM들이 이미 DB에 저장되어 있어야 함
         List<AlbumEntity> albums = albumRepository.findAllById(dto.getAlbumIds());
 
         albums.stream()

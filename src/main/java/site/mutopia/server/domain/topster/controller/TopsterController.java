@@ -27,7 +27,7 @@ public class TopsterController {
     @CreatedResponse
     public ResponseEntity<TopsterSaveResDto> saveTopster(@LoginUser UserEntity loggedInUser, @RequestBody TopsterSaveReqDto saveDto) {
         TopsterEntity savedTopster = topsterService.saveTopster(loggedInUser.getId(), saveDto);
-        return ResponseEntity.ok().body(TopsterSaveResDto.builder().topsterId(savedTopster.getId()).build());
+        return ResponseEntity.status(HttpStatus.CREATED).body(TopsterSaveResDto.builder().topsterId(savedTopster.getId()).build());
     }
 
     @GetMapping("/{topsterId}")
