@@ -14,6 +14,7 @@ import site.mutopia.server.domain.profile.repository.ProfileRepository;
 import site.mutopia.server.domain.songComment.repository.SongCommentRepository;
 import site.mutopia.server.domain.profile.dto.response.ProfileAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.exception.UserNotFoundException;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class ProfileService {
     public MyInfoResDto getMyInfo(UserEntity userEntity) {
         Optional<ProfileEntity> profile = profileRepository.findByUserId(userEntity.getId());
 
-        if (profile == null) {
+        if (profile.isEmpty()) {
             ProfileEntity savedProfile = saveNewUserProfile(userEntity);
             return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(savedProfile.getProfilePicUrl()).bio(null).isFirstLogin(true).build();
         }
@@ -67,6 +68,7 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public ProfileAggregationInfoResDto aggregateProfileInfo(String userId) {
+        ProfileEntity profileEntity = profileRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("해당 유저의 프로필이 존재하지 않습니다."));
         Long totalReviewCount = albumReviewRepository.countByWriterId(userId);
         Long totalRatingCount = totalReviewCount + songCommentRepository.countByWriterId(userId);
         Long followerCount = followRepository.countByFollowingId(userId);
@@ -77,6 +79,9 @@ public class ProfileService {
                 .totalRatingCount(totalRatingCount)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
+                .userId(userId)
+                .username(profileEntity.getUser().getUsername())
+                .profileImageUrl(profileEntity.getProfilePicUrl())
                 .build();
     }
 }

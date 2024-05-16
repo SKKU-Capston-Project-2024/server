@@ -26,7 +26,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
     private final TopsterService topsterService;
     private final AlbumReviewService albumReviewService;
     private final SongCommentService songCommentService;
@@ -35,16 +34,6 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
         return ResponseEntity.ok().body(userEntity);
-    }
-
-
-    @Operation(summary = "유저 정보 가져오기", description = "유저의 닉네임, 프로필 사진,리뷰, 좋아요, 팔로워, 팔로잉 수를 가져옵니다.")
-    @NotFoundResponse
-    @OkResponse
-    @GetMapping("/{userId}/profile/aggregation")
-    public ResponseEntity<UserAggregationInfoResDto> getUserAggregationInfo(@PathVariable("userId") String userId) {
-        UserAggregationInfoResDto result = userService.aggregateUserInfo(userId);
-        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/{userId}/topster")
