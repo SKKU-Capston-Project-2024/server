@@ -298,10 +298,60 @@ class AlbumReviewControllerTest {
         }
     }
 
-//    @Nested
-//    class GetAlbumReviewByAlbumReviewId {
-//
-//    }
+    @Nested
+    class CheckUserHasWrittenReview {
+
+        @Test
+        void shouldReturnTrueWhenUserHasReviewedAlbum() throws Exception {
+            // given
+            userLogin();
+            String albumId = "album-123";
+            AlbumReviewEntity reviewEntity = AlbumReviewEntity.builder().build();
+            setFieldValue(reviewEntity, "id", 1L);
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString())).thenReturn(Optional.of(reviewEntity));
+
+            // then
+            mockMvc.perform(get("/album/" + albumId + "/review/check")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userHasReviewed").value(true))
+                    .andExpect(jsonPath("$.albumReviewId").value(1L))
+                    .andDo(print());
+        }
+
+        @Test
+        void shouldReturnFalseWhenUserHasNotReviewedAlbum() throws Exception {
+            // given
+            userLogin();
+            String albumId = "album-123";
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString())).thenReturn(Optional.empty());
+
+            // then
+            mockMvc.perform(get("/album/" + albumId + "/review/check")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userHasReviewed").value(false))
+                    .andExpect(jsonPath("$.albumReviewId").isEmpty())
+                    .andDo(print());
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenUserNotLoggedIn() throws Exception {
+            // given
+            when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.empty());
+            String albumId = "album-123";
+
+            // then
+            mockMvc.perform(get("/album/" + albumId + "/review/check")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isUnauthorized())
+                    .andDo(print());
+        }
+    }
+
 
     private void userLogin() throws Exception {
         loggedInUser = UserEntity.builder()
