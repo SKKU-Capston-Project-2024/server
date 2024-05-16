@@ -23,4 +23,7 @@ public interface SongCommentRepository extends JpaRepository<SongCommentEntity, 
             "JOIN comment.song song " +
             "WHERE writer.id = :userId")
     Page<SongCommentInfoResDto> findCommentsByUserId(@Param("userId") String userId, Pageable pageable);
+
+    @Query("SELECT COUNT(sc) FROM SongCommentEntity sc WHERE sc.writer.id = :writerId")
+    Long countByWriterId(@Param("writerId") String writerId);
 }
