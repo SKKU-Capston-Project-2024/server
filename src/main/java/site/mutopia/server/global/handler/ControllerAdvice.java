@@ -2,11 +2,13 @@ package site.mutopia.server.global.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import site.mutopia.server.domain.auth.exception.UnAuthorizedException;
 import site.mutopia.server.global.dto.ExceptionResponse;
+import site.mutopia.server.global.error.exception.AlreadyExistException;
 import site.mutopia.server.global.error.exception.EntityNotFoundException;
 
 @RestControllerAdvice
@@ -44,6 +46,10 @@ public class ControllerAdvice {
         return ResponseEntity.status(401).body(new ExceptionResponse("인증에 실패했습니다."));
     }
 
-
-
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistException(AlreadyExistException exception) {
+        log.error(exception.getClass().getName());
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(exception.getMessage()));
+    }
 }

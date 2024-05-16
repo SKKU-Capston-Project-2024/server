@@ -10,6 +10,7 @@ import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
+import site.mutopia.server.domain.albumReview.exception.AlbumReviewAlreadyExistException;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeId;
@@ -33,8 +34,7 @@ public class AlbumReviewService {
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveReqDto reviewSaveDto) {
         albumReviewRepository.findByWriterId(writerId).ifPresent(review -> {
-            // TODO: 에러 응답 정의하기
-            throw new IllegalStateException("User already reviewed album: " + reviewSaveDto.getAlbumId());
+            throw new AlbumReviewAlreadyExistException("User already reviewed album: " + reviewSaveDto.getAlbumId());
         });
 
         UserEntity writer = userRepository.findById(writerId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + writerId));

@@ -143,7 +143,7 @@ class AlbumReviewControllerTest {
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(dto))
                             .header("Authorization", "Bearer mockedToken"))
-                    .andExpect(status().is4xxClientError())
+                    .andExpect(status().isConflict())
                     .andDo(print());
         }
 
@@ -297,6 +297,11 @@ class AlbumReviewControllerTest {
                     .andDo(print());
         }
     }
+
+//    @Nested
+//    class GetAlbumReviewByAlbumReviewId {
+//
+//    }
 
     private void userLogin() throws Exception {
         loggedInUser = UserEntity.builder()
