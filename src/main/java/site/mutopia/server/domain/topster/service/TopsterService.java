@@ -33,14 +33,17 @@ public class TopsterService {
     private final TopsterAlbumRepository topsterAlbumRepository;
 
     public TopsterEntity saveTopster(String userId, TopsterSaveReqDto dto) {
+        topsterRepository.findByUserId(userId).ifPresent(t -> {
+            // TODO: 에러 응답 재정의하기, 지금은 Internal Server Error로 나감
+            throw new IllegalStateException("userId: " + userId + " already has topster");
+        });
+
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
 
         TopsterEntity savedTopster = topsterRepository.save(TopsterEntity.builder()
-                .title(dto.getTopsterTitle())
                 .user(user)
                 .build());
 
-        // (저장하고자 하는 Topster)에 속한 ALBUM들이 이미 DB에 저장되어 있어야 함
         List<AlbumEntity> albums = albumRepository.findAllById(dto.getAlbumIds());
 
         albums.stream()
@@ -53,7 +56,7 @@ public class TopsterService {
         return savedTopster;
     }
 
-    // 나중에 성능 튜닝
+    // TODO: 나중에 성능 튜닝
     public TopsterInfoDto getTopsterInfoById(Long topsterId) {
         TopsterEntity topsterEntity = topsterRepository.findById(topsterId)
                 .orElseThrow(() -> new TopsterNotFoundException("Topster not found. TopsterId: " + topsterId + " does not exist."));
@@ -62,7 +65,7 @@ public class TopsterService {
     }
 
     public TopsterInfoDto getTopsterInfoByUserId(String userId) {
-        TopsterEntity topsterEntity = topsterRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+        TopsterEntity topsterEntity = topsterRepository.findByUserId(userId)
                 .orElseThrow(() -> new TopsterNotFoundException("Topster that matches to userId: " + userId + " does not exist."));
 
         return getTopsterDetails(topsterEntity);
@@ -70,7 +73,7 @@ public class TopsterService {
 
     private TopsterInfoDto getTopsterDetails(TopsterEntity topsterEntity) {
         UserInfoDto userInfoDto = UserInfoDto.builder().id(topsterEntity.getUser().getId()).username(topsterEntity.getUser().getUsername()).build();
-        TopsterInfoDetailDto topsterInfoDto = TopsterInfoDetailDto.builder().id(topsterEntity.getId()).title(topsterEntity.getTitle()).build();
+        TopsterInfoDetailDto topsterInfoDto = TopsterInfoDetailDto.builder().id(topsterEntity.getId()).build();
 
         List<TopsterAlbumEntity> topsterAlbumEntities = topsterAlbumRepository.findByTopsterId(topsterEntity.getId());
         List<TopsterAlbumInfoDto> topsterAlbumInfoDtoList = topsterAlbumEntities.stream()

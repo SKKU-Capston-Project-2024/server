@@ -1,10 +1,11 @@
 package site.mutopia.server.domain.topster.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import site.mutopia.server.domain.user.entity.UserEntity;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "topster")
@@ -16,20 +17,12 @@ public class TopsterEntity {
     @Column(name = "topster_id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
     @Builder
-    public TopsterEntity(String title, UserEntity user) {
-        this.title = title;
+    public TopsterEntity(UserEntity user) {
         this.user = user;
     }
 }

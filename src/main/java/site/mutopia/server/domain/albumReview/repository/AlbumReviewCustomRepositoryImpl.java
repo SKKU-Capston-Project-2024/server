@@ -18,7 +18,10 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
                 "CAST(review.id AS long), " +
                 "review.title, review.content, review.rating, " +
+                "CAST((select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) AS long), " +
+                "review.createdAt, " +
                 "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
                 "album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
@@ -44,7 +47,10 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
                 "CAST(review.id AS long)," +
                 "review.title, review.content, review.rating, " +
+                "CAST((select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) AS long), " +
+                "review.createdAt, " +
                 "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
                 "album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
