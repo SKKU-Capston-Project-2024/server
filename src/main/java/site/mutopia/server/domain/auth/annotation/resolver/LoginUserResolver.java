@@ -35,9 +35,7 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
         final String accessToken = AuthHeaderParser.parse((HttpServletRequest) webRequest.getNativeRequest());
         Optional<UserEntity> userEntity = tokenProvider.getUserEntity(accessToken);
         if (userEntity.isEmpty()) {
-            log.debug("로그인");
             if(parameter.getParameterAnnotation(LoginUser.class).require()) {
-                log.debug("로그인이 필요합니다.");
                 throw new UnAuthorizedException("로그인이 필요합니다.");
             }
             else{
