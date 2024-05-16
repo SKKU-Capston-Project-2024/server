@@ -2,6 +2,7 @@ package site.mutopia.server.domain.albumReview.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -39,6 +40,9 @@ public class AlbumReviewEntity {
 
     @CreatedDate
     private Long createdAt;
+
+    @Formula("(SELECT COUNT(*) FROM album_review_like WHERE album_review_id = id)")
+    private Long likeCount;
 
     @Builder
     public AlbumReviewEntity(String title, String content, Integer rating, UserEntity writer, AlbumEntity album) {
