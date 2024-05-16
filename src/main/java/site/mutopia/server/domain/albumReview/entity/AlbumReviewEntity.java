@@ -41,7 +41,7 @@ public class AlbumReviewEntity {
     @CreatedDate
     private Long createdAt;
 
-    @Formula("(SELECT COUNT(*) FROM album_review_like WHERE album_review_id = id)")
+    @Formula("(SELECT COUNT(*) FROM album_review_like arl WHERE arl.review_id = id)")
     private Long likeCount;
 
     @Builder
