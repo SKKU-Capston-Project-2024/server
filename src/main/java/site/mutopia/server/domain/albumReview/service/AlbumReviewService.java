@@ -20,7 +20,6 @@ import site.mutopia.server.domain.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,10 @@ public class AlbumReviewService {
     private final AlbumRepository albumRepository;
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveReqDto reviewSaveDto) {
-        // TODO: 작성자가 해당 앨범에 대한 리뷰를 작성한 적이 있는지 체크하는 로직 추가하기
+        albumReviewRepository.findByWriterId(writerId).ifPresent(review -> {
+            // TODO: 에러 응답 정의하기
+            throw new IllegalStateException("User already reviewed album: " + reviewSaveDto.getAlbumId());
+        });
 
         UserEntity writer = userRepository.findById(writerId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + writerId));
         AlbumEntity album = albumRepository.findAlbumById(reviewSaveDto.getAlbumId()).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + reviewSaveDto.getAlbumId() + " does not exist."));

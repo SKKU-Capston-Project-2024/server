@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import site.mutopia.server.domain.album.dto.AlbumTrackDto;
 import site.mutopia.server.domain.album.dto.ReviewPreviewDto;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
-import site.mutopia.server.domain.song.entity.SongEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +41,6 @@ public class AlbumDetailResDto {
                 .albumImg(entity.getCoverImageUrl())
                 .releaseDate(entity.getReleaseDate())
                 .totalReviewCount(entity.getTotalReviewCount())
-                .averageRating(entity.getAverageRating())
                 .likeCount(entity.getTotalLikeCount())
                 .albumTrackList(entity.getSongs().stream().map(AlbumTrackDto::new).collect(Collectors.toList()))
                 .build();

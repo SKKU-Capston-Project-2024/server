@@ -9,8 +9,6 @@ import site.mutopia.server.domain.auth.exception.UnAuthorizedException;
 import site.mutopia.server.global.dto.ExceptionResponse;
 import site.mutopia.server.global.error.exception.EntityNotFoundException;
 
-import javax.swing.text.html.parser.Entity;
-
 @RestControllerAdvice
 @Slf4j
 public class ControllerAdvice {
@@ -36,7 +34,7 @@ public class ControllerAdvice {
     public ResponseEntity<ExceptionResponse> handleNotFoundException(EntityNotFoundException exception) {
         log.error(exception.getClass().getName());
         log.error(exception.getMessage());
-        return ResponseEntity.badRequest().body(new ExceptionResponse("Resource not found"));
+        return ResponseEntity.status(404).body(new ExceptionResponse(exception.getMessage()));
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
