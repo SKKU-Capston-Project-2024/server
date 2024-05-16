@@ -99,7 +99,7 @@ public class AlbumReviewService {
 
     private AlbumReviewInfoDto addIsLikedToReview(UserEntity user, AlbumReviewInfoDto review) {
         if (user != null) {
-            review.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(user.getId(), review.getReview().getId())).isPresent());
+            review.getReview().setIsLiked(reviewLikeRepository.existsByReview_IdAndUser_Id(review.getReview().getId(), user.getId()));
         }
         return review;
     }
