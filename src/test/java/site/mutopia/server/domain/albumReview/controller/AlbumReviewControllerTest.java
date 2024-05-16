@@ -20,10 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import site.mutopia.server.TestSecurityConfig;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.albumReview.service.AlbumReviewService;
+import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeEntity;
 import site.mutopia.server.domain.albumReviewLike.repository.AlbumReviewLikeRepository;
 import site.mutopia.server.domain.auth.jwt.TokenProvider;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -34,6 +36,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,7 +49,7 @@ import static site.mutopia.server.util.ReflectionUtil.setFieldValue;
         HibernateJpaAutoConfiguration.class,
 })
 @Import({AlbumReviewService.class, TestSecurityConfig.class})
-@MockBean({JpaMetamodelMappingContext.class, AlbumReviewLikeRepository.class})
+@MockBean(JpaMetamodelMappingContext.class)
 class AlbumReviewControllerTest {
 
     @Autowired
@@ -64,6 +67,9 @@ class AlbumReviewControllerTest {
     @MockBean
     private TokenProvider tokenProvider;
 
+    @MockBean
+    private AlbumReviewLikeRepository albumReviewLikeRepository;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -76,15 +82,6 @@ class AlbumReviewControllerTest {
         SecurityContextHolder.setContext(securityContext);
         Authentication authentication = Mockito.mock(Authentication.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        loggedInUser = UserEntity.builder()
-                .provider("google")
-                .providerId("provider-id-1")
-                .email("user@gmail.com")
-                .username("username-1")
-                .build();
-        setFieldValue(loggedInUser, "id", "84102e90-8d58-4b6e-9b44-6ceb6b984c59");
-        when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.of(loggedInUser));
     }
 
     @Nested
@@ -93,6 +90,7 @@ class AlbumReviewControllerTest {
         @Test
         void shouldCreateAlbumReviewWhenRequestIsValid() throws Exception {
             // given
+            userLogin();
             AlbumReviewSaveReqDto saveReqDto = AlbumReviewSaveReqDto.builder()
                     .title("Great Album")
                     .content("This is a great album with fantastic songs.")
@@ -129,6 +127,7 @@ class AlbumReviewControllerTest {
         @Test
         void userCantReviewSameAlbumTwice() throws Exception {
             // given
+            userLogin();
             AlbumReviewSaveReqDto dto = AlbumReviewSaveReqDto.builder()
                     .title("Great Album")
                     .content("This is a great album with fantastic songs.")
@@ -151,6 +150,7 @@ class AlbumReviewControllerTest {
         @Test
         void shouldReturnNotFoundWhenWriterNotFound() throws Exception {
             // given
+            userLogin();
             AlbumReviewSaveReqDto saveReqDto = AlbumReviewSaveReqDto.builder()
                     .title("Great Album")
                     .content("This is a great album with fantastic songs.")
@@ -173,6 +173,7 @@ class AlbumReviewControllerTest {
         @Test
         void shouldReturnNotFoundWhenAlbumNotFound() throws Exception {
             // given
+            userLogin();
             AlbumReviewSaveReqDto saveReqDto = AlbumReviewSaveReqDto.builder()
                     .title("Great Album")
                     .content("This is a great album with fantastic songs.")
@@ -192,5 +193,119 @@ class AlbumReviewControllerTest {
                     .andExpect(status().isNotFound())
                     .andDo(print());
         }
+    }
+
+    @Nested
+    class GetAlbumReviewByAlbumReviewId {
+
+        @Test
+        void shouldReturnAlbumReviewWhenUserLoggedInAndUserLikesOwnReview() throws Exception {
+            // given
+            userLogin();
+
+            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
+
+
+            // then
+            mockMvc.perform(get("/album/review/1")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.review.id").value(dto.getReview().getId()))
+                    .andExpect(jsonPath("$.review.title").value(dto.getReview().getTitle()))
+                    .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
+                    .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
+                    .andExpect(jsonPath("$.review.isLiked").value(true))
+                    .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
+                    .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
+                    .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
+                    .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))
+                    .andExpect(jsonPath("$.album.coverImageUrl").value(dto.getAlbum().getCoverImageUrl()))
+                    .andExpect(jsonPath("$.album.releaseDate").value(dto.getAlbum().getReleaseDate()))
+                    .andExpect(jsonPath("$.album.length").value(dto.getAlbum().getLength()))
+                    .andExpect(jsonPath("$.album.totalReviewCount").value(dto.getAlbum().getTotalReviewCount()))
+                    .andExpect(jsonPath("$.album.totalLikeCount").value(dto.getAlbum().getTotalLikeCount()))
+                    .andDo(print());
+        }
+
+        @Test
+        void shouldReturnAlbumReviewWhenUserLoggedInAndUserDoesntLikesOwnReview() throws Exception {
+            // given
+            userLogin();
+
+            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.empty());
+
+            // then
+            mockMvc.perform(get("/album/review/1")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.review.id").value(dto.getReview().getId()))
+                    .andExpect(jsonPath("$.review.title").value(dto.getReview().getTitle()))
+                    .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
+                    .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
+                    .andExpect(jsonPath("$.review.isLiked").value(false))
+                    .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
+                    .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
+                    .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
+                    .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))
+                    .andExpect(jsonPath("$.album.coverImageUrl").value(dto.getAlbum().getCoverImageUrl()))
+                    .andExpect(jsonPath("$.album.releaseDate").value(dto.getAlbum().getReleaseDate()))
+                    .andExpect(jsonPath("$.album.length").value(dto.getAlbum().getLength()))
+                    .andExpect(jsonPath("$.album.totalReviewCount").value(dto.getAlbum().getTotalReviewCount()))
+                    .andExpect(jsonPath("$.album.totalLikeCount").value(dto.getAlbum().getTotalLikeCount()))
+                    .andDo(print());
+        }
+
+        @Test
+        void shouldReturnAlbumReviewWhenUserNotLoggedIn() throws Exception {
+            // given
+
+            // User Not Logged In
+            when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.empty());
+
+            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
+
+            // then
+            mockMvc.perform(get("/album/review/1")
+                            .contentType("application/json")
+                            .header("Authorization", "Bearer mockedToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.review.id").value(dto.getReview().getId()))
+                    .andExpect(jsonPath("$.review.title").value(dto.getReview().getTitle()))
+                    .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
+                    .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
+                    .andExpect(jsonPath("$.review.isLiked").value(false))
+                    .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
+                    .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
+                    .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
+                    .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))
+                    .andExpect(jsonPath("$.album.coverImageUrl").value(dto.getAlbum().getCoverImageUrl()))
+                    .andExpect(jsonPath("$.album.releaseDate").value(dto.getAlbum().getReleaseDate()))
+                    .andExpect(jsonPath("$.album.length").value(dto.getAlbum().getLength()))
+                    .andExpect(jsonPath("$.album.totalReviewCount").value(dto.getAlbum().getTotalReviewCount()))
+                    .andExpect(jsonPath("$.album.totalLikeCount").value(dto.getAlbum().getTotalLikeCount()))
+                    .andDo(print());
+        }
+    }
+
+    private void userLogin() throws Exception {
+        loggedInUser = UserEntity.builder()
+                .provider("google")
+                .providerId("provider-id-1")
+                .email("user@gmail.com")
+                .username("username-1")
+                .build();
+        setFieldValue(loggedInUser, "id", "84102e90-8d58-4b6e-9b44-6ceb6b984c59");
+        when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.of(loggedInUser));
     }
 }

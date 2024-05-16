@@ -53,7 +53,7 @@ public class AlbumReviewInfoDto {
         private String content;
         private Integer rating;
         @Setter
-        private Boolean isLiked;
+        private Boolean isLiked = false;
     }
 
     @Getter
