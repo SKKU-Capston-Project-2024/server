@@ -14,9 +14,7 @@ import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
 import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
 import site.mutopia.server.domain.topster.service.TopsterService;
-import site.mutopia.server.domain.user.dto.UserAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
-import site.mutopia.server.domain.user.service.UserService;
 import site.mutopia.server.swagger.response.NotFoundResponse;
 import site.mutopia.server.swagger.response.OkResponse;
 
@@ -28,7 +26,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
     private final TopsterService topsterService;
     private final AlbumReviewService albumReviewService;
     private final SongCommentService songCommentService;
@@ -37,12 +34,6 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
         return ResponseEntity.ok().body(userEntity);
-    }
-
-    @GetMapping("/{userId}/profile/aggregation")
-    public ResponseEntity<UserAggregationInfoResDto> getUserAggregationInfo(@PathVariable("userId") String userId) {
-        UserAggregationInfoResDto result = userService.aggregateUserInfo(userId);
-        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/{userId}/topster")

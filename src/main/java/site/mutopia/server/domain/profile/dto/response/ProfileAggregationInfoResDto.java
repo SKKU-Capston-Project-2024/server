@@ -1,4 +1,4 @@
-package site.mutopia.server.domain.user.dto;
+package site.mutopia.server.domain.profile.dto.response;
 
 import lombok.*;
 
@@ -6,7 +6,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserAggregationInfoResDto {
+public class ProfileAggregationInfoResDto {
+    private String userId;
+    private String username;
+    private String profileImageUrl;
     private Long totalReviewCount;
     private Long totalRatingCount;
     private Long followerCount;

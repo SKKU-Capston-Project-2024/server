@@ -2,15 +2,14 @@ package site.mutopia.server.domain.user.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import site.mutopia.server.domain.profile.entity.ProfileEntity;
 
 @Entity
 @Table(name = "user")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
     @Id
@@ -30,6 +29,10 @@ public class UserEntity {
 
     @Column(name = "provider_id")
     private String providerId;
+
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private ProfileEntity profile;
 
     public void modifyUsername(String username) {
         this.username = username;

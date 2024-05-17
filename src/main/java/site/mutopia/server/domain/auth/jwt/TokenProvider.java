@@ -105,11 +105,15 @@ public class TokenProvider {
     }
 
     public Optional<UserEntity> getUserEntity(String token) {
-        if(token == null || StringUtils.isEmpty(token)){
+        try{
+            if(token == null || StringUtils.isEmpty(token)){
+                return Optional.empty();
+            }
+            Claims claims = parseClaim(token);
+            return userRepository.findById(claims.getSubject());}
+        catch (Exception e){
             return Optional.empty();
         }
-        Claims claims = parseClaim(token);
-        return userRepository.findById(claims.getSubject());
     }
 
 

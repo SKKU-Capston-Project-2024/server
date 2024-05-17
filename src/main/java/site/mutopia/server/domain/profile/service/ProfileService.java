@@ -1,15 +1,20 @@
 package site.mutopia.server.domain.profile.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.mutopia.server.aws.s3.FileManager;
+import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
+import site.mutopia.server.domain.follow.repository.FollowRepository;
 import site.mutopia.server.domain.profile.dto.response.MyInfoResDto;
 import site.mutopia.server.domain.profile.entity.ProfileEntity;
 import site.mutopia.server.domain.profile.exception.ProfileNotFoundException;
 import site.mutopia.server.domain.profile.repository.ProfileRepository;
+import site.mutopia.server.domain.songComment.repository.SongCommentRepository;
+import site.mutopia.server.domain.profile.dto.response.ProfileAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.exception.UserNotFoundException;
 
 import java.util.Optional;
 
@@ -20,11 +25,14 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final FileManager fileManager;
+    private final AlbumReviewRepository albumReviewRepository;
+    private final FollowRepository followRepository;
+    private final SongCommentRepository songCommentRepository;
 
     public MyInfoResDto getMyInfo(UserEntity userEntity) {
         Optional<ProfileEntity> profile = profileRepository.findByUserId(userEntity.getId());
 
-        if (profile == null) {
+        if (profile.isEmpty()) {
             ProfileEntity savedProfile = saveNewUserProfile(userEntity);
             return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(savedProfile.getProfilePicUrl()).bio(null).isFirstLogin(true).build();
         }
@@ -56,5 +64,24 @@ public class ProfileService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to upload file");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileAggregationInfoResDto aggregateProfileInfo(String userId) {
+        ProfileEntity profileEntity = profileRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("해당 유저의 프로필이 존재하지 않습니다."));
+        Long totalReviewCount = albumReviewRepository.countByWriterId(userId);
+        Long totalRatingCount = totalReviewCount + songCommentRepository.countByWriterId(userId);
+        Long followerCount = followRepository.countByFollowingId(userId);
+        Long followingCount = followRepository.countByUserId(userId);
+
+        return ProfileAggregationInfoResDto.builder()
+                .totalReviewCount(totalReviewCount)
+                .totalRatingCount(totalRatingCount)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                .userId(userId)
+                .username(profileEntity.getUser().getUsername())
+                .profileImageUrl(profileEntity.getProfilePicUrl())
+                .build();
     }
 }

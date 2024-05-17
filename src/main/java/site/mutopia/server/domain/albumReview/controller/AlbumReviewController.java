@@ -15,6 +15,8 @@ import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.CreatedResponse;
 
+import java.util.List;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -42,6 +44,12 @@ public class AlbumReviewController {
     public ResponseEntity<AlbumReviewCheckResDto> checkUserHasWrittenReview(@LoginUser UserEntity loggedInUser, @PathVariable("albumId") String albumId) {
         AlbumReviewCheckResDto result = albumReviewService.checkReviewExistence(loggedInUser.getId(), albumId);
         return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/album/review/recent")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReview(
+            @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
+        return ResponseEntity.ok().body(albumReviewService.getRecentAlbumReview(loggedInUser, offset));
     }
 
     /*
