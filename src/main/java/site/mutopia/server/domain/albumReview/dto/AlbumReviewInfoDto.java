@@ -18,6 +18,7 @@ public class AlbumReviewInfoDto {
     private AlbumInfoDto album;
 
     // Constructor used by JPQL to create instances
+    @Builder
     public AlbumReviewInfoDto(Long reviewId, String title, String content, Integer rating, Long likeCount, Long createdAt, String albumId,
                               String writerId, String username, String userProfileImageUrl,
                               String name, String artistName, String coverImageUrl, String releaseDate,

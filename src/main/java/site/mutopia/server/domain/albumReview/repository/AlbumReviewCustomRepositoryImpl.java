@@ -19,13 +19,10 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 "CAST(review.id AS long), " +
                 "review.title, review.content, review.rating, " +
                 "CAST((select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) AS long), " +
-                "review.createdAt, " +
-                "album.id, writer.id, writer.username, " +
+                "review.createdAt, album.id, writer.id, writer.username, " +
                 "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
-                "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
-                "album.length, " +
+                "album.name, album.artistName, album.coverImageUrl, album.releaseDate, album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
-                "CAST((select avg(albumRating.rating) from AlbumRatingEntity albumRating where albumRating.album.id = album.id) AS double), " +
                 "CAST((select count(albumLike) from AlbumLikeEntity albumLike where albumLike.album.id = album.id) AS long))" +
                 "FROM AlbumReviewEntity review " +
                 "INNER JOIN review.album album " +
@@ -54,7 +51,6 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
                 "album.length, " +
                 "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
-                "CAST((select avg(albumRating.rating) from AlbumRatingEntity albumRating where albumRating.album.id = album.id) AS double), " +
                 "CAST((select count(albumLike) from AlbumLikeEntity albumLike where albumLike.album.id = album.id) AS long)) " +
                 "FROM AlbumReviewEntity review " +
                 "INNER JOIN review.album album " +
@@ -66,6 +62,4 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 .setMaxResults(limit)
                 .getResultList();
     }
-
-
 }

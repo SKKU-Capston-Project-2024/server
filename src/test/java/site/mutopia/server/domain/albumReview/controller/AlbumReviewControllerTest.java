@@ -98,7 +98,7 @@ class AlbumReviewControllerTest {
                     .albumId("album-123")
                     .build();
 
-            when(albumReviewRepository.findByWriterId(anyString())).thenReturn(Optional.empty());
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString())).thenReturn(Optional.empty());
             when(userRepository.findById(anyString())).thenReturn(Optional.of(loggedInUser));
             when(albumRepository.findAlbumById(anyString())).thenReturn(Optional.of(AlbumEntity.builder().id(saveReqDto.getAlbumId()).build()));
 
@@ -135,7 +135,7 @@ class AlbumReviewControllerTest {
                     .albumId("album-123")
                     .build();
 
-            when(albumReviewRepository.findByWriterId(anyString()))
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString()))
                     .thenReturn(Optional.of(AlbumReviewEntity.builder().build()));
 
             // then
@@ -158,7 +158,7 @@ class AlbumReviewControllerTest {
                     .albumId("album-123")
                     .build();
 
-            when(albumReviewRepository.findByWriterId(anyString())).thenReturn(Optional.empty());
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString())).thenReturn(Optional.empty());
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             // then
@@ -181,7 +181,7 @@ class AlbumReviewControllerTest {
                     .albumId("album-123")
                     .build();
 
-            when(albumReviewRepository.findByWriterId(anyString())).thenReturn(Optional.empty());
+            when(albumReviewRepository.findByWriterIdAndAlbumId(anyString(), anyString())).thenReturn(Optional.empty());
             when(userRepository.findById(any())).thenReturn(Optional.of(loggedInUser));
             when(albumRepository.findAlbumById(anyString())).thenReturn(Optional.empty());
 
@@ -203,7 +203,7 @@ class AlbumReviewControllerTest {
             // given
             userLogin();
 
-            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
             when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
 
@@ -218,8 +218,11 @@ class AlbumReviewControllerTest {
                     .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
                     .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
                     .andExpect(jsonPath("$.review.isLiked").value(true))
+                    .andExpect(jsonPath("$.review.likeCount").value(dto.getReview().getLikeCount()))
+                    .andExpect(jsonPath("$.review.createdAt").value("2024-05-17"))
                     .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
                     .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.writer.profileImageUrl").value(dto.getWriter().getProfileImageUrl()))
                     .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
                     .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
                     .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))
@@ -236,7 +239,7 @@ class AlbumReviewControllerTest {
             // given
             userLogin();
 
-            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
             when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -250,8 +253,11 @@ class AlbumReviewControllerTest {
                     .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
                     .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
                     .andExpect(jsonPath("$.review.isLiked").value(false))
+                    .andExpect(jsonPath("$.review.likeCount").value(dto.getReview().getLikeCount()))
+                    .andExpect(jsonPath("$.review.createdAt").value("2024-05-17"))
                     .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
                     .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.writer.profileImageUrl").value(dto.getWriter().getProfileImageUrl()))
                     .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
                     .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
                     .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))
@@ -270,7 +276,7 @@ class AlbumReviewControllerTest {
             // User Not Logged In
             when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.empty());
 
-            AlbumReviewInfoDto dto = new AlbumReviewInfoDto(1L, "review-title", "content", 5, "album-id", "writer-id", "username", "album-name", "artist-name", "cover-img-url", "2024-05-03", 0L, 3L, 5L);
+            AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
             when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
 
@@ -284,8 +290,11 @@ class AlbumReviewControllerTest {
                     .andExpect(jsonPath("$.review.content").value(dto.getReview().getContent()))
                     .andExpect(jsonPath("$.review.rating").value(dto.getReview().getRating()))
                     .andExpect(jsonPath("$.review.isLiked").value(false))
+                    .andExpect(jsonPath("$.review.likeCount").value(dto.getReview().getLikeCount()))
+                    .andExpect(jsonPath("$.review.createdAt").value("2024-05-17"))
                     .andExpect(jsonPath("$.writer.id").value(dto.getWriter().getId()))
                     .andExpect(jsonPath("$.writer.username").value(dto.getWriter().getUsername()))
+                    .andExpect(jsonPath("$.writer.profileImageUrl").value(dto.getWriter().getProfileImageUrl()))
                     .andExpect(jsonPath("$.album.id").value(dto.getAlbum().getId()))
                     .andExpect(jsonPath("$.album.name").value(dto.getAlbum().getName()))
                     .andExpect(jsonPath("$.album.artistName").value(dto.getAlbum().getArtistName()))

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
-import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
@@ -32,10 +31,9 @@ public class AlbumReviewService {
     private final AlbumReviewLikeRepository reviewLikeRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
-    private final AlbumEntityRepository albumEntityRepository;
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveReqDto reviewSaveDto) {
-        albumReviewRepository.findByWriterId(writerId).ifPresent(review -> {
+        albumReviewRepository.findByWriterIdAndAlbumId(writerId, reviewSaveDto.getAlbumId()).ifPresent(review -> {
             throw new AlbumReviewAlreadyExistException("User already reviewed album: " + reviewSaveDto.getAlbumId());
         });
 
