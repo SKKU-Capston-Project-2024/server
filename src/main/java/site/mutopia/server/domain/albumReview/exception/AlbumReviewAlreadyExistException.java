@@ -11,4 +11,5 @@ public class AlbumReviewAlreadyExistException extends AlreadyExistException {
     public AlbumReviewAlreadyExistException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

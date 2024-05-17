@@ -12,6 +12,7 @@ import site.mutopia.server.domain.topster.dto.TopsterInfoDto.UserInfoDto;
 import site.mutopia.server.domain.topster.dto.TopsterSaveReqDto;
 import site.mutopia.server.domain.topster.entity.TopsterAlbumEntity;
 import site.mutopia.server.domain.topster.entity.TopsterEntity;
+import site.mutopia.server.domain.topster.exception.TopsterAlreadyExistException;
 import site.mutopia.server.domain.topster.exception.TopsterNotFoundException;
 import site.mutopia.server.domain.topster.repository.TopsterAlbumRepository;
 import site.mutopia.server.domain.topster.repository.TopsterRepository;
@@ -34,8 +35,7 @@ public class TopsterService {
 
     public TopsterEntity saveTopster(String userId, TopsterSaveReqDto dto) {
         topsterRepository.findByUserId(userId).ifPresent(t -> {
-            // TODO: 에러 응답 재정의하기, 지금은 Internal Server Error로 나감
-            throw new IllegalStateException("userId: " + userId + " already has topster");
+            throw new TopsterAlreadyExistException("userId: " + userId + " already has topster");
         });
 
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
