@@ -1,6 +1,8 @@
 package site.mutopia.server.domain.user.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import site.mutopia.server.global.error.exception.EntityNotFoundException;
+
+public class UserNotFoundException extends EntityNotFoundException {
     public UserNotFoundException() {
         super("User not found");
     }

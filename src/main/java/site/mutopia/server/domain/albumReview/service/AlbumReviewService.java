@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
-import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewCheckResDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewSaveReqDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
+import site.mutopia.server.domain.albumReview.exception.AlbumReviewAlreadyExistException;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeId;
@@ -21,7 +21,6 @@ import site.mutopia.server.domain.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +31,11 @@ public class AlbumReviewService {
     private final AlbumReviewLikeRepository reviewLikeRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
-    private final AlbumEntityRepository albumEntityRepository;
 
     public AlbumReviewEntity saveAlbumReview(String writerId, AlbumReviewSaveReqDto reviewSaveDto) {
-        // TODO: 작성자가 해당 앨범에 대한 리뷰를 작성한 적이 있는지 체크하는 로직 추가하기
+        albumReviewRepository.findByWriterIdAndAlbumId(writerId, reviewSaveDto.getAlbumId()).ifPresent(review -> {
+            throw new AlbumReviewAlreadyExistException("User already reviewed album: " + reviewSaveDto.getAlbumId());
+        });
 
         UserEntity writer = userRepository.findById(writerId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + writerId));
         AlbumEntity album = albumRepository.findAlbumById(reviewSaveDto.getAlbumId()).orElseThrow(() -> new AlbumNotFoundException("Album not found. albumId: " + reviewSaveDto.getAlbumId() + " does not exist."));

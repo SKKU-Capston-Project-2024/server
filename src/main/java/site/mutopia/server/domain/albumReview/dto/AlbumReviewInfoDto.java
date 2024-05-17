@@ -18,14 +18,15 @@ public class AlbumReviewInfoDto {
     private AlbumInfoDto album;
 
     // Constructor used by JPQL to create instances
+    @Builder
     public AlbumReviewInfoDto(Long reviewId, String title, String content, Integer rating, Long likeCount, Long createdAt, String albumId,
                               String writerId, String username, String userProfileImageUrl,
                               String name, String artistName, String coverImageUrl, String releaseDate,
-                              Long length, Long totalReviewCount, Double averageRating, Long totalLikeCount) {
+                              Long length, Long totalReviewCount, Long totalLikeCount) {
         this.review = new ReviewInfoDto(reviewId,title, content, rating, false, likeCount, unixTimeToString(createdAt));
         this.writer = new WriterInfoDto(writerId, username, userProfileImageUrl);
         this.album = new AlbumInfoDto(albumId, name, artistName, coverImageUrl, releaseDate,
-                length, totalReviewCount, averageRating, totalLikeCount);
+                length, totalReviewCount, totalLikeCount);
     }
 
     public static AlbumReviewInfoDto fromEntity(AlbumReviewEntity entity){
@@ -46,7 +47,6 @@ public class AlbumReviewInfoDto {
                 entity.getAlbum().getReleaseDate(),
                 entity.getAlbum().getLength(),
                 entity.getAlbum().getTotalReviewCount(),
-                entity.getAlbum().getAverageRating(),
                 entity.getAlbum().getTotalLikeCount()
         );
 
@@ -61,7 +61,7 @@ public class AlbumReviewInfoDto {
         private String content;
         private Integer rating;
         @Setter
-        private Boolean isLiked;
+        private Boolean isLiked = false;
         @Setter
         private Long likeCount;
         @Setter
@@ -88,7 +88,6 @@ public class AlbumReviewInfoDto {
         private String releaseDate;
         private Long length;
         private Long totalReviewCount;
-        private Double averageRating;
         private Long totalLikeCount;
     }
 
