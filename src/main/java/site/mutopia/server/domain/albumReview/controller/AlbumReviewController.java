@@ -47,6 +47,7 @@ public class AlbumReviewController {
         return ResponseEntity.ok().body(result);
     }
 
+    @Operation(summary = "전체 리뷰 최신순으로 가져오기", description = "최신순으로 정렬된 리뷰를 가져옵니다.")
     @GetMapping("/album/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReview(
             @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){

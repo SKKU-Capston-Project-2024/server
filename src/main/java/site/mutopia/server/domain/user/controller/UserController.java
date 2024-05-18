@@ -49,8 +49,8 @@ public class UserController {
     public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(
             @LoginUser(require = false) UserEntity loggedInUser,
             @PathVariable("userId") String userId,
-            @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(loggedInUser, userId, limit);
+            @RequestParam(value = "offset", required = false, defaultValue = "10") Integer offset) {
+        List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(loggedInUser, userId, offset);
         return ResponseEntity.ok(reviews);
     }
 

@@ -58,8 +58,8 @@ public class AlbumReviewService {
                 .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. writerId: " + writerId + " albumId: " + albumId + " does not exist."));
     }
 
-    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(UserEntity loggingUser, String userId, Integer limit) {
-        List<AlbumReviewInfoDto> review = albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, limit);
+    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(UserEntity loggingUser, String userId, Integer offset) {
+        List<AlbumReviewInfoDto> review = albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, offset);
         if (loggingUser != null) {
             review.forEach(r -> {
                 r.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(loggingUser.getId(), r.getReview().getId())).isPresent());
