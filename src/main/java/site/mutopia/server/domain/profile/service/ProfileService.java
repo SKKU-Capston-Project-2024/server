@@ -80,6 +80,7 @@ public class ProfileService {
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .userId(userId)
+                .bio(profileEntity.getBio())
                 .username(profileEntity.getUser().getUsername())
                 .profileImageUrl(profileEntity.getProfilePicUrl())
                 .build();
