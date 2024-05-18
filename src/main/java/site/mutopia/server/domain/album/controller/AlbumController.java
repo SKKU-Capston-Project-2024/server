@@ -48,7 +48,7 @@ public class AlbumController {
         return ResponseEntity.ok().body(albumService.searchAlbumByKeyword(keyword, offset));
     }
 
-    @Operation(summary = "앨범의 최근 리뷰 조회", description = "앨범의 최근 리뷰를 조회합니다.")
+    @Operation(summary = "앨범의 최근 리뷰 조회", description = "앨범의 최근 리뷰를 조회합니다. 한번에 20개씩 가져옵니다. offset으로 페이징")
     @GetMapping("/{albumId}/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReviews(
             @LoginUser(require = false) UserEntity userEntity,

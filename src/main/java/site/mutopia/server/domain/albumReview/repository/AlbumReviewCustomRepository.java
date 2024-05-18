@@ -9,5 +9,5 @@ public interface AlbumReviewCustomRepository {
 
     Optional<AlbumReviewInfoDto> findAlbumReviewInfoDto(Long albumReviewId);
 
-    List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit);
+    List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer offset);
 }

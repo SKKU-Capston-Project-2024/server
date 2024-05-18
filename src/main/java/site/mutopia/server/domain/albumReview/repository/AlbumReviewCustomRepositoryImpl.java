@@ -40,7 +40,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
     }
 
     @Override
-    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer limit) {
+    public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer offset) {
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
                 "CAST(review.id AS long)," +
                 "review.title, review.content, review.rating, " +
@@ -55,11 +55,13 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
                 "FROM AlbumReviewEntity review " +
                 "INNER JOIN review.album album " +
                 "INNER JOIN review.writer writer " +
-                "WHERE writer.id = :userId";
+                "WHERE writer.id = :userId" +
+                " ORDER BY review.createdAt DESC";
 
         return em.createQuery(jpql, AlbumReviewInfoDto.class)
                 .setParameter("userId", userId)
-                .setMaxResults(limit)
+                .setMaxResults(20)
+                .setFirstResult(offset)
                 .getResultList();
     }
 }
