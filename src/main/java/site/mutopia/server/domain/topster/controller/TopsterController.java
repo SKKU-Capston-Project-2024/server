@@ -17,7 +17,7 @@ import site.mutopia.server.swagger.response.OkResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/topster")
+@RequestMapping
 @RequiredArgsConstructor
 @Tag(name = "Topster", description = "Topster APIs")
 public class TopsterController {
@@ -25,7 +25,7 @@ public class TopsterController {
     private final TopsterService topsterService;
 
     @Operation(summary = "탑스터 저장", description = "로그인한 유저는 탑스터를 저장할 수 있다.")
-    @PostMapping
+    @PostMapping("/user/profile/topster")
     @ResponseStatus(HttpStatus.CREATED)
     @CreatedResponse
     public ResponseEntity<TopsterSaveResDto> saveTopster(@LoginUser UserEntity loggedInUser, @RequestBody TopsterSaveReqDto saveDto) {
@@ -33,37 +33,25 @@ public class TopsterController {
         return ResponseEntity.status(HttpStatus.CREATED).body(TopsterSaveResDto.builder().topsterId(savedTopster.getId()).build());
     }
 
-    @Operation(summary = "탑스터 조회 (topsterId)", description = "유저는 topsterId로 탑스터를 조회할 수 있다.")
-    @GetMapping("/{topsterId}")
+    @Operation(summary = "탑스터 조회", description = "유저는 topsterId로 탑스터를 조회할 수 있다.")
+    @GetMapping("/user/{userId}/profile/topster")
     @OkResponse
-    public ResponseEntity<TopsterInfoDto> getTopsterById(@PathVariable("topsterId") Long topsterId) {
-        TopsterInfoDto topsterInfo = topsterService.getTopsterInfoById(topsterId);
+    public ResponseEntity<TopsterInfoDto> getTopsterByUserId(@PathVariable("userId") String userId) {
+        TopsterInfoDto topsterInfo = topsterService.getTopsterInfoByUserId(userId);
         return ResponseEntity.ok().body(topsterInfo);
     }
 
     @Operation(summary = "탑스터 삭제", description = "로그인한 유저는 topsterId로 탑스터를 삭제할 수 있다.")
-    @DeleteMapping("/{topsterId}")
-    public ResponseEntity<?> removeTopsterById(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId) {
-        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
-
-        if (!userOwnsTopster) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
-        }
-
-        topsterService.removeTopsterById(topsterId);
+    @DeleteMapping("/user/profile/topster")
+    public ResponseEntity<?> removeTopster(@LoginUser UserEntity loggedInUser) {
+        topsterService.removeTopsterByUserId(loggedInUser.getId());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "탑스터에 속한 앨범들 중 일부를 삭제", description = "로그인한 유저는 탑스터에 속한 앨범들 중 일부를 삭제할 수 있다.")
-    @DeleteMapping("/{topsterId}/album")
-    public ResponseEntity<?> deleteAlbumsFromTopster(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId, @RequestBody TopsterAlbumDeleteReqDto dto) {
-        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
-
-        if (!userOwnsTopster) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
-        }
-
-        List<String> remainAlbumIds = topsterService.deleteAlbumsFromTopster(topsterId, dto.getAlbumIds());
+    @DeleteMapping("/user/profile/topster/album")
+    public ResponseEntity<?> deleteAlbumsFromTopster(@LoginUser UserEntity loggedInUser, @RequestBody TopsterAlbumDeleteReqDto dto) {
+        List<String> remainAlbumIds = topsterService.deleteAlbumsFromTopster(loggedInUser.getId(), dto.getAlbumIds());
 
         return ResponseEntity.ok().body(
                 TopsterAlbumDeleteResDto.builder()
@@ -73,15 +61,9 @@ public class TopsterController {
     }
 
     @Operation(summary = "탑스터에 앨범 추가", description = "로그인한 유저는 탑스터에 앨범을 추가할 수 있다.")
-    @PostMapping("/{topsterId}/album")
-    public ResponseEntity<?> appendAlbumsInTopster(@LoginUser UserEntity loggedInUser, @PathVariable("topsterId") Long topsterId, @RequestBody TopsterAlbumAppendReqDto dto) {
-        boolean userOwnsTopster = topsterService.userOwnsTopster(loggedInUser.getId(), topsterId);
-
-        if (!userOwnsTopster) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not have permission to modify this Topster.");
-        }
-
-        List<String> remainAlbumIds = topsterService.appendAlbumsInTopster(topsterId, dto.getAlbumIds());
+    @PostMapping("/user/profile/topster/album")
+    public ResponseEntity<?> appendAlbumsInTopster(@LoginUser UserEntity loggedInUser, @RequestBody TopsterAlbumAppendReqDto dto) {
+        List<String> remainAlbumIds = topsterService.appendAlbumsInTopster(loggedInUser.getId(), dto.getAlbumIds());
 
         return ResponseEntity.ok().body(
                 TopsterAlbumAppendResDto.builder()

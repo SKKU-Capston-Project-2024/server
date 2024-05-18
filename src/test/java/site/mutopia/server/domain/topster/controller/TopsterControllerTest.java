@@ -34,8 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -83,8 +82,6 @@ class TopsterControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
     }
 
-
-
     @Nested
     class SaveTopster {
 
@@ -93,11 +90,11 @@ class TopsterControllerTest {
             // given
             userLogin();
 
-            TopsterSaveReqDto dto = new TopsterSaveReqDto("My Topster", Arrays.asList("album-1", "album-2"));
+            TopsterSaveReqDto dto = new TopsterSaveReqDto(Arrays.asList("album-1", "album-2"));
 
+            when(topsterRepository.findByUserId(any())).thenReturn(Optional.empty());
             when(userRepository.findById(any())).thenReturn(Optional.of(loggedInUser));
             TopsterEntity savedTopster = TopsterEntity.builder()
-                    .title(dto.getTopsterTitle())
                     .user(loggedInUser)
                     .build();
             when(topsterRepository.save(any())).thenReturn(savedTopster);
@@ -108,7 +105,7 @@ class TopsterControllerTest {
             setFieldValue(savedTopster, "id", 1L);
 
             // then
-            mockMvc.perform(post("/topster")
+            mockMvc.perform(post("/user/profile/topster")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken")
                             .content(objectMapper.writeValueAsString(dto)))
@@ -120,14 +117,13 @@ class TopsterControllerTest {
         @Test
         void 사용자가_로그인_하지_않았을때_권한없음을_반환해야한다() throws Exception {
             // given
-            TopsterSaveReqDto dto = new TopsterSaveReqDto("My Topster", Arrays.asList("album-1", "album-2"));
+            TopsterSaveReqDto dto = new TopsterSaveReqDto(Arrays.asList("album-1", "album-2"));
 
             // User Not Logged In
             when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.empty());
 
-
             // then
-            mockMvc.perform(post("/topster")
+            mockMvc.perform(post("/user/profile/topster")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken")
                             .content(objectMapper.writeValueAsString(dto)))
@@ -144,24 +140,23 @@ class TopsterControllerTest {
             // when
             userLogin();
 
-            TopsterEntity topster = TopsterEntity.builder().title("My Topster").user(loggedInUser).build();
+            TopsterEntity topster = TopsterEntity.builder().user(loggedInUser).build();
             setFieldValue(topster, "id", 1L);
 
             AlbumEntity album1 = AlbumEntity.builder().id("album-1").coverImageUrl("url-1").artistName("artist-1").name("album-name-1").releaseDate("2024-05-03").length(0L).build();
             AlbumEntity album2 = AlbumEntity.builder().id("album-2").coverImageUrl("url-2").artistName("artist-2").name("album-name-2").releaseDate("2024-05-04").length(0L).build();
 
-            when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
+            when(topsterRepository.findByUserId(any())).thenReturn(Optional.of(topster));
             when(topsterAlbumRepository.findByTopsterId(any())).thenReturn(List.of(
                     TopsterAlbumEntity.builder().album(album1).topster(topster).build(),
                     TopsterAlbumEntity.builder().album(album2).topster(topster).build()
             ));
 
-            mockMvc.perform(get("/topster/1")
+            mockMvc.perform(get("/user/84102e90-8d58-4b6e-9b44-6ceb6b984c59/profile/topster")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.topster.id").value(topster.getId()))
-                    .andExpect(jsonPath("$.topster.title").value(topster.getTitle()))
                     .andExpect(jsonPath("$.user.id").value(loggedInUser.getId()))
                     .andExpect(jsonPath("$.user.username").value(loggedInUser.getUsername()))
                     .andExpect(jsonPath("$.topsterAlbums[0].id").value(album1.getId()))
@@ -189,24 +184,23 @@ class TopsterControllerTest {
             UserEntity writer = UserEntity.builder().username("user-name").build();
             setFieldValue(writer, "id", "user-id-1234nlaskdjf");
 
-            TopsterEntity topster = TopsterEntity.builder().title("My Topster").user(writer).build();
+            TopsterEntity topster = TopsterEntity.builder().user(writer).build();
             setFieldValue(topster, "id", 1L);
 
             AlbumEntity album1 = AlbumEntity.builder().id("album-1").coverImageUrl("url-1").artistName("artist-1").name("album-name-1").releaseDate("2024-05-03").length(0L).build();
             AlbumEntity album2 = AlbumEntity.builder().id("album-2").coverImageUrl("url-2").artistName("artist-2").name("album-name-2").releaseDate("2024-05-04").length(0L).build();
 
-            when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
+            when(topsterRepository.findByUserId(any())).thenReturn(Optional.of(topster));
             when(topsterAlbumRepository.findByTopsterId(any())).thenReturn(List.of(
                     TopsterAlbumEntity.builder().album(album1).topster(topster).build(),
                     TopsterAlbumEntity.builder().album(album2).topster(topster).build()
             ));
 
-            mockMvc.perform(get("/topster/1")
+            mockMvc.perform(get("/user/84102e90-8d58-4b6e-9b44-6ceb6b984c59/profile/topster")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.topster.id").value(topster.getId()))
-                    .andExpect(jsonPath("$.topster.title").value(topster.getTitle()))
                     .andExpect(jsonPath("$.user.id").value(writer.getId()))
                     .andExpect(jsonPath("$.user.username").value(writer.getUsername()))
                     .andExpect(jsonPath("$.topsterAlbums[0].id").value(album1.getId()))
@@ -232,26 +226,13 @@ class TopsterControllerTest {
         void 정상적인_요청을_보냈을때_탑스터_삭제_성공() throws Exception {
             userLogin();
 
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(true);
+            TopsterEntity topster = TopsterEntity.builder().user(loggedInUser).build();
+            when(topsterRepository.findByUserId(any())).thenReturn(Optional.of(topster));
 
-            mockMvc.perform(delete("/topster/1")
+            mockMvc.perform(delete("/user/profile/topster")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken"))
                     .andExpect(status().isOk())
-                    .andDo(print());
-        }
-
-        @Test
-        void 유저가_다른사람의_탑스터를_삭제하려고_할때_Forbidden_반환() throws Exception {
-            userLogin();
-
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(false);
-
-            mockMvc.perform(delete("/topster/1")
-                            .contentType("application/json")
-                            .header("Authorization", "Bearer mockedToken"))
-                    .andExpect(status().isForbidden())
-                    .andExpect(content().string("Error: You do not have permission to modify this Topster."))
                     .andDo(print());
         }
     }
@@ -265,42 +246,24 @@ class TopsterControllerTest {
             userLogin();
 
             TopsterAlbumDeleteReqDto requestDto = new TopsterAlbumDeleteReqDto(Arrays.asList("album-1", "album-2"));
-            TopsterEntity topster = TopsterEntity.builder().title("My Topster").user(loggedInUser).build();
+            TopsterEntity topster = TopsterEntity.builder().user(loggedInUser).build();
             setFieldValue(topster, "id", 1L);
 
             AlbumEntity album1 = AlbumEntity.builder().id("album-1").build();
             AlbumEntity album2 = AlbumEntity.builder().id("album-2").build();
             AlbumEntity album3 = AlbumEntity.builder().id("album-3").build();
 
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(true);
-            when(topsterRepository.findById(anyLong())).thenReturn(Optional.of(topster));
+            when(topsterRepository.findByUserId(anyString())).thenReturn(Optional.of(topster));
             when(topsterAlbumRepository.findByTopsterId(anyLong())).thenReturn(List.of(
                     TopsterAlbumEntity.builder().topster(topster).album(album3).build()
             ));
 
-            mockMvc.perform(delete("/topster/1/album")
+            mockMvc.perform(delete("/user/profile/topster/album")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken")
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.remainAlbumIds[0]").value("album-3"))
-                    .andDo(print());
-        }
-
-        @Test
-        void 유저가_다른_유저의_탑스터에_앨범을_삭제하려_하면_Forbidden() throws Exception {
-            userLogin();
-
-            TopsterAlbumDeleteReqDto requestDto = new TopsterAlbumDeleteReqDto(Arrays.asList("album-1", "album-2"));
-
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(false);
-
-            mockMvc.perform(delete("/topster/1/album")
-                            .contentType("application/json")
-                            .header("Authorization", "Bearer mockedToken")
-                            .content(objectMapper.writeValueAsString(requestDto)))
-                    .andExpect(status().isForbidden())
-                    .andExpect(content().string("Error: You do not have permission to modify this Topster."))
                     .andDo(print());
         }
     }
@@ -316,15 +279,14 @@ class TopsterControllerTest {
             userLogin();
 
             TopsterAlbumAppendReqDto requestDto = new TopsterAlbumAppendReqDto(Arrays.asList("album-3"));
-            TopsterEntity topster = TopsterEntity.builder().title("My Topster").user(loggedInUser).build();
+            TopsterEntity topster = TopsterEntity.builder().user(loggedInUser).build();
             setFieldValue(topster, "id", 1L);
 
             AlbumEntity album1 = AlbumEntity.builder().id("album-1").coverImageUrl("url-1").artistName("artist-1").name("album-name-1").releaseDate("2024-05-03").length(0L).build();
             AlbumEntity album2 = AlbumEntity.builder().id("album-2").coverImageUrl("url-2").artistName("artist-2").name("album-name-2").releaseDate("2024-05-04").length(0L).build();
             AlbumEntity album3 = AlbumEntity.builder().id("album-3").coverImageUrl("url-3").artistName("artist-3").name("album-name-3").releaseDate("2024-05-05").length(0L).build();
 
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(true);
-            when(topsterRepository.findById(anyLong())).thenReturn(Optional.of(topster));
+            when(topsterRepository.findByUserId(anyString())).thenReturn(Optional.of(topster));
             when(albumRepository.findAllById(any())).thenReturn(List.of(album1, album2));
 
             when(topsterAlbumRepository.findByTopsterId(anyLong())).thenReturn(List.of(
@@ -334,7 +296,7 @@ class TopsterControllerTest {
             ));
 
             // then
-            mockMvc.perform(post("/topster/1/album")
+            mockMvc.perform(post("/user/profile/topster/album")
                             .contentType("application/json")
                             .header("Authorization", "Bearer mockedToken")
                             .content(objectMapper.writeValueAsString(requestDto)))
@@ -342,23 +304,6 @@ class TopsterControllerTest {
                     .andExpect(jsonPath("$.remainAlbumIds[0]").value("album-1"))
                     .andExpect(jsonPath("$.remainAlbumIds[1]").value("album-2"))
                     .andExpect(jsonPath("$.remainAlbumIds[2]").value("album-3"))
-                    .andDo(print());
-        }
-
-        @Test
-        void 유저가_다른_유저의_탑스터에_앨범을_추가하려_하면_Forbidden() throws Exception {
-            userLogin();
-
-            TopsterAlbumAppendReqDto requestDto = new TopsterAlbumAppendReqDto(Arrays.asList("album-1", "album-2"));
-
-            when(topsterRepository.existsByUserIdAndTopsterId(any(), anyLong())).thenReturn(false);
-
-            mockMvc.perform(post("/topster/1/album")
-                            .contentType("application/json")
-                            .header("Authorization", "Bearer mockedToken")
-                            .content(objectMapper.writeValueAsString(requestDto)))
-                    .andExpect(status().isForbidden())
-                    .andExpect(content().string("Error: You do not have permission to modify this Topster."))
                     .andDo(print());
         }
     }
