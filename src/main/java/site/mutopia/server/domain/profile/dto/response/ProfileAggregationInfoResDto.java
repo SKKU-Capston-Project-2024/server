@@ -14,4 +14,5 @@ public class ProfileAggregationInfoResDto {
     private Long totalRatingCount;
     private Long followerCount;
     private Long followingCount;
+    private String bio;
 }
