@@ -1,7 +1,13 @@
 package site.mutopia.server.domain.albumReview.exception;
 
-public class AlbumReviewNotFoundException extends RuntimeException {
+import site.mutopia.server.global.error.exception.EntityNotFoundException;
+
+public class AlbumReviewNotFoundException extends EntityNotFoundException {
+
     public AlbumReviewNotFoundException(String message) {
         super(message);
     }
+
+    public AlbumReviewNotFoundException(String message, Throwable cause) { super(message, cause); }
+
 }
