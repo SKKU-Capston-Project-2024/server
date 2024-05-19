@@ -37,7 +37,7 @@ public class ProfileService {
             return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(savedProfile.getProfilePicUrl()).bio(null).isFirstLogin(true).build();
         }
 
-        return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(profile.get().getProfilePicUrl()).bio(profile.get().getBio()).isFirstLogin(false).build();
+        return MyInfoResDto.builder().id(userEntity.getId()).name(userEntity.getUsername()).profileUrl(profile.get().getProfilePicUrl()).bio(profile.get().getBiography()).isFirstLogin(false).build();
     }
 
     private ProfileEntity saveNewUserProfile(UserEntity userEntity) {
@@ -80,7 +80,7 @@ public class ProfileService {
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .userId(userId)
-                .bio(profileEntity.getBio())
+                .biography(profileEntity.getBiography())
                 .username(profileEntity.getUser().getUsername())
                 .profileImageUrl(profileEntity.getProfilePicUrl())
                 .build();
