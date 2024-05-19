@@ -12,11 +12,8 @@ import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.service.PlaylistService;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
-import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
 import site.mutopia.server.domain.topster.service.TopsterService;
 import site.mutopia.server.domain.user.entity.UserEntity;
-import site.mutopia.server.swagger.response.NotFoundResponse;
-import site.mutopia.server.swagger.response.OkResponse;
 
 import java.util.List;
 
@@ -26,7 +23,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private final TopsterService topsterService;
     private final AlbumReviewService albumReviewService;
     private final SongCommentService songCommentService;
     private final PlaylistService playlistService;
@@ -34,14 +30,6 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserEntity> getUserInfo(@LoginUser UserEntity userEntity) {
         return ResponseEntity.ok().body(userEntity);
-    }
-
-    @GetMapping("/{userId}/topster")
-    @NotFoundResponse
-    @OkResponse
-    public ResponseEntity<TopsterInfoDto> getUserTopster(@PathVariable("userId") String userId) {
-        TopsterInfoDto topster = topsterService.getTopsterInfoByUserId(userId);
-        return ResponseEntity.ok().body(topster);
     }
 
     @Operation(summary = "리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")

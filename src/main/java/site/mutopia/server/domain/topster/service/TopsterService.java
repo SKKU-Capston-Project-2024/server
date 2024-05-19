@@ -21,6 +21,7 @@ import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,21 +58,10 @@ public class TopsterService {
     }
 
     // TODO: 나중에 성능 튜닝
-    public TopsterInfoDto getTopsterInfoById(Long topsterId) {
-        TopsterEntity topsterEntity = topsterRepository.findById(topsterId)
-                .orElseThrow(() -> new TopsterNotFoundException("Topster not found. TopsterId: " + topsterId + " does not exist."));
-
-        return getTopsterDetails(topsterEntity);
-    }
-
     public TopsterInfoDto getTopsterInfoByUserId(String userId) {
         TopsterEntity topsterEntity = topsterRepository.findByUserId(userId)
                 .orElseThrow(() -> new TopsterNotFoundException("Topster that matches to userId: " + userId + " does not exist."));
 
-        return getTopsterDetails(topsterEntity);
-    }
-
-    private TopsterInfoDto getTopsterDetails(TopsterEntity topsterEntity) {
         UserInfoDto userInfoDto = UserInfoDto.builder().id(topsterEntity.getUser().getId()).username(topsterEntity.getUser().getUsername()).build();
         TopsterInfoDetailDto topsterInfoDto = TopsterInfoDetailDto.builder().id(topsterEntity.getId()).build();
 
@@ -88,7 +78,6 @@ public class TopsterService {
                                 .build())
                 .collect(Collectors.toList());
 
-
         return TopsterInfoDto.builder()
                 .topster(topsterInfoDto)
                 .user(userInfoDto)
@@ -96,20 +85,19 @@ public class TopsterService {
                 .build();
     }
 
-    public boolean userOwnsTopster(String userId, Long topsterId) {
-        return topsterRepository.existsByUserIdAndTopsterId(userId, topsterId);
-    }
+    public List<String> deleteAlbumsFromTopster(String userId, List<String> albumIds) {
+        TopsterEntity topster = topsterRepository.findByUserId(userId)
+                .orElseThrow(() -> new TopsterNotFoundException("user: " + userId + " doesn't have topster"));
 
-    public List<String> deleteAlbumsFromTopster(Long topsterId, List<String> albumIds) {
-        topsterAlbumRepository.deleteByTopsterIdAndAlbumIds(topsterId, albumIds);
+        topsterAlbumRepository.deleteByTopsterIdAndAlbumIds(topster.getId(), albumIds);
 
         // return remain albums in topster
-        return topsterAlbumRepository.findByTopsterId(topsterId).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
+        return topsterAlbumRepository.findByTopsterId(topster.getId()).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
     }
 
-    public List<String> appendAlbumsInTopster(Long topsterId, List<String> albumIds) {
-        TopsterEntity topster = topsterRepository.findById(topsterId)
-                .orElseThrow(() -> new TopsterNotFoundException("Topster not found. TopsterId: " + topsterId + " does not exist."));
+    public List<String> appendAlbumsInTopster(String userId, List<String> albumIds) {
+        TopsterEntity topster = topsterRepository.findByUserId(userId)
+                .orElseThrow(() -> new TopsterNotFoundException("user: " + userId + " doesn't have topster"));
 
         List<AlbumEntity> albums = albumRepository.findAllById(albumIds);
 
@@ -121,11 +109,14 @@ public class TopsterService {
         topsterAlbumRepository.saveAll(topsterAlbums);
 
         // return remain albums in topster
-        return topsterAlbumRepository.findByTopsterId(topsterId).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
+        return topsterAlbumRepository.findByTopsterId(topster.getId()).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
     }
 
-    public void removeTopsterById(Long topsterId) {
-        topsterAlbumRepository.deleteByTopsterId(topsterId);
-        topsterRepository.deleteById(topsterId);
+    public void removeTopsterByUserId(String userId) {
+        Optional<TopsterEntity> topster = topsterRepository.findByUserId(userId);
+        if(topster.isEmpty()) return;
+
+        topsterAlbumRepository.deleteByTopsterId(topster.get().getId());
+        topsterRepository.deleteById(topster.get().getId());
     }
 }
