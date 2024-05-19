@@ -2,9 +2,11 @@ package site.mutopia.server.domain.profile.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "profile")
 public class ProfileEntity {
@@ -17,14 +19,14 @@ public class ProfileEntity {
     @JoinColumn(name = "user_id", unique = true)
     private UserEntity user;
 
-    @Column(name = "bio")
-    private String bio;
+    @Column(name = "biography")
+    private String biography;
 
     @Column(name = "profile_pic_url")
     private String profilePicUrl;
 
     public void modifyBio(String bio) {
-        this.bio = bio;
+        this.biography = biography;
     }
 
     public void modifyProfilePicUrl(String profilePicUrl) {
@@ -36,7 +38,7 @@ public class ProfileEntity {
         ProfileEntity profileEntity = new ProfileEntity();
         profileEntity.profilePicUrl = profilePicUrl;
         profileEntity.user = userEntity;
-        profileEntity.bio = "";
+        profileEntity.biography = "";
         return profileEntity;
     }
 }
