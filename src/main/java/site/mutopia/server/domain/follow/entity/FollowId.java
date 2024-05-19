@@ -1,9 +1,12 @@
 package site.mutopia.server.domain.follow.entity;
 
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
 @EqualsAndHashCode
 public class FollowId implements Serializable {
 
