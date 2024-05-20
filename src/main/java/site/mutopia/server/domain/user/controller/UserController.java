@@ -36,17 +36,6 @@ public class UserController {
         return ResponseEntity.ok().body(userEntity);
     }
 
-    @GetMapping("/{userId}/topster")
-    @NotFoundResponse
-    @OkResponse
-    public ResponseEntity<TopsterInfoDto> getUserTopster(@PathVariable("userId") String userId) {
-        TopsterInfoDto topster = topsterService.getTopsterInfoByUserId(userId);
-        return ResponseEntity.ok().body(topster);
-    }
-
-
-
-
     @Operation(summary = "특정 유저의 최신 리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
     @GetMapping("/{userId}/album/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(
