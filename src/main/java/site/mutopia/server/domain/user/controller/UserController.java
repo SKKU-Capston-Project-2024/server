@@ -44,13 +44,23 @@ public class UserController {
         return ResponseEntity.ok().body(topster);
     }
 
-    @Operation(summary = "리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
-    @GetMapping("/{userId}/album/review")
+    @Operation(summary = "특정 유저의 최신 리뷰 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
+    @GetMapping("/{userId}/album/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(
             @LoginUser(require = false) UserEntity loggedInUser,
             @PathVariable("userId") String userId,
             @RequestParam(value = "offset", required = false, defaultValue = "10") Integer offset) {
         List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(loggedInUser, userId, offset);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @Operation(summary = "특정 유저의 앨범 리뷰 좋아요순으로 가져오기", description = "로그인 한 사용자는 각 리뷰에서 자신의 좋아요 여부를 확인할 수 있습니다. review.isLiked 값으로 확인 가능합니다.")
+    @GetMapping("/{userId}/album/review/popular")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviewsOrderByLike(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "offset", required = false, defaultValue = "10") Integer offset) {
+        List<AlbumReviewInfoDto> reviews = albumReviewService.findByUserIdOrderByLike(userId, offset, loggedInUser == null ? null : loggedInUser.getId());
         return ResponseEntity.ok(reviews);
     }
 

@@ -49,12 +49,19 @@ public class AlbumController {
     }
 
     @Operation(summary = "앨범의 최근 리뷰 조회", description = "앨범의 최근 리뷰를 조회합니다. 한번에 20개씩 가져옵니다. offset으로 페이징")
-    @GetMapping("/{albumId}/review/recent")
+    @GetMapping(value = "/{albumId}/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReviews(
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("albumId") String albumId, @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
         return ResponseEntity.ok().body(albumReviewService.getRecentAlbumReviews(userEntity,albumId,offset));
     }
 
+    @Operation(summary = "앨범의 인기 리뷰 조회", description = "앨범의 인기 리뷰를 조회합니다. 한번에 20개씩 가져옵니다. offset으로 페이징")
+    @GetMapping(value ="/{albumId}/review/popular")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getPopularAlbumReviews(
+            @LoginUser(require = false) UserEntity userEntity,
+            @PathVariable("albumId") String albumId, @RequestParam(value = "offset", required = false, defaultValue = "0") int offset){
+        return ResponseEntity.ok().body(albumReviewService.getPopularAlbumReviewsByAlbumId(userEntity,albumId,offset));
+    }
 
 }
