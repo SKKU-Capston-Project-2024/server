@@ -1,9 +1,7 @@
 package site.mutopia.server.domain.playlistSong.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 import site.mutopia.server.domain.song.entity.SongEntity;
 
@@ -12,6 +10,8 @@ import site.mutopia.server.domain.song.entity.SongEntity;
 @IdClass(PlaylistSongId.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class PlaylistSongEntity {
     @Id
     @ManyToOne

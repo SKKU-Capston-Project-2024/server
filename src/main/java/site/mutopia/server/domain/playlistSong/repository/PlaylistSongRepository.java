@@ -9,5 +9,10 @@ import java.util.List;
 
 @Repository
 public interface PlaylistSongRepository extends JpaRepository<PlaylistSongEntity, PlaylistSongId> {
+
     List<PlaylistSongEntity> findByPlaylistId(Long playlistId);
+
+    void deleteByPlaylistIdAndSongId(Long playlistId, String songId);
+
+    void deleteByPlaylistId(Long playlistId);
 }

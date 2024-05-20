@@ -5,11 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 
-@Repository
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> {
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +

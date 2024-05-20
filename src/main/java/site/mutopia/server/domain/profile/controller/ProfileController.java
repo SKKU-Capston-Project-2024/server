@@ -38,7 +38,7 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "유저 정보 가져오기", description = "유저의 닉네임, 프로필 사진,리뷰, 좋아요, 팔로워, 팔로잉 수를 가져옵니다.")
+    @Operation(summary = "유저 정보 가져오기", description = "유저의 닉네임, 프로필 사진, 리뷰, 좋아요, 팔로워, 팔로잉 수를 가져옵니다.")
     @NotFoundResponse
     @OkResponse
     @GetMapping("/user/{userId}/profile/aggregation")
