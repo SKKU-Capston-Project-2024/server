@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.albumReview.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,17 +48,18 @@ public class AlbumReviewController {
         return ResponseEntity.ok().body(result);
     }
 
-    @Operation(summary = "전체 리뷰 최신순으로 가져오기", description = "최신순으로 정렬된 리뷰를 가져옵니다.")
-    @GetMapping("/album/review/recent")
+    @Operation(summary = "전체 리뷰 최신순으로 가져오기", description = "최신순으로 정렬된 리뷰를 offset 부터 20개 가져옵니다.")
+    @GetMapping(value = "/album/review/recent")
     public ResponseEntity<List<AlbumReviewInfoDto>> getRecentAlbumReview(
             @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
         return ResponseEntity.ok().body(albumReviewService.getRecentAlbumReview(loggedInUser, offset));
     }
 
-    /*
-    @GetMapping("/my")
-    public ResponseEntity<AlbumReviewEntity> getMyAlbumReview(@LoginUser UserEntity loggedInUser, @RequestParam("albumId") String albumId) {
-        return ResponseEntity.ok().body(albumReviewService.getMyAlbumReview(loggedInUser.getId(), albumId));
+    @Operation(summary = "전체 리뷰 좋아요순으로 가져오기", description = "좋아요순으로 정렬된 리뷰를 offset 부터 20개 가져옵니다.")
+    @GetMapping(value = "/album/review/popular")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getPopularAlbumReview(
+            @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
+        return ResponseEntity.ok().body(albumReviewService.getPopularAlbumReviews(loggedInUser, offset));
     }
-    */
+
 }

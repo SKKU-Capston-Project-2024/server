@@ -7,7 +7,19 @@ import java.util.Optional;
 
 public interface AlbumReviewCustomRepository {
 
-    Optional<AlbumReviewInfoDto> findAlbumReviewInfoDto(Long albumReviewId);
+    Optional<AlbumReviewInfoDto> findAlbumReviewInfoDto(Long albumReviewId, String loginUserId);
 
-    List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(String userId, Integer offset);
+    List<AlbumReviewInfoDto> findAllByUserIdOrderByCreatedAt(String userId, Integer offset, String loginUserId);
+
+    List<AlbumReviewInfoDto> findAllByUserIdOrderByLike(String userId, Integer offset, String loginUserId);
+
+    List<AlbumReviewInfoDto> findAllByAlbumIdOrderByCreatedAt(String albumId, Integer offset, String loginUserId);
+
+    List<AlbumReviewInfoDto> findAllByAlbumIdOrderByLike(String loginUserId, String albumId, Integer offset);
+
+    List<AlbumReviewInfoDto> findAllOrderByCreatedAtDesc(Integer offset, String loginUserId);
+
+    List<AlbumReviewInfoDto> findAllOrderByLikeDesc(String loginUserId, Integer offset);
+
+
 }

@@ -204,7 +204,7 @@ class AlbumReviewControllerTest {
             userLogin();
 
             AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
-            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewRepository.findAlbumReviewInfoDto(any(),any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
 
 
@@ -240,7 +240,7 @@ class AlbumReviewControllerTest {
             userLogin();
 
             AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
-            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewRepository.findAlbumReviewInfoDto(any(),any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.empty());
 
             // then
@@ -277,7 +277,7 @@ class AlbumReviewControllerTest {
             when(tokenProvider.getUserEntity(Mockito.anyString())).thenReturn(Optional.empty());
 
             AlbumReviewInfoDto dto = AlbumReviewInfoDto.builder().reviewId(1L).title("review-title").content("content").rating(5).likeCount(10L).createdAt(1715910078997L).albumId("album-id").writerId("writer-id").username("username").userProfileImageUrl("url").name("album-name").artistName("artist-name").coverImageUrl("url2").releaseDate("2024-05-04").length(0L).totalReviewCount(4L).totalLikeCount(14L).build();
-            when(albumReviewRepository.findAlbumReviewInfoDto(any())).thenReturn(Optional.of(dto));
+            when(albumReviewRepository.findAlbumReviewInfoDto(any(),any())).thenReturn(Optional.of(dto));
             when(albumReviewLikeRepository.findById(any())).thenReturn(Optional.of(AlbumReviewLikeEntity.builder().build()));
 
             // then

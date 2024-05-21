@@ -22,11 +22,7 @@ public interface AlbumReviewRepository extends JpaRepository<AlbumReviewEntity, 
 
     Optional<AlbumReviewEntity> findByWriterIdAndAlbumId(String writerId, String albumId);
 
-    //find recent review by albumId desc
-    @Query("SELECT a FROM AlbumReviewEntity a WHERE a.album.id = :albumId ORDER BY a.createdAt DESC limit :limit offset :offset")
-    List<AlbumReviewEntity> findRecentReviewByAlbumId(@Param("albumId") String albumId, @Param("limit") int limit, @Param("offset") int offset);
 
-    @Query("SELECT a FROM AlbumReviewEntity a ORDER BY a.createdAt DESC limit :limit offset :offset")
-    List<AlbumReviewEntity> findRecentReview(@Param("limit") int limit, @Param("offset") int offset);
+
 
 }

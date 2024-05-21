@@ -2,6 +2,8 @@ package site.mutopia.server.domain.albumReview.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
@@ -13,7 +15,6 @@ import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewAlreadyExistException;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
-import site.mutopia.server.domain.albumReviewLike.entity.AlbumReviewLikeId;
 import site.mutopia.server.domain.albumReviewLike.repository.AlbumReviewLikeRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Transactional
 public class AlbumReviewService {
 
+    private static final Logger log = LoggerFactory.getLogger(AlbumReviewService.class);
     private final AlbumReviewRepository albumReviewRepository;
     private final AlbumReviewLikeRepository reviewLikeRepository;
     private final UserRepository userRepository;
@@ -46,11 +48,9 @@ public class AlbumReviewService {
 
     public AlbumReviewInfoDto getAlbumReviewInfoById(UserEntity user,Long albumReviewId) {
 
-        AlbumReviewInfoDto albumReviewInfoDto = albumReviewRepository.findAlbumReviewInfoDto(albumReviewId).orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
-        if(user != null) {
-            albumReviewInfoDto.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(user.getId(),albumReviewId)).isPresent());
-        }
-        return albumReviewInfoDto;
+        return albumReviewRepository.findAlbumReviewInfoDto(albumReviewId, user == null ? null : user.getId())
+                .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
+
     }
 
     public AlbumReviewEntity getMyAlbumReview(String writerId, String albumId) {
@@ -59,13 +59,7 @@ public class AlbumReviewService {
     }
 
     public List<AlbumReviewInfoDto> findAlbumReviewInfoDtoListByUserId(UserEntity loggingUser, String userId, Integer offset) {
-        List<AlbumReviewInfoDto> review = albumReviewRepository.findAlbumReviewInfoDtoListByUserId(userId, offset);
-        if (loggingUser != null) {
-            review.forEach(r -> {
-                r.getReview().setIsLiked(reviewLikeRepository.findById(new AlbumReviewLikeId(loggingUser.getId(), r.getReview().getId())).isPresent());
-            });
-        }
-        return review;
+        return albumReviewRepository.findAllByUserIdOrderByCreatedAt(userId, offset, loggingUser == null ? null : loggingUser.getId());
 
     }
 
@@ -83,18 +77,12 @@ public class AlbumReviewService {
     }
 
 
-    public List<AlbumReviewInfoDto> getRecentAlbumReviews(UserEntity userEntity, String albumId,int offset) {
-
-        List<AlbumReviewEntity> recentReviewByAlbumId = albumReviewRepository.findRecentReviewByAlbumId(albumId, 10, offset);
-        List<AlbumReviewInfoDto> list = recentReviewByAlbumId.stream()
-                .map(AlbumReviewInfoDto::fromEntity).toList();
-        return list.stream().map(r -> addIsLikedToReview(userEntity, r)).toList();
+    public List<AlbumReviewInfoDto> getRecentAlbumReviews(UserEntity userEntity, String albumId, int offset) {
+        return albumReviewRepository.findAllByAlbumIdOrderByCreatedAt(albumId, offset, userEntity == null ? null : userEntity.getId());
     }
 
     public List<AlbumReviewInfoDto> getRecentAlbumReview(UserEntity userEntity, int offset) {
-        List<AlbumReviewEntity> review = albumReviewRepository.findRecentReview(10, offset);
-        List<AlbumReviewInfoDto> list = review.stream().map(AlbumReviewInfoDto::fromEntity).toList();
-        return list.stream().map(r -> addIsLikedToReview(userEntity, r)).toList();
+        return albumReviewRepository.findAllOrderByCreatedAtDesc(offset, userEntity == null ? null : userEntity.getId());
     }
 
     private AlbumReviewInfoDto addIsLikedToReview(UserEntity user, AlbumReviewInfoDto review) {
@@ -102,6 +90,18 @@ public class AlbumReviewService {
             review.getReview().setIsLiked(reviewLikeRepository.existsByReview_IdAndUser_Id(review.getReview().getId(), user.getId()));
         }
         return review;
+    }
+
+    public List<AlbumReviewInfoDto> getPopularAlbumReviewsByAlbumId(UserEntity userEntity, String albumId, int offset) {
+        return albumReviewRepository.findAllByAlbumIdOrderByLike(userEntity == null ? null : userEntity.getId(), albumId, offset);
+    }
+
+    public List<AlbumReviewInfoDto> getPopularAlbumReviews(UserEntity userEntity, int offset) {
+        return albumReviewRepository.findAllOrderByLikeDesc(userEntity == null ? null : userEntity.getId(), offset);
+    }
+
+    public List<AlbumReviewInfoDto> findByUserIdOrderByLike(String userId, Integer offset, String loginUserId) {
+        return albumReviewRepository.findAllByUserIdOrderByLike(userId, offset, loginUserId);
     }
 
 }

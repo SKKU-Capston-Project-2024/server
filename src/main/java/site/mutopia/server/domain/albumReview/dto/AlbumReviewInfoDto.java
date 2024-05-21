@@ -22,8 +22,8 @@ public class AlbumReviewInfoDto {
     public AlbumReviewInfoDto(Long reviewId, String title, String content, Integer rating, Long likeCount, Long createdAt, String albumId,
                               String writerId, String username, String userProfileImageUrl,
                               String name, String artistName, String coverImageUrl, String releaseDate,
-                              Long length, Long totalReviewCount, Long totalLikeCount) {
-        this.review = new ReviewInfoDto(reviewId,title, content, rating, false, likeCount, unixTimeToString(createdAt));
+                              Long length, Long totalReviewCount, Long totalLikeCount, Boolean isLiked) {
+        this.review = new ReviewInfoDto(reviewId,title, content, rating, isLiked, likeCount, unixTimeToString(createdAt));
         this.writer = new WriterInfoDto(writerId, username, userProfileImageUrl);
         this.album = new AlbumInfoDto(albumId, name, artistName, coverImageUrl, releaseDate,
                 length, totalReviewCount, totalLikeCount);
@@ -47,7 +47,8 @@ public class AlbumReviewInfoDto {
                 entity.getAlbum().getReleaseDate(),
                 entity.getAlbum().getLength(),
                 entity.getAlbum().getTotalReviewCount(),
-                entity.getAlbum().getTotalLikeCount()
+                entity.getAlbum().getTotalLikeCount(),
+                null
         );
 
     }
