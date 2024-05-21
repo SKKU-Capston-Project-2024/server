@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.playlist.dto.AddSongToPlaylistReqDto;
+import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistSaveReqDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistSaveResDto;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 import site.mutopia.server.domain.playlist.service.PlaylistService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.CreatedResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -64,5 +67,12 @@ public class PlaylistController {
         playlistService.deletePlaylist(playlistId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/user/{userId}/playlist")
+    public ResponseEntity<List<?>> getUserPlaylist(@PathVariable("userId") String userId,
+                                                   @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getUserPlaylists(userId, limit);
+        return ResponseEntity.ok().body(userPlaylists);
     }
 }
