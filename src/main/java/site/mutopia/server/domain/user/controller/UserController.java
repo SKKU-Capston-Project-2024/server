@@ -12,11 +12,7 @@ import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.service.PlaylistService;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
-import site.mutopia.server.domain.topster.dto.TopsterInfoDto;
-import site.mutopia.server.domain.topster.service.TopsterService;
 import site.mutopia.server.domain.user.entity.UserEntity;
-import site.mutopia.server.swagger.response.NotFoundResponse;
-import site.mutopia.server.swagger.response.OkResponse;
 
 import java.util.List;
 
@@ -26,7 +22,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private final TopsterService topsterService;
     private final AlbumReviewService albumReviewService;
     private final SongCommentService songCommentService;
     private final PlaylistService playlistService;
@@ -41,7 +36,7 @@ public class UserController {
     public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviews(
             @LoginUser(require = false) UserEntity loggedInUser,
             @PathVariable("userId") String userId,
-            @RequestParam(value = "offset", required = false, defaultValue = "10") Integer offset) {
+            @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset) {
         List<AlbumReviewInfoDto> reviews = albumReviewService.findAlbumReviewInfoDtoListByUserId(loggedInUser, userId, offset);
         return ResponseEntity.ok(reviews);
     }
@@ -51,7 +46,7 @@ public class UserController {
     public ResponseEntity<List<AlbumReviewInfoDto>> getUserAlbumReviewsOrderByLike(
             @LoginUser(require = false) UserEntity loggedInUser,
             @PathVariable("userId") String userId,
-            @RequestParam(value = "offset", required = false, defaultValue = "10") Integer offset) {
+            @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset) {
         List<AlbumReviewInfoDto> reviews = albumReviewService.findByUserIdOrderByLike(userId, offset, loggedInUser == null ? null : loggedInUser.getId());
         return ResponseEntity.ok(reviews);
     }
