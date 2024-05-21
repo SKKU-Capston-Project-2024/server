@@ -13,8 +13,8 @@ public class SongInfoDto {
     String albumName;
     String albumCoverUrl;
     String artistName;
-    String reviewCount;
-    String averageRating;
+    Long commentCount;
+    Double averageRating;
     Long likeCount;
     Boolean isLiked;
     Long myRating;
