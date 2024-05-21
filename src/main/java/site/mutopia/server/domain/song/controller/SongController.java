@@ -2,13 +2,17 @@ package site.mutopia.server.domain.song.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import site.mutopia.server.domain.auth.annotation.LoginUser;
+import site.mutopia.server.domain.song.dto.SongInfoDto;
 import site.mutopia.server.domain.song.dto.SongSearchResDto;
 import site.mutopia.server.domain.song.service.SongService;
+import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.spotify.dto.track.SearchTracksDto;
 
 import java.util.List;
@@ -23,11 +27,22 @@ public class SongController {
     private final SongService songService;
 
     @GetMapping("/search")
-    public List<SongSearchResDto> search(
+    public ResponseEntity<List<SongSearchResDto>> search(
             @RequestParam("keyword") String keyword,
             @RequestParam("offset") int offset
     )
     {
-        return songService.search(keyword, offset);
+        return ResponseEntity.ok().body(songService.search(keyword, offset));
     }
+
+    @GetMapping("/info/{songId}")
+    public ResponseEntity<SongInfoDto> getSong(
+            @LoginUser(require = false) UserEntity user,
+            @RequestParam("songId") String songId
+    )
+    {
+        return ResponseEntity.ok().body(songService.getSong(user, songId));
+    }
+
+
 }
