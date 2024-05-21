@@ -14,7 +14,7 @@ import site.mutopia.server.domain.songComment.entity.SongCommentId;
 public interface SongCommentRepository extends JpaRepository<SongCommentEntity, SongCommentId> {
 
     @Query("SELECT new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
-            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$CommentWriterInfo(writer.id, writer.username), " +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$CommentWriterInfo(writer.id, writer.username, writer.profile.profilePicUrl), " +
             "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongCommentInfo(" +
             "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongInfo(song.id, song.title, song.duration, song.releaseDate), " +
             "comment.rating, comment.comment)) " +
@@ -24,6 +24,34 @@ public interface SongCommentRepository extends JpaRepository<SongCommentEntity, 
             "WHERE writer.id = :userId")
     Page<SongCommentInfoResDto> findCommentsByUserId(@Param("userId") String userId, Pageable pageable);
 
+    @Query("SELECT new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$CommentWriterInfo(writer.id, writer.username, writer.profile.profilePicUrl), " +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongCommentInfo(" +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongInfo(song.id, song.title, song.duration, song.releaseDate), " +
+            "comment.rating, comment.comment)) " +
+            "FROM SongCommentEntity comment " +
+            "JOIN comment.writer writer " +
+            "JOIN comment.song song " +
+            "ORDER BY comment.createdAt DESC")
+    Page<SongCommentInfoResDto> findCommentsOrderByCreatedAtDesc(Pageable pageable);
+
+
+
+    @Query("SELECT new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$CommentWriterInfo(writer.id, writer.username, writer.profile.profilePicUrl), " +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongCommentInfo(" +
+            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongInfo(song.id, song.title, song.duration, song.releaseDate), " +
+            "comment.rating, comment.comment)) " +
+            "FROM SongCommentEntity comment " +
+            "JOIN comment.writer writer " +
+            "JOIN comment.song song " +
+            "JOIN song.album album " +
+            "WHERE album.id = :albumId " +
+            "ORDER BY comment.createdAt DESC")
+    Page<SongCommentInfoResDto> findCommentsByAlbumIdOrderByCreatedAtDesc(@Param("albumId") String albumId, Pageable pageable);
+
+
     @Query("SELECT COUNT(sc) FROM SongCommentEntity sc WHERE sc.writer.id = :writerId")
     Long countByWriterId(@Param("writerId") String writerId);
+
 }

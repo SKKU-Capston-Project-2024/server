@@ -20,6 +20,7 @@ public class SongCommentInfoResDto {
     public static class CommentWriterInfo {
         private String userId;
         private String username;
+        private String profileImageUrl;
     }
 
     @Getter
