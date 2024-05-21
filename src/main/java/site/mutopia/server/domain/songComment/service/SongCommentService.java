@@ -77,7 +77,9 @@ public class SongCommentService {
     }
 
     public List<SongCommentInfoResDto> getRecentSongComment(int page) {
-        return songCommentRepository.findCommentsOrderByCreatedAtDesc(PageRequest.of(page, 20)).getContent();
+        return songCommentRepository.findCommentsOrderByCreatedAtDesc(PageRequest.of(page, 20)).getContent().stream()
+                .map(SongCommentInfoResDto::fromEntity)
+                .toList();
     }
 
     public List<SongCommentInfoResDto> getRecentSongCommentByAlbum(String albumId, int page) {

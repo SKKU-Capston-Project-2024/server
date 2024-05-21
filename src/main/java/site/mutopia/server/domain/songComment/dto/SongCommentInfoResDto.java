@@ -1,8 +1,14 @@
 package site.mutopia.server.domain.songComment.dto;
 
 import lombok.*;
+import site.mutopia.server.domain.songComment.entity.SongCommentEntity;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
+import static site.mutopia.server.global.util.StringUtil.unixTimeToString;
 
 @Getter
 @AllArgsConstructor
@@ -42,5 +48,34 @@ public class SongCommentInfoResDto {
         private SongInfo songInfo;
         private Integer rating;
         private String comment;
+        private String createdAt;
+    }
+
+    public static SongCommentInfoResDto fromEntity(SongCommentEntity entity) {
+        SongInfo songInfo = SongInfo.builder()
+                .id(entity.getSong().getId())
+                .title(entity.getSong().getTitle())
+                .duration(entity.getSong().getDuration())
+                .releaseDate(entity.getSong().getReleaseDate())
+                .build();
+
+        CommentWriterInfo writerInfo = CommentWriterInfo.builder()
+                .userId(entity.getWriter().getId())
+                .username(entity.getWriter().getUsername())
+                .profileImageUrl(entity.getWriter().getProfile().getProfilePicUrl())
+                .build();
+
+        SongCommentInfo songCommentInfo = SongCommentInfo.builder()
+                .songInfo(songInfo)
+                .rating(entity.getRating())
+                .comment(entity.getComment())
+                .createdAt(unixTimeToString(entity.getCreatedAt()))
+                .build();
+
+
+        return SongCommentInfoResDto.builder()
+                .writer(writerInfo)
+                .songComment(songCommentInfo)
+                .build();
     }
 }

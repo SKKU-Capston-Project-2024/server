@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.song.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class SongController {
 
     private final SongService songService;
 
+    @Operation(summary = "곡 검색", description = "키워드로 곡을 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<List<SongSearchResDto>> search(
             @RequestParam("keyword") String keyword,
@@ -35,6 +37,7 @@ public class SongController {
         return ResponseEntity.ok().body(songService.search(keyword, offset));
     }
 
+    @Operation(summary = "곡 정보 조회", description = "곡 정보를 조회합니다.")
     @GetMapping("/info/{songId}")
     public ResponseEntity<SongInfoDto> getSong(
             @LoginUser(require = false) UserEntity user,

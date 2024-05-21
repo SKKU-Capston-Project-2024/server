@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static site.mutopia.server.global.util.StringUtil.unixTimeToString;
+
 
 @Getter
 @AllArgsConstructor
@@ -91,12 +93,7 @@ public class AlbumReviewInfoDto {
         private Long totalLikeCount;
     }
 
-    private static String unixTimeToString(Long unixTime) {
-        Date date = new Date(unixTime);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-        return sdf.format(date);
-    }
+
 }
 
 

@@ -24,7 +24,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@Tag(name = "SongComment", description = "Song Comment APIs")
+@Tag(name = "Song Comment", description = "곡 한줄평")
 public class SongCommentController {
 
     private final SongCommentService songCommentService;
@@ -52,12 +52,15 @@ public class SongCommentController {
         return ResponseEntity.status(201).body(songCommentService.saveSongComment(userEntity, songId, songCommentReqDto));
     }
 
+
+    @Operation(summary = "사용자의 노래 한줄평 조회", description = "특정 사용자가 작성한 노래 한줄평을 조회합니다.")
     @GetMapping("/song/comment/recent")
     public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongComment(
             @RequestParam(value = "page", defaultValue = "0") int page){
         return ResponseEntity.ok().body(songCommentService.getRecentSongComment(page));
     }
 
+    @Operation(summary = "앨범의 노래 한줄평 조회", description = "특정 앨범의 수록곡에 대한 노래 한줄평을 조회합니다.")
     @GetMapping("/album/{albumId}/song/comment/recent")
     public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongCommentByAlbum(
             @PathVariable("albumId") String albumId,
