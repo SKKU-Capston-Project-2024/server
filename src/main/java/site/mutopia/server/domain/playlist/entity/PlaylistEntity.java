@@ -8,15 +8,26 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @Table(name = "playlist")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class PlaylistEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content", length = 10000)
+    private String content;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private UserEntity creator;
+
+    @Builder
+    public PlaylistEntity(String title, String content, UserEntity creator) {
+        this.title = title;
+        this.content = content;
+        this.creator = creator;
+    }
 }
