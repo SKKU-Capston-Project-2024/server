@@ -26,4 +26,11 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> 
             "FROM PlaylistEntity p " +
             "WHERE p.id = :playlistId")
     Optional<PlaylistInfoDto> findPlaylistInfoById(@Param("playlistId") Long playlistId);
+
+    @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
+            "p.id, p.creator.id, " +
+            "(SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id)) " +
+            "FROM PlaylistEntity p " +
+            "ORDER BY p.createdAt DESC")
+    Page<PlaylistInfoDto> findRecentPlaylists(Pageable pageable);
 }

@@ -77,6 +77,13 @@ public class PlaylistController {
         return ResponseEntity.ok().body(userPlaylists);
     }
 
+    @Operation(summary = "최근에 등록된 플레이리스트 조회하기", description = "사용자는 최근에 등록된 플레이리스트 목록을 조회할 수 있습니다.")
+    @GetMapping("/user/playlist/recent")
+    public ResponseEntity<List<?>> getRecentPlaylists(@RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getRecentPlaylists(limit);
+        return ResponseEntity.ok().body(userPlaylists);
+    }
+
     @Operation(summary = "플레이리스트 ID로 플레이리스트 단건 조회하기", description = "사용자는 플레이리스트 정보를 조회할 수 있습니다.")
     @GetMapping("/user/playlist/{playlistId}")
     public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@PathVariable("playlistId") Long playlistId) {

@@ -48,6 +48,14 @@ public class PlaylistService {
         return playlistInfoDto;
     }
 
+    public List<PlaylistInfoDto> getRecentPlaylists(int limit) {
+        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit)).getContent();
+
+        playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
+
+        return playlists;
+    }
+
     private List<PlaylistInfoDto.SongBriefInfo> fetchSongsForPlaylist(Long playlistId) {
         return playlistSongRepository.findByPlaylistId(playlistId).stream()
                 .map(playlistSong -> new PlaylistInfoDto.SongBriefInfo(playlistSong.getSong().getId(),
