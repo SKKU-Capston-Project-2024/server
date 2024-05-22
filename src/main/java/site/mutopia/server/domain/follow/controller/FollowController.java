@@ -65,7 +65,7 @@ public class FollowController {
     }
 
     @Operation(summary = "팔로우 여부 확인", description = "다른 사용자를 팔로우하고 있는지 확인합니다.")
-    @GetMapping("/user/{userId}/following")
+    @GetMapping("/user/following/{userId}")
     public ResponseEntity<FollowStatusResponse> isFollowing(
             @LoginUser UserEntity user,
             @PathVariable("userId") String userId){
