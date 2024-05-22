@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
+import site.mutopia.server.domain.follow.dto.FollowStatusResponse;
 import site.mutopia.server.domain.follow.dto.FollowerInfoDto;
 import site.mutopia.server.domain.follow.service.FollowService;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -27,14 +28,18 @@ public class FollowController {
 
     @Operation(summary = "팔로워 목록 조회", description = "사용자의 팔로워 목록을 조회합니다.")
     @GetMapping("/user/{userId}/followers")
-    public ResponseEntity<List<FollowerInfoDto>> getFollowers(@PathVariable("userId") String userId) {
-        return ResponseEntity.ok().body(followService.getFollowers(userId));
+    public ResponseEntity<List<FollowerInfoDto>> getFollowers(
+            @LoginUser UserEntity user,
+            @PathVariable("userId") String userId) {
+        return ResponseEntity.ok().body(followService.getFollowers(userId, user));
     }
 
     @Operation(summary = "팔로잉 목록 조회", description = "사용자의 팔로잉 목록을 조회합니다.")
     @GetMapping("/user/{userId}/followings")
-    public ResponseEntity<List<FollowerInfoDto>> getFollowings(@PathVariable("userId") String userId) {
-        return ResponseEntity.ok().body(followService.getFollowings(userId));
+    public ResponseEntity<List<FollowerInfoDto>> getFollowings(
+            @LoginUser UserEntity user,
+            @PathVariable("userId") String userId) {
+        return ResponseEntity.ok().body(followService.getFollowings(userId, user));
     }
 
     @Operation(summary = "팔로우 하기", description = "다른 사용자를 팔로우합니다.")
@@ -58,5 +63,14 @@ public class FollowController {
         followService.unfollow(user, userId);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "팔로우 여부 확인", description = "다른 사용자를 팔로우하고 있는지 확인합니다.")
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<FollowStatusResponse> isFollowing(
+            @LoginUser UserEntity user,
+            @PathVariable("userId") String userId){
+        return ResponseEntity.ok().body(followService.isFollowing(user, userId));
+    }
+
 
 }

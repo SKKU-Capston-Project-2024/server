@@ -20,13 +20,14 @@ spring:
       - jwt
       - cloud
       - db
+      - youtube
     active: dev
 logging:
   level:
     root: debug
     org:
       hibernate:
-        SQL: debug
+        SQL: off
 client-info:
   host: "https://mutopia.site"
 
