@@ -11,6 +11,6 @@ public class AlbumReviewLikeResDto {
     private Long likeCount;
 
     public enum AlbumReviewLikeToggleResStatus {
-        ON, OFF, NULL
+        ON, OFF
     }
 }
