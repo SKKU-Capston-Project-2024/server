@@ -76,7 +76,7 @@ public class SongCommentController {
         return ResponseEntity.ok().body(songCommentService.getRecentSongCommentByAlbum(albumId, page));
     }
 
-    @GetMapping("user/{userId}/song/comment")
+    @GetMapping("/user/{userId}/song/comment")
     @Operation(summary = "사용자의 곡 한줄평 조회", description = "특정 사용자가 작성한 노래 한줄평을 최신순으로 조회합니다.")
     public ResponseEntity<List<SongCommentInfoResDto>> getUserSongComments(@PathVariable("userId") String userId,
                                                                            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
