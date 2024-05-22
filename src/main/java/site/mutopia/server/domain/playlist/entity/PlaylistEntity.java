@@ -2,6 +2,7 @@ package site.mutopia.server.domain.playlist.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
 @Entity
@@ -23,6 +24,9 @@ public class PlaylistEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private UserEntity creator;
+
+    @CreatedDate
+    private Long createdAt;
 
     @Builder
     public PlaylistEntity(String title, String content, UserEntity creator) {

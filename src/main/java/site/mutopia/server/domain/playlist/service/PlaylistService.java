@@ -34,7 +34,22 @@ public class PlaylistService {
 
     // TODO: 성능 개선
     public List<PlaylistInfoDto> getUserPlaylists(String userId, int limit) {
-        List<PlaylistInfoDto> playlists = playlistRepository.findPlaylistInfoByUserId(userId, PageRequest.of(0, limit)).getContent();
+        List<PlaylistInfoDto> playlists = playlistRepository.findPlaylistInfosByUserId(userId, PageRequest.of(0, limit)).getContent();
+
+        playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
+
+        return playlists;
+    }
+
+    public PlaylistInfoDto getUserPlaylistById(Long playlistId) {
+        PlaylistInfoDto playlistInfoDto = playlistRepository.findPlaylistInfoById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
+        playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistId));
+
+        return playlistInfoDto;
+    }
+
+    public List<PlaylistInfoDto> getRecentPlaylists(int limit) {
+        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit)).getContent();
 
         playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
 
