@@ -28,36 +28,16 @@ public class SongCommentService {
 
     @Transactional(readOnly = true)
     public List<SongCommentInfoResDto> getUserSongComments(String userId, int page) {
-        Page<SongCommentInfoResDto> songComments = songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20));
-        return songComments.getContent();
+        return songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20)).getContent().stream()
+                .map(SongCommentInfoResDto::fromEntity)
+                .toList();
     }
 
     public SongCommentInfoResDto getSongComment(String userId, String songId) {
         SongCommentEntity comment = songCommentRepository.findById(new SongCommentId(userId, songId))
                 .orElseThrow(() -> new SongCommentNotFoundException(userId, songId));
 
-        SongCommentInfoResDto.SongInfo songInfo = SongCommentInfoResDto.SongInfo.builder()
-                .id(comment.getSong().getId())
-                .title(comment.getSong().getTitle())
-                .duration(comment.getSong().getDuration())
-                .releaseDate(comment.getSong().getReleaseDate())
-                .build();
-
-        SongCommentInfoResDto.CommentWriterInfo writerInfo = SongCommentInfoResDto.CommentWriterInfo.builder()
-                .userId(comment.getWriter().getId())
-                .username(comment.getWriter().getUsername())
-                .build();
-
-        SongCommentInfoResDto.SongCommentInfo songCommentInfo = SongCommentInfoResDto.SongCommentInfo.builder()
-                .songInfo(songInfo)
-                .rating(comment.getRating())
-                .comment(comment.getComment())
-                .build();
-
-        return SongCommentInfoResDto.builder()
-                .writer(writerInfo)
-                .songComment(songCommentInfo)
-                .build();
+        return SongCommentInfoResDto.fromEntity(comment);
 
     }
 
@@ -74,6 +54,12 @@ public class SongCommentService {
                 .build();
 
         return songCommentRepository.save(comment);
+    }
+
+    public List<SongCommentInfoResDto> getSongCommentBySongId(String songId, int offset) {
+        return songCommentRepository.findCommentsOrderByCreatedAtDesc(songId, PageRequest.of(offset, 20)).getContent().stream()
+                .map(SongCommentInfoResDto::fromEntity)
+                .toList();
     }
 
     public List<SongCommentInfoResDto> getRecentSongComment(int page) {

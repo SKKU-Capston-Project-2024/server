@@ -13,19 +13,14 @@ import site.mutopia.server.domain.songComment.entity.SongCommentId;
 @Repository
 public interface SongCommentRepository extends JpaRepository<SongCommentEntity, SongCommentId> {
 
-    @Query("SELECT new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
-            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$CommentWriterInfo(writer.id, writer.username, writer.profile.profilePicUrl), " +
-            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongCommentInfo(" +
-            "new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto$SongInfo(song.id, song.title, song.duration, song.releaseDate), " +
-            "comment.rating, comment.comment)) " +
-            "FROM SongCommentEntity comment " +
-            "JOIN comment.writer writer " +
-            "JOIN comment.song song " +
-            "WHERE writer.id = :userId")
-    Page<SongCommentInfoResDto> findCommentsByUserId(@Param("userId") String userId, Pageable pageable);
+    @Query("SELECT distinct c FROM SongCommentEntity c left join fetch c.song left join fetch c.writer left join fetch c.song.album left join fetch c.writer.profile where c.writer.id = :userId order by c.createdAt desc")
+    Page<SongCommentEntity> findCommentsByUserId(@Param("userId") String userId, Pageable pageable);
 
-    @Query("SELECT distinct c FROM SongCommentEntity c left join fetch c.song left join fetch c.writer left join fetch c.song.album left join fetch c.writer.profile")
+    @Query("SELECT distinct c FROM SongCommentEntity c left join fetch c.song left join fetch c.writer left join fetch c.song.album left join fetch c.writer.profile order by c.createdAt desc")
     Page<SongCommentEntity> findCommentsOrderByCreatedAtDesc(Pageable pageable);
+
+    @Query("SELECT distinct c FROM SongCommentEntity c left join fetch c.song left join fetch c.writer left join fetch c.song.album left join fetch c.writer.profile where c.song.id = :songId order by c.createdAt desc")
+    Page<SongCommentEntity> findCommentsOrderByCreatedAtDesc(@Param("songId") String songId, Pageable pageable);
 
 
 
