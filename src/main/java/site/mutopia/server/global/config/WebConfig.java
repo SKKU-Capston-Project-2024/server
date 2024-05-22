@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "https://mutopia-clone.vercel.app", "https://mutopia.site")
+                .allowedOrigins("http://localhost:3000", "https://mutopia-clone.vercel.app", "https://mutopia.site", "https://api.mutopia.site", "https://mutopia.site/swagger-ui/index.html")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS");
     }
 }
