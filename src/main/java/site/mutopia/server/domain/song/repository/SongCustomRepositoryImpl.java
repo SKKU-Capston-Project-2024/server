@@ -21,7 +21,7 @@ public class SongCustomRepositoryImpl implements SongCustomRepository{
                 "CAST((SELECT AVG(sc.rating) FROM SongCommentEntity sc WHERE sc.song.id = s.id) AS double), " +
                 "CAST((SELECT COUNT(sl) FROM SongLikeEntity sl WHERE sl.song.id = s.id) AS long), " +
                 (loginUserId == null ? "false, " : "CAST((SELECT COUNT(*) > 0 FROM SongLikeEntity sl WHERE sl.song.id = s.id AND sl.user.id = :loginUserId) AS boolean), ") +
-                (loginUserId == null ? "false " : "CAST((SELECT sc.rating FROM SongCommentEntity sc WHERE sc.song.id = s.id AND sc.writer.id = :loginUserId) AS Long) ") +
+                (loginUserId == null ? "null " : "CAST((SELECT sc.rating FROM SongCommentEntity sc WHERE sc.song.id = s.id AND sc.writer.id = :loginUserId) AS Long) ") +
                 ") FROM SongEntity s " +
                 "WHERE s.id = :songId";
 
