@@ -1,10 +1,8 @@
 package site.mutopia.server.domain.songComment.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
@@ -12,9 +10,12 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @Table(name = "song_comment")
 @IdClass(SongCommentId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @AllArgsConstructor
 @Builder
 public class SongCommentEntity {
+
+
     @Id
     @ManyToOne
     @JoinColumn(name = "writer_id")
@@ -32,4 +33,7 @@ public class SongCommentEntity {
 
     @Column(name = "comment")
     private String comment;
+
+    @CreatedDate
+    private Long createdAt;
 }

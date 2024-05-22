@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
 import site.mutopia.server.domain.album.repository.AlbumRepository;
+import site.mutopia.server.domain.song.SongNotFoundException;
+import site.mutopia.server.domain.song.dto.SongInfoDto;
 import site.mutopia.server.domain.song.dto.SongSearchResDto;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.song.repository.SongRepository;
+import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.spotify.SpotifyApi;
 import site.mutopia.server.spotify.convertor.DomainConvertor;
 import site.mutopia.server.spotify.dto.track.Tracks;
@@ -38,5 +41,13 @@ public class SongService {
         return songs;
 
     }
+
+    public SongInfoDto getSong(UserEntity user,String songId) {
+        return songRepository.findInfoById(user == null ? null : user.getId(), songId)
+                .orElseThrow(() -> new SongNotFoundException(songId));
+    }
+
+
+
 
 }

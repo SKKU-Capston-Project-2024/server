@@ -50,8 +50,8 @@ public class UserController {
 
     @GetMapping("/{userId}/song/comment")
     public ResponseEntity<List<SongCommentInfoResDto>> getUserSongComments(@PathVariable("userId") String userId,
-                                                 @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, limit);
+                                                 @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, page);
         return ResponseEntity.ok().body(userSongComments);
     }
 
