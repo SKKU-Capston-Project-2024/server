@@ -16,7 +16,7 @@ public class SongCustomRepositoryImpl implements SongCustomRepository{
     @Override
     public Optional<SongInfoDto> findInfoById(String loginUserId, String songId) {
         String jpql = "SELECT new site.mutopia.server.domain.song.dto.SongInfoDto(" +
-                "s.id, s.album.id, s.album.name, s.album.coverImageUrl, s.album.artistName, " +
+                "s.id, s.title ,s.album.id, s.album.name, s.album.coverImageUrl, s.album.artistName, " +
                 "CAST((SELECT COUNT(*) FROM SongCommentEntity sc WHERE sc.song.id = s.id) AS long), " +
                 "CAST((SELECT AVG(sc.rating) FROM SongCommentEntity sc WHERE sc.song.id = s.id) AS double), " +
                 "CAST((SELECT COUNT(sl) FROM SongLikeEntity sl WHERE sl.song.id = s.id) AS long), " +

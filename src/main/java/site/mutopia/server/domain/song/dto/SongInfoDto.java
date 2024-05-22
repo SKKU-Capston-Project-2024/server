@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SongInfoDto {
     String id;
+    String trackName;
     String albumId;
     String albumName;
     String albumCoverUrl;
