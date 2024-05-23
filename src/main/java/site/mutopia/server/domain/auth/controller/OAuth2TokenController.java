@@ -18,6 +18,7 @@ public class OAuth2TokenController {
     public GetGoogleTokenDto getToken(@LoginUser UserEntity loggedInUser) {
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("google", loggedInUser.getId());
 
+        // TODO: exception 정의
         if (client == null) {
             throw new RuntimeException("Error: Authorized client not found");
         }
