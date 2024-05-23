@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 
 import java.util.List;
@@ -258,6 +259,36 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
         if (loginUserId != null) {
             query.setParameter("loginUserId", loginUserId);
         }
+        return query.getResultList();
+    }
+
+    @Override
+    public List<AlbumReviewInfoDto> findAllByFollowingOrderByCreatedAt(String userId, Pageable pageable) {
+        String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto( " +
+                "CAST(review.id AS long), " +
+                "review.title, review.content, review.rating, " +
+                "CAST((select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) AS long), " +
+                "review.createdAt, " +
+                "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
+                "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
+                "album.length, " +
+                "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
+                "CAST((select count(albumLike) from AlbumLikeEntity albumLike where albumLike.album.id = album.id) AS long), " +
+                "CAST((select count(*)>0 from AlbumReviewLikeEntity albumReviewLike2 where albumReviewLike2.review.id = review.id and albumReviewLike2.user.id = :userId) AS boolean )" +
+                ") FROM FollowEntity fe " +
+                "JOIN AlbumReviewEntity review ON fe.following.id = review.writer.id " +
+                "JOIN AlbumEntity album ON review.album.id = album.id " +
+                "JOIN review.writer writer " +
+                "WHERE fe.user.id = :userId " +
+                "ORDER BY review.createdAt DESC";
+
+
+        TypedQuery<AlbumReviewInfoDto> query = em.createQuery(jpql, AlbumReviewInfoDto.class)
+                .setParameter("userId", userId)
+                .setMaxResults(pageable.getPageSize())
+                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+
         return query.getResultList();
     }
 

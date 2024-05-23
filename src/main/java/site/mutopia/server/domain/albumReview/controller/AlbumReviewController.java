@@ -61,4 +61,16 @@ public class AlbumReviewController {
             @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
         return ResponseEntity.ok().body(albumReviewService.getPopularAlbumReviews(loggedInUser, offset));
     }
+
+    @Operation(summary = "팔로잉의 최신 리뷰 조회", description = "팔로워들의 최신 리뷰를 20개씩 가져옵니다. 페이지는 0번부터 시작")
+    @GetMapping(value = "/user/following/review/recent")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getFollowingRecentAlbumReview(
+            @LoginUser UserEntity loggedInUser, @RequestParam("page") int page){
+        return ResponseEntity.ok().body(albumReviewService.getFollowingRecentAlbumReview(loggedInUser, page));
+    }
+
+
+
+
+
 }

@@ -1,5 +1,6 @@
 package site.mutopia.server.domain.albumReview.repository;
 
+import org.springframework.data.domain.Pageable;
 import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 
 import java.util.List;
@@ -22,5 +23,7 @@ public interface AlbumReviewCustomRepository {
     List<AlbumReviewInfoDto> findAllOrderByLikeDesc(String loginUserId, Integer offset);
 
     List<AlbumReviewInfoDto> findLikedByUserIdOrderByCreatedAt(String userId, String loginUserId, Integer offset);
+
+    List<AlbumReviewInfoDto> findAllByFollowingOrderByCreatedAt(String userId, Pageable pageable);
 
 }

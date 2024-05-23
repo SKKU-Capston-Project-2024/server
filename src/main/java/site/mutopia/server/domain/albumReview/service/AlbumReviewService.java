@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.exception.AlbumNotFoundException;
@@ -104,6 +106,10 @@ public class AlbumReviewService {
         return albumReviewRepository.findAllByUserIdOrderByLike(userId, offset, loginUserId);
     }
 
+    public List<AlbumReviewInfoDto> getFollowingRecentAlbumReview(UserEntity userEntity, int page) {
+        return albumReviewRepository.findAllByFollowingOrderByCreatedAt(userEntity.getId(), Pageable.ofSize(20).withPage(page));
+
+    }
 
 
 }
