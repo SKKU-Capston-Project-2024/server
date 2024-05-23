@@ -38,7 +38,7 @@ public class SongController {
     }
 
     @Operation(summary = "곡 정보 조회", description = "곡 정보를 조회합니다.")
-    @GetMapping("/info/{songId}")
+    @GetMapping("/info")
     public ResponseEntity<SongInfoDto> getSong(
             @LoginUser(require = false) UserEntity user,
             @RequestParam("songId") String songId
