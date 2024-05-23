@@ -30,7 +30,6 @@ public class UserEntity {
     @Column(name = "provider_id")
     private String providerId;
 
-
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private ProfileEntity profile;
 
