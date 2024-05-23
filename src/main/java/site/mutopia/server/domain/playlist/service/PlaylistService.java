@@ -3,6 +3,7 @@ package site.mutopia.server.domain.playlist.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.playlist.dto.AddSongToPlaylistReqDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
@@ -90,5 +91,11 @@ public class PlaylistService {
     public void deletePlaylist(Long playlistId) {
         playlistSongRepository.deleteByPlaylistId(playlistId);
         playlistRepository.deleteById(playlistId);
+    }
+
+    public List<PlaylistInfoDto> getLikedPlaylistsByUserId(String userId, int page) {
+        List<PlaylistInfoDto> info = playlistRepository.findLikedPlayList(userId, Pageable.ofSize(20).withPage(page)).getContent();
+        info.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
+        return info;
     }
 }

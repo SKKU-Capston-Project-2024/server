@@ -3,7 +3,11 @@ package site.mutopia.server.domain.playlist.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import site.mutopia.server.domain.playlistLike.entity.PlaylistLikeEntity;
+import site.mutopia.server.domain.playlistSong.entity.PlaylistSongEntity;
 import site.mutopia.server.domain.user.entity.UserEntity;
+
+import java.util.List;
 
 @Entity
 @Table(name = "playlist")
@@ -24,6 +28,10 @@ public class PlaylistEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private UserEntity creator;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "playlist_id")
+    private List<PlaylistSongEntity> songs;
 
     @CreatedDate
     private Long createdAt;

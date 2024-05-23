@@ -3,6 +3,7 @@ package site.mutopia.server.domain.albumReviewLike.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
 import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
@@ -11,6 +12,8 @@ import site.mutopia.server.domain.albumReviewLike.repository.AlbumReviewLikeRepo
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +48,10 @@ public class AlbumReviewLikeService {
     @Transactional(readOnly = true)
     public boolean isAlbumReviewLikeExists(Long albumReviewId, String userId) {
         return albumReviewLikeRepository.existsByAlbumReviewIdAndUserId(albumReviewId, userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AlbumReviewInfoDto> getLikedAlbumReviews(UserEntity loggingUser, String userId, Integer offset) {
+        return albumReviewRepository.findLikedByUserIdOrderByCreatedAt(userId, loggingUser == null ? null : loggingUser.getId(), offset);
     }
 }
