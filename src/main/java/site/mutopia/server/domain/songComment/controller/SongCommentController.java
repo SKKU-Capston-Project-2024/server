@@ -61,7 +61,7 @@ public class SongCommentController {
     }
 
 
-    @Operation(summary = "사용자의 곡 한줄평 조회", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
+    @Operation(summary = "전체 곡 한줄평 조회", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
     @GetMapping("/song/comment/recent")
     public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongComment(
             @RequestParam(value = "page", defaultValue = "0") int page){

@@ -69,7 +69,10 @@ public class SongCommentService {
     }
 
     public List<SongCommentInfoResDto> getRecentSongCommentByAlbum(String albumId, int page) {
-        return songCommentRepository.findCommentsByAlbumIdOrderByCreatedAtDesc(albumId, PageRequest.of(page, 20)).getContent();
+        return songCommentRepository.findCommentsByAlbumIdOrderByCreatedAtDesc(albumId, PageRequest.of(page, 20)).getContent()
+                .stream()
+                .map(SongCommentInfoResDto::fromEntity)
+                .toList();
     }
 
 
