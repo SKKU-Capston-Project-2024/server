@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import site.mutopia.server.infra.youtube.dto.YoutubePlaylistSaveReqDto;
 
 @Component
 @Slf4j
@@ -76,6 +77,55 @@ public class YoutubeApi {
                             .queryParam("key", this.apiKey)
                             .build())
                     .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error("API error: {}", errorBody);
+                                    return Mono.error(new RuntimeException("API error: " + errorBody));
+                                });
+                    })
+                    .bodyToMono(JsonNode.class)
+                    .doOnError(WebClientResponseException.class, ex -> {
+                        log.error("WebClientResponseException: Status {}, Message {}", ex.getRawStatusCode(), ex.getMessage());
+                    })
+                    .doOnError(Exception.class, ex -> {
+                        log.error("Exception: {}", ex.getMessage());
+                    })
+                    .block();
+        } catch (WebClientResponseException ex) {
+            log.error("Error response: Status {}, Body {}", ex.getRawStatusCode(), ex.getResponseBodyAsString());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("General error: {}", ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public JsonNode savePlaylist(String accessToken, String title, String description) {
+        try {
+            YoutubePlaylistSaveReqDto request =
+                    YoutubePlaylistSaveReqDto.builder()
+                            .snippet(YoutubePlaylistSaveReqDto.Snippet.builder()
+                                    .title(title)
+                                    .description(description)
+                                    .build())
+                            .status(YoutubePlaylistSaveReqDto.Status.builder().privacyStatus("public").build())
+                            .build();
+
+            return webClient.post()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/playlists")
+                            .queryParam("part", "id")
+                            .queryParam("part", "contentDetails")
+                            .queryParam("part", "player")
+                            .queryParam("part", "snippet")
+                            .queryParam("part", "status")
+                            .queryParam("key", this.apiKey)
+                            .build())
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Content-Type", "application/json")
+                    .body(Mono.just(request), YoutubePlaylistSaveReqDto.class)
                     .retrieve()
                     .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), clientResponse -> {
                         return clientResponse.bodyToMono(String.class)

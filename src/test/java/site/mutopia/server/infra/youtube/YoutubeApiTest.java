@@ -13,7 +13,9 @@ class YoutubeApiTest {
 
     @Test
     void test1() {
-        JsonNode res = youtubeApi.getPlaylists("ya29.a0AXooCgt_Y1i-1Gy3Xxc3plQrSngZTBnXaiRQxuxEpPL5hFHW7_bF7kreCc5SeElUHZ5CGiaxX0SPITfVRotRcnwpUXHaoVOahCdlpiyKj-d4hGUvjWBvSv_PggRFzMGQ3l5J2qjS4SM4JV7uTYQqKMLvVBLkh7MC9yKCaCgYKAegSARESFQHGX2Miaz1S914zHIOZbtfDx9bNvw0171");
+        String accessToken = "ya29.a0AXooCgsuARDNagfrXQk12QnkETHiorB5jXiQ_oHNtHdXl5NVTOs_Qi8OaGWfLkpRc-BhbcqI1p3VdsRM5omTye5fnMAm698W2BhTCx3FCBrY0KeBPhI87_JTG_THefMTr_HvXIb6ZGayuq-BDUm7QCHrIdpx-dTbnyiraCgYKAdgSARESFQHGX2MidBzwtEHQHmZw33bgImVH8g0171";
+
+        JsonNode res = youtubeApi.savePlaylist(accessToken, "test-1", "description-1");
         System.out.println(res);
     }
 }
