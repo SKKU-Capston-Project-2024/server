@@ -1,10 +1,7 @@
 package site.mutopia.server.domain.albumLike.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
@@ -13,6 +10,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @IdClass(AlbumLikeId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Builder
 public class AlbumLikeEntity {
     @Id
@@ -22,7 +20,7 @@ public class AlbumLikeEntity {
     private AlbumEntity album;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @MapsId("user")
     private UserEntity user;

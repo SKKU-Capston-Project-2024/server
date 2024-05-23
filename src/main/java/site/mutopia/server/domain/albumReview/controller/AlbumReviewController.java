@@ -61,5 +61,4 @@ public class AlbumReviewController {
             @LoginUser(require = false) UserEntity loggedInUser, @RequestParam("offset") int offset){
         return ResponseEntity.ok().body(albumReviewService.getPopularAlbumReviews(loggedInUser, offset));
     }
-
 }

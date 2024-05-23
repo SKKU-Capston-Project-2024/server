@@ -1,6 +1,8 @@
 package site.mutopia.server.domain.playlist.dto;
 
 import lombok.*;
+import site.mutopia.server.domain.playlistLike.entity.PlaylistLikeEntity;
+import site.mutopia.server.domain.songLike.entity.SongLikeEntity;
 
 import java.util.List;
 
@@ -30,4 +32,5 @@ public class PlaylistInfoDto {
         this.creatorId = creatorId;
         this.likeCount = likeCount;
     }
+
 }

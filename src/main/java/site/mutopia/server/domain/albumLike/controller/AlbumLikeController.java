@@ -10,10 +10,13 @@ import site.mutopia.server.domain.albumLike.dto.AlbumLikeStatusResDto.AlbumLikeT
 import site.mutopia.server.domain.albumLike.dto.AlbumLikeStatusResDto.IsUserLoggedIn;
 import site.mutopia.server.domain.albumLike.dto.AlbumLikeToggleResDto;
 import site.mutopia.server.domain.albumLike.dto.AlbumLikeToggleResDto.AlbumLikeToggleResStatus;
+import site.mutopia.server.domain.albumLike.dto.LikeAlbumDto;
 import site.mutopia.server.domain.albumLike.service.AlbumLikeService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.OkResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/album")
@@ -40,6 +43,12 @@ public class AlbumLikeController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    @Operation(summary ="특정 유저가 좋아요 한 앨범 조회", description = "특정 유저가 좋아요한 앨범을 조회합니다.")
+    @GetMapping("/like/{userId}")
+    public ResponseEntity<List<LikeAlbumDto>> getAlbumsLikedByUser(@PathVariable("userId") String userId, @RequestParam("page") int page) {
+        return ResponseEntity.ok().body(albumLikeService.getLikedAlbums(userId, page));
+    }
+
     @GetMapping("/{albumId}/like/status")
     @Operation(summary = "앨범에 대한 좋아요 상태 조회", description = "사용자는 어떤 앨범에 대한 좋아요 상태를 조회할 수 있습니다. 로그인 하지 않은 경우, isUserLoggedIn=NO, likeStatus=NULL")
     @OkResponse
@@ -58,4 +67,5 @@ public class AlbumLikeController {
 
         return ResponseEntity.ok().body(dto);
     }
+
 }

@@ -30,11 +30,11 @@ public class AlbumReviewEntity {
     @Column(name = "rating")
     private Integer rating;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private UserEntity writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
     private AlbumEntity album;
 

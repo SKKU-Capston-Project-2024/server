@@ -229,5 +229,37 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
         return query.getResultList();
     }
 
+    @Override
+    public List<AlbumReviewInfoDto> findLikedByUserIdOrderByCreatedAt(String userId, String loginUserId, Integer offset) {
+        String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto( " +
+                "CAST(review.id AS long), " +
+                "review.title, review.content, review.rating, " +
+                "CAST((select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) AS long), " +
+                "review.createdAt, " +
+                "album.id, writer.id, writer.username, " +
+                "CAST((select profilePicUrl from ProfileEntity profile where profile.user.id = writer.id) AS string), " +
+                "album.name, album.artistName, album.coverImageUrl, album.releaseDate, " +
+                "album.length, " +
+                "CAST((select count(albumReview1) from AlbumReviewEntity albumReview1 where albumReview1.album.id = album.id) AS long), " +
+                "CAST((select count(albumLike) from AlbumLikeEntity albumLike where albumLike.album.id = album.id) AS long), " +
+                (loginUserId != null ? "CAST((select count(*)>0 from AlbumReviewLikeEntity albumReviewLike2 where albumReviewLike2.review.id = review.id and albumReviewLike2.user.id = :loginUserId) AS boolean ) " : "FALSE ") +
+                ") FROM AlbumReviewEntity review " +
+                "INNER JOIN review.album album " +
+                "INNER JOIN review.writer writer " +
+                "INNER JOIN AlbumReviewLikeEntity albumReviewLike ON review.id = albumReviewLike.review.id " +
+                "WHERE albumReviewLike.user.id = :userId " +
+                "ORDER BY (select count(albumReviewLike) from AlbumReviewLikeEntity albumReviewLike where albumReviewLike.review.id = review.id) DESC";
+
+
+        TypedQuery<AlbumReviewInfoDto> query = em.createQuery(jpql, AlbumReviewInfoDto.class)
+                .setParameter("userId", userId)
+                .setMaxResults(20)
+                .setFirstResult(offset);
+        if (loginUserId != null) {
+            query.setParameter("loginUserId", loginUserId);
+        }
+        return query.getResultList();
+    }
+
 
 }

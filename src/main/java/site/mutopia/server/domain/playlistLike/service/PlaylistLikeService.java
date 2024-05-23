@@ -1,14 +1,18 @@
 package site.mutopia.server.domain.playlistLike.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 import site.mutopia.server.domain.playlist.exception.PlaylistNotFoundException;
 import site.mutopia.server.domain.playlist.repository.PlaylistRepository;
 import site.mutopia.server.domain.playlistLike.entity.PlaylistLikeEntity;
 import site.mutopia.server.domain.playlistLike.repository.PlaylistLikeRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,4 +48,6 @@ public class PlaylistLikeService {
     public Long countLikesByPlaylistId(Long playlistId) {
         return playlistLikeRepository.countLikesByPlaylistId(playlistId);
     }
+
+
 }
