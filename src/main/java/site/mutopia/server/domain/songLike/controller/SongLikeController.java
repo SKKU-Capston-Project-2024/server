@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.songLike.dto.LikeSongDto;
 import site.mutopia.server.domain.songLike.dto.SongLikeStatusResDto;
 import site.mutopia.server.domain.songLike.dto.SongLikeStatusResDto.SongLikeToggleStatus;
 import site.mutopia.server.domain.songLike.dto.SongLikeStatusResDto.IsUserLoggedIn;
@@ -14,6 +15,8 @@ import site.mutopia.server.domain.songLike.service.SongLikeService;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.OkResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/song")
@@ -58,4 +61,11 @@ public class SongLikeController {
 
         return ResponseEntity.ok().body(dto);
     }
+
+    @Operation(summary = "특정 유저가 좋아요 한 곡 가져오기", description = "특정 유저가 좋아요한 곡을 가져옵니다.")
+    @GetMapping("/like/{userId}")
+    public ResponseEntity<List<LikeSongDto>> getLikedSongsByUser(@PathVariable("userId") String userId, @RequestParam("page") int page) {
+        return ResponseEntity.ok().body(songLikeService.getLikedSongsByUser(userId, page));
+    }
+
 }

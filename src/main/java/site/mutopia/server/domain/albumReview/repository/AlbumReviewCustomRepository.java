@@ -21,5 +21,6 @@ public interface AlbumReviewCustomRepository {
 
     List<AlbumReviewInfoDto> findAllOrderByLikeDesc(String loginUserId, Integer offset);
 
+    List<AlbumReviewInfoDto> findLikedByUserIdOrderByCreatedAt(String userId, String loginUserId, Integer offset);
 
 }

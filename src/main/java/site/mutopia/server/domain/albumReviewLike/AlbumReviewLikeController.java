@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto;
 import site.mutopia.server.domain.albumReviewLike.dto.AlbumReviewLikeResDto;
 import site.mutopia.server.domain.albumReviewLike.dto.AlbumReviewLikeResDto.AlbumReviewLikeToggleResStatus;
 import site.mutopia.server.domain.albumReviewLike.dto.AlbumReviewLikeStatusResDto;
@@ -14,6 +15,8 @@ import site.mutopia.server.domain.albumReviewLike.service.AlbumReviewLikeService
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.OkResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/album/review")
@@ -55,5 +58,13 @@ public class AlbumReviewLikeController {
                 .build();
         return ResponseEntity.ok().body(dto);
     }
+
+    @Operation(summary = "특정 유저가 좋아요한 리뷰 가져오기", description = "특정 유저가 좋아요한 리뷰를 가져옵니다.")
+    @GetMapping(value = "/like/{userId}")
+    public ResponseEntity<List<AlbumReviewInfoDto>> getLikedAlbumReview(
+            @LoginUser(require = false) UserEntity loggedInUser, @PathVariable("userId") String userId, @RequestParam("offset") int offset){
+        return ResponseEntity.ok().body(albumReviewLikeService.getLikedAlbumReviews(loggedInUser, userId, offset));
+    }
+
 
 }

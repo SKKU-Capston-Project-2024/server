@@ -24,10 +24,10 @@ spring:
     active: dev
 logging:
   level:
-    root: debug
+    root: error
     org:
       hibernate:
-        SQL: off
+        SQL: debug
 client-info:
   host: "https://mutopia.site"
 

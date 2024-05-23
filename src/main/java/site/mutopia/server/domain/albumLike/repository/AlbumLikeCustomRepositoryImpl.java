@@ -3,7 +3,9 @@ package site.mutopia.server.domain.albumLike.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @RequiredArgsConstructor
 public class AlbumLikeCustomRepositoryImpl implements AlbumLikeCustomRepository{
 
