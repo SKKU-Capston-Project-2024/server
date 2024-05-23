@@ -9,6 +9,8 @@ import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.infra.youtube.YoutubeApi;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +28,22 @@ public class YoutubePlaylistService {
         JsonNode savePlaylistRes = youtubeApi.savePlaylist(accessToken, title, description);
         String youtubePlaylistId = savePlaylistRes.path("id").asText();
 
-        // TODO: youtubeApi 비동기로 성능개선
-        songs.forEach(song -> {
-            JsonNode video = youtubeApi.getFirstVideo(song.getTitle() + " - " + song.getAlbum().getArtistName());
-            String videoId = video.path("items").get(0).path("id").path("videoId").asText();
-            youtubeApi.addVideoToPlaylist(accessToken, youtubePlaylistId, videoId);
-        });
+        List<CompletableFuture<String>> videoIdFutures = songs.stream()
+                .map(song -> CompletableFuture.supplyAsync(() -> {
+                    JsonNode video = youtubeApi.getFirstVideo(song.getTitle() + " - " + song.getAlbum().getArtistName());
+                    return video.path("items").get(0).path("id").path("videoId").asText();
+                }))
+                .toList();
+
+        List<String> videoIds = videoIdFutures.stream()
+                .map(CompletableFuture::join)
+                .toList();
+
+        List<CompletableFuture<JsonNode>> addVideoFutures = videoIds.stream()
+                .map(videoId -> youtubeApi.addVideoToPlaylistAsync(accessToken, youtubePlaylistId, videoId))
+                .toList();
+
+        addVideoFutures.forEach(CompletableFuture::join);
 
         crudService.savePlaylist(youtubePlaylistId, userId);
 

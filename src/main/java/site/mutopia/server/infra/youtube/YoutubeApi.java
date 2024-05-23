@@ -12,6 +12,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 import site.mutopia.server.infra.youtube.dto.YoutubePlaylistSaveReqDto;
 
+import java.util.concurrent.CompletableFuture;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -153,6 +155,44 @@ public class YoutubeApi {
         }
     }
 
+    public JsonNode getPlaylistById(String accessToken, String playlistId) {
+        try {
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/playlists")
+                            .queryParam("part", "id")
+                            .queryParam("part", "contentDetails")
+                            .queryParam("part", "snippet")
+                            .queryParam("part", "status")
+                            .queryParam("id", playlistId)
+                            .queryParam("key", this.apiKey)
+                            .build())
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Accept", "application/json")
+                    .retrieve()
+                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error("API error: {}", errorBody);
+                                    return Mono.error(new RuntimeException("API error: " + errorBody));
+                                });
+                    })
+                    .bodyToMono(JsonNode.class)
+                    .doOnError(WebClientResponseException.class, ex -> {
+                        log.error("WebClientResponseException: Status {}, Message {}", ex.getRawStatusCode(), ex.getMessage());
+                    })
+                    .doOnError(Exception.class, ex -> {
+                        log.error("Exception: {}", ex.getMessage());
+                    })
+                    .block();
+        } catch (WebClientResponseException ex) {
+            log.error("Error response: Status {}, Body {}", ex.getRawStatusCode(), ex.getResponseBodyAsString());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("General error: {}", ex.getMessage());
+            throw ex;
+        }
+    }
 
     public JsonNode addVideoToPlaylist(String accessToken, String playlistId, String videoId) {
         try {
@@ -193,6 +233,49 @@ public class YoutubeApi {
             log.error("General error: {}", ex.getMessage());
             throw ex;
         }
+    }
+
+    public CompletableFuture<JsonNode> addVideoToPlaylistAsync(String accessToken, String playlistId, String videoId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                JsonNode request = createAddVideoRequest(playlistId, videoId);
+
+                return webClient.post()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/playlistItems")
+                                .queryParam("part", "id")
+                                .queryParam("part", "contentDetails")
+                                .queryParam("part", "snippet")
+                                .queryParam("part", "status")
+                                .queryParam("key", this.apiKey)
+                                .build())
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Content-Type", "application/json")
+                        .body(Mono.just(request), JsonNode.class)
+                        .retrieve()
+                        .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), clientResponse -> {
+                            return clientResponse.bodyToMono(String.class)
+                                    .flatMap(errorBody -> {
+                                        log.error("API error: {}", errorBody);
+                                        return Mono.error(new RuntimeException("API error: " + errorBody));
+                                    });
+                        })
+                        .bodyToMono(JsonNode.class)
+                        .doOnError(WebClientResponseException.class, ex -> {
+                            log.error("WebClientResponseException: Status {}, Message {}", ex.getRawStatusCode(), ex.getMessage());
+                        })
+                        .doOnError(Exception.class, ex -> {
+                            log.error("Exception: {}", ex.getMessage());
+                        })
+                        .block();
+            } catch (WebClientResponseException ex) {
+                log.error("Error response: Status {}, Body {}", ex.getRawStatusCode(), ex.getResponseBodyAsString());
+                throw ex;
+            } catch (Exception ex) {
+                log.error("General error: {}", ex.getMessage());
+                throw ex;
+            }
+        });
     }
 
     private JsonNode createAddVideoRequest(String playlistId, String videoId) {
