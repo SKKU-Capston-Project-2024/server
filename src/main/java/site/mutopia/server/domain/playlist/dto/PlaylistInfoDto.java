@@ -1,8 +1,6 @@
 package site.mutopia.server.domain.playlist.dto;
 
 import lombok.*;
-import site.mutopia.server.domain.playlistLike.entity.PlaylistLikeEntity;
-import site.mutopia.server.domain.songLike.entity.SongLikeEntity;
 
 import java.util.List;
 
@@ -15,6 +13,8 @@ public class PlaylistInfoDto {
     private Long playlistId;
     private String creatorId;
     private Long likeCount;
+    private String title;
+    private String content;
     private List<SongBriefInfo> songs;
 
     @Getter
@@ -25,12 +25,16 @@ public class PlaylistInfoDto {
         private String songId;
         private String title;
         private Integer trackOrder;
+        private String artistName;
+        private String albumName;
+        private String albumImgUrl;
     }
 
-    public PlaylistInfoDto(Long playlistId, String creatorId, Long likeCount) {
+    public PlaylistInfoDto(Long playlistId, String creatorId, Long likeCount, String title, String content) {
         this.playlistId = playlistId;
         this.creatorId = creatorId;
         this.likeCount = likeCount;
+        this.title = title;
+        this.content = content;
     }
-
 }
