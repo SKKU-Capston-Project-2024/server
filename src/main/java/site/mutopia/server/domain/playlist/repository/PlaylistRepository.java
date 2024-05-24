@@ -13,36 +13,32 @@ import java.util.Optional;
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> {
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, " +
-            "(SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id)) " +
+            "p.id, p.creator.id, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), p.title, p.content)" +
             "FROM PlaylistEntity p " +
             "WHERE p.creator.id = :userId")
     Page<PlaylistInfoDto> findPlaylistInfosByUserId(@Param("userId") String userId, Pageable pageable);
 
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, " +
-            "(SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id)) " +
+            "p.id, p.creator.id, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), p.title, p.content)" +
             "FROM PlaylistEntity p " +
             "WHERE p.id = :playlistId")
     Optional<PlaylistInfoDto> findPlaylistInfoById(@Param("playlistId") Long playlistId);
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, " +
-            "(SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id)) " +
+            "p.id, p.creator.id, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), p.title, p.content)" +
             "FROM PlaylistEntity p " +
             "ORDER BY p.createdAt DESC")
     Page<PlaylistInfoDto> findRecentPlaylists(Pageable pageable);
 
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, COUNT(pll)) " +
+            "p.id, p.creator.id, COUNT(pll), p.title, p.content)"  +
             "FROM PlaylistLikeEntity pll " +
             "JOIN pll.playlist p " +
             "JOIN p.songs " +
             "WHERE pll.user.id = :userId " +
             "GROUP BY p.id " +
-            "ORDER BY p.createdAt DESC "
-            )
+            "ORDER BY p.createdAt DESC")
     Page<PlaylistInfoDto> findLikedPlayList(@Param("userId") String userId,Pageable pageable);
 }
