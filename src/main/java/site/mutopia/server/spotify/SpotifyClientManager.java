@@ -11,10 +11,14 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import site.mutopia.server.spotify.dto.playlist.*;
+import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -46,7 +50,7 @@ public class SpotifyClientManager {
         this.accessToken = getAccessToken();
     }
 
-    public String getAuthorizationHeader() {
+    public String getAuthorizationBasicHeader() {
         String client64 = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         String auth = "Basic " + client64;
         return auth;
@@ -72,7 +76,7 @@ public class SpotifyClientManager {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://accounts.spotify.com/api")
-                .defaultHeader("Authorization", getAuthorizationHeader())
+                .defaultHeader("Authorization", getAuthorizationBasicHeader())
                 .build();
         AuthResponse authResponse = webClient.post()
                 .uri("/token")
@@ -111,7 +115,7 @@ public class SpotifyClientManager {
     public AuthResponse exchangeCodeForToken(String code) {
         return WebClient.builder()
                 .baseUrl("https://accounts.spotify.com/api")
-                .defaultHeader("Authorization", getAuthorizationHeader())
+                .defaultHeader("Authorization", getAuthorizationBasicHeader())
                 .build()
                 .post()
                 .uri("/token")
@@ -125,5 +129,87 @@ public class SpotifyClientManager {
                     log.error("Error exchanging code for token", error);
                     return Mono.empty();
                 }).block();
+    }
+
+    public String getAuthorizationBearerHeader(String accessToken) {
+        return "Bearer " + accessToken;
+    }
+
+    public SpotifyUserProfile getCurrentUserProfile(String accessToken) {
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .build()
+                .get()
+                .uri("/me")
+                .retrieve()
+                .bodyToMono(SpotifyUserProfile.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                }).block();
+    }
+
+    public SpotifyPlaylist createPlaylist(String spotifyUserId, String accessToken, String name, String description, boolean isPublic) {
+        SpotifyPlaylistCreateReq playlistRequest = SpotifyPlaylistCreateReq.builder()
+                .name(name)
+                .description(description)
+                .isPublic(isPublic)
+                .build();
+
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .build()
+                .post()
+                .uri("/users/" + spotifyUserId +"/playlists")
+                .body(Mono.just(playlistRequest), SpotifyPlaylistCreateReq.class)
+                .retrieve()
+                .bodyToMono(SpotifyPlaylist.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
+    }
+
+    public SpotifyPlaylistAddTracksRes addTracksToPlaylist(String playlistId, String accessToken, List<String> songIds, Integer position) {
+        List<String> uris = songIds.stream().map(songId -> "spotify:track:" + songId).toList();
+
+        SpotifyPlaylistAddTracksReq addTracksRequest = SpotifyPlaylistAddTracksReq.builder()
+                .uris(uris)
+                .position(position)
+                .build();
+
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .defaultHeader("Content-Type", "application/json")
+                .build()
+                .post()
+                .uri("/playlists/" + playlistId + "/tracks")
+                .body(Mono.just(addTracksRequest), SpotifyPlaylistAddTracksReq.class)
+                .retrieve()
+                .bodyToMono(SpotifyPlaylistAddTracksRes.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
+    }
+
+    public SpotifyPlaylistDetails getPlaylistDetails(String playlistId, String accessToken) {
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .defaultHeader("Content-Type", "application/json")
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/playlists/" + playlistId)
+                        .build())
+                .retrieve()
+                .bodyToMono(SpotifyPlaylistDetails.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
     }
 }

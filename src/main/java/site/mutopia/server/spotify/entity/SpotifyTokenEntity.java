@@ -26,6 +26,9 @@ public class SpotifyTokenEntity {
     @Enumerated(EnumType.STRING)
     private SpotifyTokenType tokenType;
 
+    @Column(name = "spotify_user_id")
+    private String spotifyUserId;
+
     @Column(name = "token_value", length = 2048)
     private String tokenValue;
 
@@ -33,9 +36,10 @@ public class SpotifyTokenEntity {
     private LocalDateTime issuedAt;
 
     @Builder
-    public SpotifyTokenEntity(UserEntity user, SpotifyTokenType tokenType, String tokenValue, LocalDateTime issuedAt) {
+    public SpotifyTokenEntity(UserEntity user, SpotifyTokenType tokenType, String spotifyUserId, String tokenValue, LocalDateTime issuedAt) {
         this.user = user;
         this.tokenType = tokenType;
+        this.spotifyUserId = spotifyUserId;
         this.tokenValue = tokenValue;
         this.issuedAt = issuedAt;
     }

@@ -14,6 +14,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.spotify.SpotifyClientManager;
 import site.mutopia.server.spotify.SpotifyClientManager.AuthResponse;
 import site.mutopia.server.spotify.dto.login.SpotifyLoginResDto;
+import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
 import site.mutopia.server.spotify.service.SpotifyService;
 
 @RestController
@@ -28,7 +29,7 @@ public class SpotifyController {
     @GetMapping("/spotify/login")
     public ResponseEntity<SpotifyLoginResDto> login(@LoginUser UserEntity loggedInUser, HttpServletResponse response) {
         String state = loggedInUser.getId();
-        String scope = "user-read-private user-read-email playlist-read-private playlist-modify-private";
+        String scope = "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public";
         String authUrl = "https://accounts.spotify.com/authorize?" +
                 "response_type=code&client_id=" + spotifyClientManager.getClientId() + "&scope=" + scope +
                 "&redirect_uri=" + spotifyClientManager.getRedirectUri() + "&state=" + state;
@@ -39,7 +40,7 @@ public class SpotifyController {
     }
 
     @GetMapping("/spotify/login/callback")
-    public ResponseEntity<String> callback(
+    public ResponseEntity<Void> callback(
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "state") String userId,
@@ -52,10 +53,10 @@ public class SpotifyController {
         }
 
         AuthResponse tokenRes = spotifyClientManager.exchangeCodeForToken(code);
+        SpotifyUserProfile profile = spotifyClientManager.getCurrentUserProfile(tokenRes.getAccessToken());
 
-        spotifyService.saveSpotifyToken(userId, tokenRes.getAccessToken(), tokenRes.getRefreshToken());
-        log.debug("Spotify tokens saved for userId: {}, sessionId: {}", userId, request.getSession().getId());
+        spotifyService.saveSpotifyToken(userId, profile.getId(), tokenRes.getAccessToken(), tokenRes.getRefreshToken());
 
-        return ResponseEntity.ok().body(tokenRes.getAccessToken());
+        return ResponseEntity.noContent().build();
     }
 }

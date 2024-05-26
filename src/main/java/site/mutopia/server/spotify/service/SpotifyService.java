@@ -6,6 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+import site.mutopia.server.spotify.SpotifyClientManager;
+import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylist;
+import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
 import site.mutopia.server.spotify.entity.SpotifyTokenEntity;
 import site.mutopia.server.spotify.entity.SpotifyTokenType;
 import site.mutopia.server.spotify.repository.SpotifyTokenRepository;
@@ -15,12 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class SpotifyService {
     private final SpotifyTokenRepository spotifyTokenRepository;
     private final UserRepository userRepository;
+    private final SpotifyClientManager spotifyClientManager;
 
-    public void saveSpotifyToken(String userId, String accessToken, String refreshToken) {
+    @Transactional
+    public void saveSpotifyToken(String userId, String spotifyUserId, String accessToken, String refreshToken) {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
 
         LocalDateTime now = LocalDateTime.now();
@@ -30,6 +34,7 @@ public class SpotifyService {
                 .tokenType(SpotifyTokenType.ACCESS)
                 .tokenValue(accessToken)
                 .issuedAt(now)
+                .spotifyUserId(spotifyUserId)
                 .build();
 
         SpotifyTokenEntity refreshTokenEntity = SpotifyTokenEntity.builder()
@@ -37,8 +42,24 @@ public class SpotifyService {
                 .tokenType(SpotifyTokenType.REFRESH)
                 .tokenValue(refreshToken)
                 .issuedAt(now)
+                .spotifyUserId(spotifyUserId)
                 .build();
 
         spotifyTokenRepository.saveAll(List.of(accessTokenEntity, refreshTokenEntity));
     }
+
+    public String createPlaylist(SpotifyTokenEntity spotifyToken, String playlistName, String playlistDescription) {
+        SpotifyPlaylist playlist = spotifyClientManager.createPlaylist(spotifyToken.getSpotifyUserId(), spotifyToken.getTokenValue(), playlistName, playlistDescription, true);
+
+        return playlist.getId();
+    }
+
+    public void addSongsToPlaylist(SpotifyTokenEntity spotifyToken, String spotifyPlaylistId, List<String> songIds) {
+        spotifyClientManager.addTracksToPlaylist(spotifyPlaylistId, spotifyToken.getTokenValue(), songIds, 0);
+    }
+
+    public SpotifyPlaylistDetails getPlaylistDetails(SpotifyTokenEntity spotifyAccessToken, String spotifyPlaylistId) {
+        return spotifyClientManager.getPlaylistDetails(spotifyPlaylistId, spotifyAccessToken.getTokenValue());
+    }
+
 }

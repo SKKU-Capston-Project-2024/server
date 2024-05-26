@@ -19,6 +19,7 @@ import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+import site.mutopia.server.spotify.service.SpotifyService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class PlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final SongRepository songRepository;
     private final UserRepository userRepository;
+    private final SpotifyService spotifyService;
 
     // TODO: 성능 개선
     public List<PlaylistInfoDto> getUserPlaylists(String userId, int limit) {
@@ -103,5 +105,12 @@ public class PlaylistService {
         List<PlaylistInfoDto> info = playlistRepository.findLikedPlayList(userId, Pageable.ofSize(20).withPage(page)).getContent();
         info.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
         return info;
+    }
+
+    public void exportPlaylistToSpotify(Long playlistId) {
+        PlaylistInfoDto dto = this.getUserPlaylistById(playlistId);
+        List<String> songIds = dto.getSongs().stream().map(song -> song.getSongId()).toList();
+
+
     }
 }
