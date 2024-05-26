@@ -106,11 +106,4 @@ public class PlaylistService {
         info.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
         return info;
     }
-
-    public void exportPlaylistToSpotify(Long playlistId) {
-        PlaylistInfoDto dto = this.getUserPlaylistById(playlistId);
-        List<String> songIds = dto.getSongs().stream().map(song -> song.getSongId()).toList();
-
-
-    }
 }
