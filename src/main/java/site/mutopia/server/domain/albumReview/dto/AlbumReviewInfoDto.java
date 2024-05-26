@@ -1,11 +1,6 @@
 package site.mutopia.server.domain.albumReview.dto;
 
 import lombok.*;
-import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import static site.mutopia.server.global.util.StringUtil.unixTimeToString;
 
@@ -24,35 +19,11 @@ public class AlbumReviewInfoDto {
     public AlbumReviewInfoDto(Long reviewId, String title, String content, Integer rating, Long likeCount, Long createdAt, String albumId,
                               String writerId, String username, String userProfileImageUrl,
                               String name, String artistName, String coverImageUrl, String releaseDate,
-                              Long length, Long totalReviewCount, Long totalLikeCount, Boolean isLiked) {
-        this.review = new ReviewInfoDto(reviewId,title, content, rating, isLiked, likeCount, unixTimeToString(createdAt));
+                              Long length, Long totalReviewCount, Long totalLikeCount, Boolean isLiked, Boolean pinned) {
+        this.review = new ReviewInfoDto(reviewId, title, content, rating, isLiked, likeCount, unixTimeToString(createdAt), pinned);
         this.writer = new WriterInfoDto(writerId, username, userProfileImageUrl);
         this.album = new AlbumInfoDto(albumId, name, artistName, coverImageUrl, releaseDate,
                 length, totalReviewCount, totalLikeCount);
-    }
-
-    public static AlbumReviewInfoDto fromEntity(AlbumReviewEntity entity){
-        return new AlbumReviewInfoDto(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getContent(),
-                entity.getRating(),
-                entity.getLikeCount(),
-                entity.getCreatedAt(),
-                entity.getAlbum().getId(),
-                entity.getWriter().getId(),
-                entity.getWriter().getUsername(),
-                entity.getWriter().getProfile().getProfilePicUrl(),
-                entity.getAlbum().getName(),
-                entity.getAlbum().getArtistName(),
-                entity.getAlbum().getCoverImageUrl(),
-                entity.getAlbum().getReleaseDate(),
-                entity.getAlbum().getLength(),
-                entity.getAlbum().getTotalReviewCount(),
-                entity.getAlbum().getTotalLikeCount(),
-                null
-        );
-
     }
 
     @Getter
@@ -69,6 +40,7 @@ public class AlbumReviewInfoDto {
         private Long likeCount;
         @Setter
         private String createdAt;
+        private Boolean pinned;
     }
 
     @Getter
@@ -93,8 +65,6 @@ public class AlbumReviewInfoDto {
         private Long totalReviewCount;
         private Long totalLikeCount;
     }
-
-
 }
 
 

@@ -30,6 +30,9 @@ public class AlbumReviewEntity {
     @Column(name = "rating")
     private Integer rating;
 
+    @Column(name = "pinned")
+    private Boolean pinned;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private UserEntity writer;
@@ -49,8 +52,13 @@ public class AlbumReviewEntity {
         this.title = title;
         this.content = content;
         this.rating = rating;
+        this.pinned = false;
         this.writer = writer;
         this.album = album;
+    }
+
+    public void pin() {
+        this.pinned = true;
     }
 }
 
