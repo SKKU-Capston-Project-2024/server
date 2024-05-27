@@ -36,8 +36,6 @@ public class SongCommentInfoResDto {
     public static class SongInfo {
         private String id;
         private String title;
-        private Integer duration;
-        private LocalDate releaseDate;
     }
 
     @Getter
@@ -49,14 +47,13 @@ public class SongCommentInfoResDto {
         private Integer rating;
         private String comment;
         private String createdAt;
+        private Boolean isLiked;
     }
 
     public static SongCommentInfoResDto fromEntity(SongCommentEntity entity) {
         SongInfo songInfo = SongInfo.builder()
                 .id(entity.getSong().getId())
                 .title(entity.getSong().getTitle())
-                .duration(entity.getSong().getDuration())
-                .releaseDate(entity.getSong().getReleaseDate())
                 .build();
 
         CommentWriterInfo writerInfo = CommentWriterInfo.builder()
@@ -78,4 +75,36 @@ public class SongCommentInfoResDto {
                 .songComment(songCommentInfo)
                 .build();
     }
+
+    public SongCommentInfoResDto(
+            String writerId, String writerName, String writerProfileImageUrl,
+            String songId, String songTitle, Integer rating, String comment,
+            Long createdAt, Boolean isLiked
+    ) {
+
+        CommentWriterInfo writerInfo = CommentWriterInfo.builder()
+                .userId(writerId)
+                .username(writerName)
+                .profileImageUrl(writerProfileImageUrl)
+                .build();
+
+        SongCommentInfo songCommentInfo = SongCommentInfo.builder()
+                .songInfo(SongInfo.builder()
+                        .id(songId)
+                        .title(songTitle)
+                        .build())
+                .rating(rating)
+                .comment(comment)
+                .createdAt(unixTimeToString(createdAt))
+                .isLiked(isLiked)
+                .build();
+
+        this.writer = writerInfo;
+        this.songComment = songCommentInfo;
+
+
+    }
+
+
+
 }
