@@ -17,6 +17,7 @@ public class LikeSongCommentDto {
     String writerName;
     String writerProfileImg;
     String comment;
+    Boolean isLiked;
 
 
     public static LikeSongCommentDto of(SongCommentLikeEntity entity){
@@ -30,7 +31,8 @@ public class LikeSongCommentDto {
                 entity.getSongComment().getWriter().getId(),
                 entity.getSongComment().getWriter().getUsername(),
                 entity.getSongComment().getWriter().getProfile().getProfilePicUrl(),
-                entity.getSongComment().getComment()
+                entity.getSongComment().getComment(),
+                false
         );
     }
 }

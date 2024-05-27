@@ -15,7 +15,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class SongCommentLikeId implements Serializable {
-    private String writerId;
-    private String songId;
+    private SongCommentId songCommentId;
     private String likeUserId;
 }

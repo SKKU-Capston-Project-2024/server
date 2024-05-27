@@ -21,10 +21,10 @@ import java.util.List;
 @RestController
 @RequestMapping("")
 @RequiredArgsConstructor
-@Tag(name = "Song Like", description = "Song Like APIs")
+@Tag(name = "Song Comment Like", description = "Song Comment Like APIs")
 public class SongCommentLikeController {
 
-/*
+
     private final SongCommentLikeService songCommentLikeService;
 
     @PostMapping("song/{songId}/comment/{writerId}/like/toggle")
@@ -37,11 +37,12 @@ public class SongCommentLikeController {
     }
 
     @Operation(summary = "특정 유저가 좋아요 한 곡 한줄평 가져오기", description = "특정 유저가 좋아요한 곡 한줄평을 가져옵니다.")
-    @GetMapping("/like/{userId}")
-    public ResponseEntity<List<LikeSongCommentDto>> getLikedSongCommentByUser(@PathVariable("userId") String userId, @RequestParam("page") int page) {
-        return ResponseEntity.ok().body(songCommentLikeService.getLikedSongsByUser(userId, page));
+    @GetMapping("/song/comment/like/{userId}")
+    public ResponseEntity<List<LikeSongCommentDto>> getLikedSongCommentByUser(
+            @PathVariable("userId") String userId, @RequestParam("page") int page, @LoginUser(require = false) UserEntity loggedInUser) {
+        return ResponseEntity.ok().body(songCommentLikeService.getLikedSongsByUser(userId, page, loggedInUser));
     }
-*/
+
 
 
 }

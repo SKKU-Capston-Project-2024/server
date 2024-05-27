@@ -31,13 +31,13 @@ public class SongCommentLikeService {
     private final SongRepository songRepository;
     private final UserRepository userRepository;
 
-    /*public void toggleSongCommentLike(String songId, String writerId, UserEntity user) {
+    public void toggleSongCommentLike(String songId, String writerId, UserEntity user) {
 
         SongCommentEntity songComment = songCommentRepository.findById(new SongCommentId(writerId, songId)).orElseThrow(
                 () -> new SongNotFoundException(songId));
 
 
-        SongCommentLikeId songCommentId = new SongCommentLikeId(songComment , user);
+        SongCommentLikeId songCommentId = new SongCommentLikeId(new SongCommentId(writerId, songId), user.getId());
 
         if (songCommentLikeRepository.findById(songCommentId).isPresent()) {
             songCommentLikeRepository.deleteById(songCommentId);
@@ -48,15 +48,15 @@ public class SongCommentLikeService {
                 .orElseThrow(() -> new SongCommentNotFoundException(writerId, songId));
 
         songCommentLikeRepository.save(SongCommentLikeEntity.builder()
-                .songComment(songCommentEntity)
-                .user(user)
-                .build());
+                        .songComment(songCommentEntity)
+                        .id(songCommentId)
+                        .likeUser(user)
+                        .build());
     }
 
     @Transactional(readOnly = true)
-    public List<LikeSongCommentDto> getLikedSongsByUser(String userId, Integer page){
-        List<SongCommentLikeEntity> songs = songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page));
-        return songs.stream().map(LikeSongCommentDto::of).toList();
-    }*/
+    public List<LikeSongCommentDto> getLikedSongsByUser(String userId, Integer page, UserEntity loggedInUser) {
+        return songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page), loggedInUser != null ? loggedInUser.getId() : null);
+    }
 
 }

@@ -11,11 +11,5 @@ import site.mutopia.server.domain.songCommentLike.entity.SongCommentLikeId;
 import java.util.List;
 
 @Repository
-public interface SongCommentLikeRepository extends JpaRepository<SongCommentLikeEntity, SongCommentLikeId> {
-
-/*
-    @Query("select sl from SongCommentLikeEntity sl JOIN FETCH sl.songComment JOIN FETCH sl.songComment.writer JOIN FETCH sl.songComment.writer.profile JOIN FETCH sl.songComment.song JOIN FETCH sl.songComment.song.album WHERE sl.user.id = :userId")
-    List<SongCommentLikeEntity> findLikedSongsByUserId(@Param("userId") String userId, Pageable pageable);
-*/
-
+public interface SongCommentLikeRepository extends JpaRepository<SongCommentLikeEntity, SongCommentLikeId>, SongCommentLikeCustomRepository {
 }

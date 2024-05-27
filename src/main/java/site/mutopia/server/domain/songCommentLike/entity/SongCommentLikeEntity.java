@@ -14,31 +14,22 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class SongCommentLikeEntity {
 
     @EmbeddedId
     private SongCommentLikeId id;
 
-    @ManyToOne
-    @JoinColumn(name = "song_id")
-    @MapsId("songId")
-    private SongEntity song;
-
-    @ManyToOne
-    @JoinColumn(name = "writer_id")
-    @MapsId("writerId")
-    private UserEntity writer;
-
-
-    @ManyToOne
+    @MapsId("songCommentId")
+    @ManyToOne(targetEntity = SongCommentEntity.class, fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "song_id", referencedColumnName = "song_id", insertable = false, updatable = false),
-            @JoinColumn(name = "writer_id", referencedColumnName = "writer_id", insertable = false, updatable = false)
+            @JoinColumn(name = "comment_song_id", referencedColumnName = "song_id"),
+            @JoinColumn(name = "comment_writer_id", referencedColumnName = "writer_id")
     })
     private SongCommentEntity songComment;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @MapsId("likeUserId")
     private UserEntity likeUser;
