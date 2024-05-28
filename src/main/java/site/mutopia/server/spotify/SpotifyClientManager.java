@@ -5,22 +5,24 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import site.mutopia.server.spotify.dto.playlist.*;
+import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 @Slf4j
+@Getter
 public class SpotifyClientManager {
 
     @Value("${spotify.client.id}")
@@ -28,6 +30,9 @@ public class SpotifyClientManager {
 
     @Value("${spotify.client.secret}")
     private String clientSecret;
+
+    @Value("${spotify.redirect.uri}")
+    private String redirectUri;
 
     private String accessToken = null;
     private LocalDateTime accessTokenExpiredTime = null;
@@ -45,6 +50,12 @@ public class SpotifyClientManager {
         this.accessToken = getAccessToken();
     }
 
+    public String getAuthorizationBasicHeader() {
+        String client64 = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+        String auth = "Basic " + client64;
+        return auth;
+    }
+
     private ExchangeFilterFunction authHeaderFilter() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
                     // 요청 전에 헤더를 설정
@@ -55,8 +66,6 @@ public class SpotifyClientManager {
                 });
     }
 
-
-
     private String getAccessToken() {
 
         if (accessTokenExpiredTime != null) {
@@ -65,12 +74,9 @@ public class SpotifyClientManager {
             }
         }
 
-        String client64 = Base64.getEncoder().encodeToString((clientId+":"+clientSecret).getBytes());
-        String auth = "Basic " + client64;
-
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://accounts.spotify.com/api")
-                .defaultHeader("Authorization", auth)
+                .defaultHeader("Authorization", getAuthorizationBasicHeader())
                 .build();
         AuthResponse authResponse = webClient.post()
                 .uri("/token")
@@ -83,19 +89,127 @@ public class SpotifyClientManager {
             throw new RuntimeException("Failed to get access token");
         }
 
-        accessToken = authResponse.access_token;
-        accessTokenExpiredTime = LocalDateTime.now().plusSeconds(authResponse.expires_in);
+        accessToken = authResponse.accessToken;
+        accessTokenExpiredTime = LocalDateTime.now().plusSeconds(authResponse.expiresIn);
         return accessToken;
     }
 
-    private static class AuthResponse {
+    @Getter
+    public static class AuthResponse {
         @JsonProperty("access_token")
-        String access_token;
+        private String accessToken;
 
-        @JsonProperty("token_type")
-        String token_type;
+        @JsonProperty("refresh_token")
+        private String refreshToken;
 
         @JsonProperty("expires_in")
-        Long expires_in;
+        private Long expiresIn;
+
+        @JsonProperty("token_type")
+        private String tokenType;
+
+        @JsonProperty("scope")
+        private String scope;
+    }
+
+    public AuthResponse exchangeCodeForToken(String code) {
+        return WebClient.builder()
+                .baseUrl("https://accounts.spotify.com/api")
+                .defaultHeader("Authorization", getAuthorizationBasicHeader())
+                .build()
+                .post()
+                .uri("/token")
+                .body(BodyInserters.fromFormData("code", code)
+                        .with("redirect_uri", redirectUri)
+                        .with("grant_type", "authorization_code"))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(AuthResponse.class)
+                .onErrorResume(error -> {
+                    log.error("Error exchanging code for token", error);
+                    return Mono.empty();
+                }).block();
+    }
+
+    public String getAuthorizationBearerHeader(String accessToken) {
+        return "Bearer " + accessToken;
+    }
+
+    public SpotifyUserProfile getCurrentUserProfile(String accessToken) {
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .build()
+                .get()
+                .uri("/me")
+                .retrieve()
+                .bodyToMono(SpotifyUserProfile.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                }).block();
+    }
+
+    public SpotifyPlaylist createPlaylist(String spotifyUserId, String accessToken, String name, String description, boolean isPublic) {
+        SpotifyPlaylistCreateReq playlistRequest = SpotifyPlaylistCreateReq.builder()
+                .name(name)
+                .description(description)
+                .isPublic(isPublic)
+                .build();
+
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .build()
+                .post()
+                .uri("/users/" + spotifyUserId +"/playlists")
+                .body(Mono.just(playlistRequest), SpotifyPlaylistCreateReq.class)
+                .retrieve()
+                .bodyToMono(SpotifyPlaylist.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
+    }
+
+    public SpotifyPlaylistAddTracksRes addTracksToPlaylist(String playlistId, String accessToken, List<String> songIds, Integer position) {
+        List<String> uris = songIds.stream().map(songId -> "spotify:track:" + songId).toList();
+
+        SpotifyPlaylistAddTracksReq addTracksRequest = SpotifyPlaylistAddTracksReq.builder()
+                .uris(uris)
+                .position(position)
+                .build();
+
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .defaultHeader("Content-Type", "application/json")
+                .build()
+                .post()
+                .uri("/playlists/" + playlistId + "/tracks")
+                .body(Mono.just(addTracksRequest), SpotifyPlaylistAddTracksReq.class)
+                .retrieve()
+                .bodyToMono(SpotifyPlaylistAddTracksRes.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
+    }
+
+    public SpotifyPlaylistDetails getPlaylistDetails(String playlistId, String accessToken) {
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .defaultHeader("Content-Type", "application/json")
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/playlists/" + playlistId)
+                        .build())
+                .retrieve()
+                .bodyToMono(SpotifyPlaylistDetails.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
     }
 }

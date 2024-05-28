@@ -7,13 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
-import site.mutopia.server.domain.playlist.dto.AddSongToPlaylistReqDto;
-import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
-import site.mutopia.server.domain.playlist.dto.PlaylistSaveReqDto;
-import site.mutopia.server.domain.playlist.dto.PlaylistSaveResDto;
+import site.mutopia.server.domain.playlist.dto.*;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 import site.mutopia.server.domain.playlist.service.PlaylistService;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
+import site.mutopia.server.spotify.entity.SpotifyTokenEntity;
+import site.mutopia.server.spotify.entity.SpotifyTokenType;
+import site.mutopia.server.spotify.exception.SpotifyAccessTokenNotFoundException;
+import site.mutopia.server.spotify.repository.SpotifyTokenRepository;
+import site.mutopia.server.spotify.service.SpotifyService;
 import site.mutopia.server.swagger.response.CreatedResponse;
 
 import java.util.List;
@@ -25,6 +28,8 @@ import java.util.List;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final SpotifyService spotifyService;
+    private final SpotifyTokenRepository spotifyTokenRepository;
 
     @Operation(summary = "플레이리스트 저장하기", description = "로그인 한 사용자는 플레이리스트를 저장할 수 있습니다.")
     @PostMapping("/user/playlist")
@@ -89,5 +94,24 @@ public class PlaylistController {
     public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@PathVariable("playlistId") Long playlistId) {
         PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId);
         return ResponseEntity.ok().body(playlistInfo);
+    }
+
+    @Operation(summary = "플레이리스트 Spotify로 export 하기", description = "로그인 한 사용자는 자신의 플레이리스트를 Spotify에 export 할 수 있습니다.")
+    @PostMapping("/user/playlist/{playlistId}/export/spotify")
+    @CreatedResponse
+    public ResponseEntity<SpotifyPlaylistDetails> exportPlaylistToSpotify(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId, @RequestBody ExportPlaylistToSpotifyReqDto req) {
+        // TODO: loggedInUser가 해당 playlist를 소유하고 있는지 체크하는 로직 추가
+
+        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
+
+        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).toList();
+
+        String spotifyPlaylistId = spotifyService.createPlaylist(spotifyAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
+        spotifyService.addSongsToPlaylist(spotifyAccessToken, spotifyPlaylistId, songIdsInPlaylist);
+
+        SpotifyPlaylistDetails playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, spotifyPlaylistId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(playlistDetails);
     }
 }
