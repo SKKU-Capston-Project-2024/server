@@ -1,6 +1,7 @@
 package site.mutopia.server.domain.songCommentLike.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class SongCommentLikeService {
 
@@ -56,7 +58,11 @@ public class SongCommentLikeService {
 
     @Transactional(readOnly = true)
     public List<LikeSongCommentDto> getLikedSongsByUser(String userId, Integer page, UserEntity loggedInUser) {
-        return songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page), loggedInUser != null ? loggedInUser.getId() : null);
+
+        List<LikeSongCommentDto> likedSongsByUserId = songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page), loggedInUser != null ? loggedInUser.getId() : null);
+
+        log.info("likedSongsByUserId: {}", likedSongsByUserId);
+        return likedSongsByUserId;
     }
 
 }

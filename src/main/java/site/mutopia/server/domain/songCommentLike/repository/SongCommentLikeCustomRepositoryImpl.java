@@ -18,7 +18,8 @@ public class SongCommentLikeCustomRepositoryImpl implements SongCommentLikeCusto
     public List<LikeSongCommentDto> findLikedSongsByUserId(String userId, Pageable page, String loginUserId) {
         String jpql = "select new site.mutopia.server.domain.songCommentLike.dto.LikeSongCommentDto(" +
                 "scl.songComment.song.id, scl.songComment.song.album.id, scl.songComment.song.album.coverImageUrl, scl.songComment.song.title, scl.songComment.song.album.artistName, scl.songComment.song.album.name, scl.songComment.writer.id, scl.songComment.writer.username, scl.songComment.writer.profile.profilePicUrl, scl.songComment.comment, " +
-                (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl2 where scl2.songComment.song.id = scl.songComment.song.id and scl.songComment.writer.id = scl2.songComment.writer.id and scl2.likeUser.id = :loginUserId) " : "false ") +
+                (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl2 where scl2.songComment.song.id = scl.songComment.song.id and scl.songComment.writer.id = scl2.songComment.writer.id and scl2.likeUser.id = :loginUserId), " : "false, ") +
+                "scl.songComment.rating, scl.songComment.createdAt " +
                 ") from SongCommentLikeEntity scl " +
                 "where scl.likeUser.id = :userId " +
                 "order by scl.songComment.createdAt desc";
