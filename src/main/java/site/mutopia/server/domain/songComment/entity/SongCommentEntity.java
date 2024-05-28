@@ -3,6 +3,7 @@ package site.mutopia.server.domain.songComment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
@@ -13,6 +14,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @Getter
 @Setter
 @AllArgsConstructor
+@EnableJpaAuditing
 @Builder
 public class SongCommentEntity {
 
