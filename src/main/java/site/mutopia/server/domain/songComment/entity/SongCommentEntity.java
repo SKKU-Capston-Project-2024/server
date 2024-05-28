@@ -11,6 +11,7 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 @IdClass(SongCommentId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @AllArgsConstructor
 @Builder
 public class SongCommentEntity {
