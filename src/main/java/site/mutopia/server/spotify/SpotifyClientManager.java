@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 import site.mutopia.server.spotify.dto.playlist.*;
 import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
+import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -207,6 +208,25 @@ public class SpotifyClientManager {
                         .build())
                 .retrieve()
                 .bodyToMono(SpotifyPlaylistDetails.class)
+                .doOnError(WebClientResponseException.class, ex -> {
+                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                })
+                .block();
+    }
+
+    public RecommendationsDto getRecommendations(List<String> songIds, String accessToken) {
+
+        return WebClient.builder()
+                .baseUrl("https://api.spotify.com/v1")
+                .defaultHeader("Authorization", getAuthorizationBearerHeader(accessToken))
+                .defaultHeader("Content-Type", "application/json")
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder.path("/recommendations")
+                        .queryParam("seed_tracks", String.join(",", songIds))
+                        .build())
+                .retrieve()
+                .bodyToMono(RecommendationsDto.class)
                 .doOnError(WebClientResponseException.class, ex -> {
                     System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 })
