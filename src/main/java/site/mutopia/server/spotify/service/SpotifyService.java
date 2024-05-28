@@ -9,6 +9,7 @@ import site.mutopia.server.domain.user.repository.UserRepository;
 import site.mutopia.server.spotify.SpotifyClientManager;
 import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylist;
 import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
+import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
 import site.mutopia.server.spotify.entity.SpotifyTokenEntity;
 import site.mutopia.server.spotify.entity.SpotifyTokenType;
 import site.mutopia.server.spotify.repository.SpotifyTokenRepository;
@@ -62,4 +63,7 @@ public class SpotifyService {
         return spotifyClientManager.getPlaylistDetails(spotifyPlaylistId, spotifyAccessToken.getTokenValue());
     }
 
+    public RecommendationsDto getRecommendations(List<String> songIds, String accessToken) {
+        return spotifyClientManager.getRecommendations(songIds, accessToken);
+    }
 }
