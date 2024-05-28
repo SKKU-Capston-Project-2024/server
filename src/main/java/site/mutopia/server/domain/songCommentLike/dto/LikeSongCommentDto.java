@@ -23,8 +23,14 @@ public class LikeSongCommentDto {
     Boolean isLiked;
     Integer rating;
     String createdAt;
+    Long likeCount;
 
-    public LikeSongCommentDto(String songId, String albumId, String albumCoverImg, String songTitle, String artistName, String albumName, String writerId, String writerName, String writerProfileImg, String comment, Boolean isLiked, Integer rating, Long createdAt) {
+    public LikeSongCommentDto(
+            String songId, String albumId, String albumCoverImg, String songTitle,
+            String artistName, String albumName, String writerId, String writerName,
+            String writerProfileImg, String comment, Boolean isLiked, Integer rating,
+            Long createdAt, Long likeCount
+    ) {
         this.songId = songId;
         this.albumId = albumId;
         this.albumCoverImg = albumCoverImg;
@@ -38,5 +44,6 @@ public class LikeSongCommentDto {
         this.isLiked = isLiked;
         this.rating = rating;
         this.createdAt = StringUtil.unixTimeToString(createdAt);
+        this.likeCount = likeCount;
     }
 }

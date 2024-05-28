@@ -48,6 +48,7 @@ public class SongCommentInfoResDto {
         private String comment;
         private String createdAt;
         private Boolean isLiked;
+        private Long likeCount;
     }
 
     public static SongCommentInfoResDto fromEntity(SongCommentEntity entity) {
@@ -79,7 +80,7 @@ public class SongCommentInfoResDto {
     public SongCommentInfoResDto(
             String writerId, String writerName, String writerProfileImageUrl,
             String songId, String songTitle, Integer rating, String comment,
-            Long createdAt, Boolean isLiked
+            Long createdAt, Boolean isLiked, Long likeCount
     ) {
 
         CommentWriterInfo writerInfo = CommentWriterInfo.builder()
@@ -97,6 +98,7 @@ public class SongCommentInfoResDto {
                 .comment(comment)
                 .createdAt(unixTimeToString(createdAt))
                 .isLiked(isLiked)
+                .likeCount(likeCount)
                 .build();
 
         this.writer = writerInfo;
