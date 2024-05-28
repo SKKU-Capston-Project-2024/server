@@ -5,14 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.mutopia.server.aws.s3.FileManager;
+import site.mutopia.server.domain.albumReview.entity.AlbumReviewEntity;
+import site.mutopia.server.domain.albumReview.exception.AlbumReviewNotFoundException;
 import site.mutopia.server.domain.albumReview.repository.AlbumReviewRepository;
 import site.mutopia.server.domain.follow.repository.FollowRepository;
 import site.mutopia.server.domain.profile.dto.response.MyInfoResDto;
+import site.mutopia.server.domain.profile.dto.response.ProfileAggregationInfoResDto;
 import site.mutopia.server.domain.profile.entity.ProfileEntity;
 import site.mutopia.server.domain.profile.exception.ProfileNotFoundException;
 import site.mutopia.server.domain.profile.repository.ProfileRepository;
 import site.mutopia.server.domain.songComment.repository.SongCommentRepository;
-import site.mutopia.server.domain.profile.dto.response.ProfileAggregationInfoResDto;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 
@@ -84,5 +86,24 @@ public class ProfileService {
                 .username(profileEntity.getUser().getUsername())
                 .profileImageUrl(profileEntity.getProfilePicUrl())
                 .build();
+    }
+
+    public void pinAlbumReview(UserEntity user, Long albumReviewId) {
+        AlbumReviewEntity review = albumReviewRepository.findById(albumReviewId)
+                .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
+
+        if (!review.getWriter().getId().equals(user.getId())) {
+            // TODO: ControllerAdvice 처리
+            throw new IllegalStateException("You can only pin your own reviews.");
+
+            // throw new UnauthorizedAccessException("You can only pin your own reviews.");
+        }
+
+        albumReviewRepository.updatePinnedToFalseByUserId(user.getId());
+        review.pin();
+    }
+
+    public void unPinAlbumReview(UserEntity user) {
+        albumReviewRepository.updatePinnedToFalseByUserId(user.getId());
     }
 }

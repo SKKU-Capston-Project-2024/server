@@ -1,7 +1,6 @@
 package site.mutopia.server.domain.albumReview.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -68,9 +67,4 @@ public class AlbumReviewController {
             @LoginUser UserEntity loggedInUser, @RequestParam("page") int page){
         return ResponseEntity.ok().body(albumReviewService.getFollowingRecentAlbumReview(loggedInUser, page));
     }
-
-
-
-
-
 }
