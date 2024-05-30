@@ -138,8 +138,6 @@ public class PlaylistController {
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
 
         List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
-        RecommendationsDto recommendations = spotifyService.getRecommendations(songIdsInPlaylist, spotifyAccessToken.getTokenValue());
-        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
 
         RecommendationsDto recommendations;
         try {
