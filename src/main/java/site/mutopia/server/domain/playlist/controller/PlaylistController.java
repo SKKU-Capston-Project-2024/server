@@ -138,29 +138,22 @@ public class PlaylistController {
     @Operation(summary = "플레이리스트로 추천 곡 목록 조회하기", description = "사용자는 플레이리스트를 통해 추천 곡 목록을 조회할 수 있다. (spotify login 필요함)")
     @GetMapping("/user/playlist/{playlistId}/recommendation")
     public ResponseEntity<RecommendationsDto> getRecommendationsByPlaylistId(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
-        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
-                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
+        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "has not logged In spotify before. please log in to spotify first."));
 
         List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
 
         RecommendationsDto recommendations;
+
         try {
             recommendations = spotifyService.getRecommendations(songIdsInPlaylist, spotifyAccessToken.getTokenValue());
         } catch (SpotifyAccessTokenExpiredException ex) {
-            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.REFRESH)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have refresh token"));
-            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
-            spotifyService.updateAccessToken(loggedInUser.getId(), accessToken);
-            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have access token"));
-
+            SpotifyTokenEntity updatedAccessToken = refreshToken();
             recommendations = spotifyService.getRecommendations(songIdsInPlaylist, updatedAccessToken.getTokenValue());
         }
 
-
         return ResponseEntity.ok().body(recommendations);
     }
-
 
     @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")
     @GetMapping("/playlist/trending")
@@ -174,16 +167,21 @@ public class PlaylistController {
         try {
             playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, globalTop50PlaylistId);
         } catch (SpotifyAccessTokenExpiredException ex) {
-            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.REFRESH)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have refresh token"));
-            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
-            spotifyService.updateAccessToken(spotifyUserId, accessToken);
-            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have access token"));
-
+            SpotifyTokenEntity updatedAccessToken = refreshToken();
             playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, globalTop50PlaylistId);
         }
 
         return ResponseEntity.ok().body(playlistDetails);
+    }
+
+    private SpotifyTokenEntity refreshToken() {
+        SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.REFRESH)
+                .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have refresh token"));
+        String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
+        spotifyService.updateAccessToken(spotifyUserId, accessToken);
+        SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have access token"));
+
+        return updatedAccessToken;
     }
 }
