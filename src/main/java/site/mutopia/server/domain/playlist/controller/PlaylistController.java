@@ -3,6 +3,7 @@ package site.mutopia.server.domain.playlist.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,9 @@ public class PlaylistController {
     private final PlaylistService playlistService;
     private final SpotifyService spotifyService;
     private final SpotifyTokenRepository spotifyTokenRepository;
+
+    @Value("${spotify.user.id}")
+    private String spotifyUserId;
 
     @Operation(summary = "플레이리스트 저장하기", description = "로그인 한 사용자는 플레이리스트를 저장할 수 있습니다.")
     @PostMapping("/user/playlist")
@@ -161,8 +165,6 @@ public class PlaylistController {
     @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")
     @GetMapping("/playlist/trending")
     public ResponseEntity<SpotifyPlaylistDetails> getGlobalTop50() {
-
-        String spotifyUserId = "28c1be5f-41fb-49a6-b8d4-780c05cc173f";
         String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
 
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
