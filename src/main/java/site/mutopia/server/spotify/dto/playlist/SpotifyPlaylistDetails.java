@@ -1,5 +1,6 @@
 package site.mutopia.server.spotify.dto.playlist;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,19 +12,19 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SpotifyPlaylistDetails {
 
-    @JsonProperty("collaborative")
+    @JsonIgnore
     private boolean collaborative;
 
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("external_urls")
+    @JsonIgnore
     private ExternalUrls externalUrls;
 
-    @JsonProperty("followers")
+    @JsonIgnore
     private Followers followers;
 
-    @JsonProperty("href")
+    @JsonIgnore
     private String href;
 
     @JsonProperty("id")
@@ -35,13 +36,14 @@ public class SpotifyPlaylistDetails {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("owner")
+    @JsonIgnore
     private Owner owner;
 
+    @JsonIgnore
     @JsonProperty("public")
     private boolean isPublic;
 
-    @JsonProperty("snapshot_id")
+    @JsonIgnore
     private String snapshotId;
 
     @JsonProperty("tracks")
@@ -56,17 +58,17 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ExternalUrls {
-        @JsonProperty("spotify")
+        @JsonIgnore
         private String spotify;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Followers {
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
-        @JsonProperty("total")
+        @JsonIgnore
         private int total;
     }
 
@@ -86,47 +88,47 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Owner {
-        @JsonProperty("external_urls")
+        @JsonIgnore
         private ExternalUrls externalUrls;
 
-        @JsonProperty("followers")
+        @JsonIgnore
         private Followers followers;
 
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
-        @JsonProperty("id")
+        @JsonIgnore
         private String id;
 
-        @JsonProperty("type")
+        @JsonIgnore
         private String type;
 
-        @JsonProperty("uri")
+        @JsonIgnore
         private String uri;
 
-        @JsonProperty("display_name")
+        @JsonIgnore
         private String displayName;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Tracks {
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
-        @JsonProperty("limit")
+        @JsonIgnore
         private int limit;
 
-        @JsonProperty("next")
+        @JsonIgnore
         private String next;
 
-        @JsonProperty("offset")
+        @JsonIgnore
         private int offset;
 
-        @JsonProperty("previous")
+        @JsonIgnore
         private String previous;
 
-        @JsonProperty("total")
+        @JsonIgnore
         private int total;
 
         @JsonProperty("items")
@@ -136,14 +138,14 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PlaylistTrackObject {
-        @JsonProperty("added_at")
+        @JsonIgnore
         private String addedAt;
 
-        @JsonProperty("added_by")
+        @JsonIgnore
         private AddedBy addedBy;
 
-        @JsonProperty("is_local")
-        private boolean isLocal;
+        @JsonIgnore
+        private boolean local;
 
         @JsonProperty("track")
         private Track track;
@@ -174,46 +176,46 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Track {
-        @JsonProperty("album")
+        @JsonIgnore
         private Album album;
 
         @JsonProperty("artists")
         private List<Artist> artists;
 
-        @JsonProperty("available_markets")
+        @JsonIgnore
         private List<String> availableMarkets;
 
-        @JsonProperty("disc_number")
+        @JsonIgnore
         private int discNumber;
 
         @JsonProperty("duration_ms")
         private int durationMs;
 
-        @JsonProperty("explicit")
+        @JsonIgnore
         private boolean explicit;
 
-        @JsonProperty("external_ids")
+        @JsonIgnore
         private ExternalIds externalIds;
 
-        @JsonProperty("external_urls")
+        @JsonIgnore
         private ExternalUrls externalUrls;
 
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
         @JsonProperty("id")
         private String id;
 
-        @JsonProperty("is_playable")
-        private boolean isPlayable;
+        @JsonIgnore
+        private boolean playable;
 
         @JsonProperty("name")
         private String name;
 
-        @JsonProperty("popularity")
+        @JsonIgnore
         private int popularity;
 
-        @JsonProperty("preview_url")
+        @JsonIgnore
         private String previewUrl;
 
         @JsonProperty("track_number")
@@ -222,66 +224,66 @@ public class SpotifyPlaylistDetails {
         @JsonProperty("type")
         private String type;
 
-        @JsonProperty("uri")
+        @JsonIgnore
         private String uri;
 
-        @JsonProperty("is_local")
-        private boolean isLocal;
+        @JsonIgnore
+        private boolean local;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Album {
-        @JsonProperty("album_type")
+        @JsonIgnore
         private String albumType;
 
-        @JsonProperty("total_tracks")
+        @JsonIgnore
         private int totalTracks;
 
-        @JsonProperty("available_markets")
+        @JsonIgnore
         private List<String> availableMarkets;
 
-        @JsonProperty("external_urls")
+        @JsonIgnore
         private ExternalUrls externalUrls;
 
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
-        @JsonProperty("id")
+        @JsonIgnore
         private String id;
 
-        @JsonProperty("images")
+        @JsonIgnore
         private List<Image> images;
 
-        @JsonProperty("name")
+        @JsonIgnore
         private String name;
 
-        @JsonProperty("release_date")
+        @JsonIgnore
         private String releaseDate;
 
-        @JsonProperty("release_date_precision")
+        @JsonIgnore
         private String releaseDatePrecision;
 
-        @JsonProperty("restrictions")
+        @JsonIgnore
         private Restrictions restrictions;
 
-        @JsonProperty("type")
+        @JsonIgnore
         private String type;
 
-        @JsonProperty("uri")
+        @JsonIgnore
         private String uri;
 
-        @JsonProperty("artists")
+        @JsonIgnore
         private List<Artist> artists;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Artist {
-        @JsonProperty("external_urls")
+        @JsonIgnore
         private ExternalUrls externalUrls;
 
-        @JsonProperty("href")
+        @JsonIgnore
         private String href;
 
         @JsonProperty("id")
@@ -293,39 +295,39 @@ public class SpotifyPlaylistDetails {
         @JsonProperty("type")
         private String type;
 
-        @JsonProperty("uri")
+        @JsonIgnore
         private String uri;
 
-        @JsonProperty("followers")
+        @JsonIgnore
         private Followers followers;
 
-        @JsonProperty("genres")
+        @JsonIgnore
         private List<String> genres;
 
-        @JsonProperty("images")
+        @JsonIgnore
         private List<Image> images;
 
-        @JsonProperty("popularity")
+        @JsonIgnore
         private int popularity;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ExternalIds {
-        @JsonProperty("isrc")
+        @JsonIgnore
         private String isrc;
 
-        @JsonProperty("ean")
+        @JsonIgnore
         private String ean;
 
-        @JsonProperty("upc")
+        @JsonIgnore
         private String upc;
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Restrictions {
-        @JsonProperty("reason")
+        @JsonIgnore
         private String reason;
     }
 }
