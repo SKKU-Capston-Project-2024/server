@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylist;
 import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistAddTracksRes;
+import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
 import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
 import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
 
@@ -25,7 +26,7 @@ class SpotifyClientManagerTest {
 
     @Test
     void createPlaylist() {
-        SpotifyPlaylist playlist = client.createPlaylist("31smzwkd4b4zk5lq74buj6n6lpf4", "BQAB633pyF-Ve5udTGfQ08YCCEr0KhrszgGBLHVwEHmtiDBp0lKOEuywec4t2eN6J8Dah8tu-4dEc557R3Mxgs3AvX0guFgWjoOFNesEFQ2eRNowoZC52H1-oq8DfVTS2auPNKK588OSi-wtQaH1dk12XFflj7My9XJ7cO6OQzqThg8QrTJ7iIq_ydTXjRXKE7HkIdsgPoCNy3AY4WwtMe7QuyyI_VKfQcwYwgvd_v7gP9LvQzzLcp69PeaCnUUVfKdNVvfAuyf-eckJwrpfErCadPnMjE3VAw", "test-playlist", "test-description", true);
+        SpotifyPlaylist playlist = client.createPlaylist("31smzwkd4b4zk5lq74buj6n6lpf4", "BQALxNVXRaqkYu3jSZZuprgHC5sxitkaYzgOmKu6jTjisLYuj1LAWaEzBmz60fFFj71PRYNMTMcDQ99hTPKFoUNHh8OhBMGizkthpzr0Fcdaoy8us1w", "test-playlist", "test-description", true);
         String id = playlist.getId();
         System.out.println(id);
     }
@@ -36,6 +37,13 @@ class SpotifyClientManagerTest {
         SpotifyPlaylistAddTracksRes playlist = client.addTracksToPlaylist("4rzhfMykEf6LZNFtwSS7JH", "BQAB633pyF-Ve5udTGfQ08YCCEr0KhrszgGBLHVwEHmtiDBp0lKOEuywec4t2eN6J8Dah8tu-4dEc557R3Mxgs3AvX0guFgWjoOFNesEFQ2eRNowoZC52H1-oq8DfVTS2auPNKK588OSi-wtQaH1dk12XFflj7My9XJ7cO6OQzqThg8QrTJ7iIq_ydTXjRXKE7HkIdsgPoCNy3AY4WwtMe7QuyyI_VKfQcwYwgvd_v7gP9LvQzzLcp69PeaCnUUVfKdNVvfAuyf-eckJwrpfErCadPnMjE3VAw", songIds,0);
         String snapshotId = playlist.getSnapshotId();
         System.out.println(snapshotId);
+    }
+
+    @Test
+    void getPlaylistDetails() {
+        String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
+        SpotifyPlaylistDetails playlistDetails = client.getPlaylistDetails(globalTop50PlaylistId, "BQD7caoiVaynBDiQvErI-VCT2kFSkKPy4JsyiqEQhHouT7Lp7E5ttUZUcbq0qw-pC72X4LVAe4G-0ZSgdyDAUTOQYHtKLxpPEDrIMIDJQFs7MkEa4vy9u13LyvKiM5Mfo_lKjhF0Pj1n_K5pJ8tni504ZKdliynGxfKoaSD1YK9v_Lcvwqv074CGZJnUftRIdhDoA-3QBr3wsg1E0dkBW9ucLzWZtEuSd2cpcN6GZHoNnJJ94mfrYRHpfLmHN6kfnzYYSPCym3TN3gazGVBRDK9inLwLMxIIIw");
+        System.out.println(playlistDetails);
     }
 
     @Test
@@ -50,5 +58,11 @@ class SpotifyClientManagerTest {
             System.out.println("images: " + t.getAlbum().getImages());
             System.out.println();
         });
+    }
+
+    @Test
+    void refreshAccessToken() {
+        String newAccessToken = client.refreshAccessToken("AQAdDZxJHV78ScnHqAXiZ4451OQiC69CGyG5Hrosh738ylQQNAYwtUQL3l68j82PfBmzS4m9_1Q5xmbD54wWpmGn1DUgg14nwvN3gJiX3GUoUiNrnzTW_qLdmFVLkyrhpxg");
+        System.out.println(newAccessToken);
     }
 }

@@ -12,6 +12,7 @@ import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
 import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
 import site.mutopia.server.spotify.entity.SpotifyTokenEntity;
 import site.mutopia.server.spotify.entity.SpotifyTokenType;
+import site.mutopia.server.spotify.exception.SpotifyAccessTokenNotFoundException;
 import site.mutopia.server.spotify.repository.SpotifyTokenRepository;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class SpotifyService {
     private final SpotifyClientManager spotifyClientManager;
 
     @Transactional
-    public void saveSpotifyToken(String userId, String spotifyUserId, String accessToken, String refreshToken) {
+    public void saveToken(String userId, String spotifyUserId, String accessToken, String refreshToken) {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found. userId: " + userId + " does not exist."));
 
         LocalDateTime now = LocalDateTime.now();
@@ -47,6 +48,18 @@ public class SpotifyService {
                 .build();
 
         spotifyTokenRepository.saveAll(List.of(accessTokenEntity, refreshTokenEntity));
+    }
+
+    @Transactional
+    public void updateAccessToken(String userId, String accessTokenValue) {
+        SpotifyTokenEntity accessToken = spotifyTokenRepository.findByUserIdAndTokenType(userId, SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + userId + "doesn't have access token"));
+
+        accessToken.updateAccessToken(accessTokenValue);
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        return spotifyClientManager.refreshAccessToken(refreshToken);
     }
 
     public String createPlaylist(SpotifyTokenEntity spotifyToken, String playlistName, String playlistDescription) {

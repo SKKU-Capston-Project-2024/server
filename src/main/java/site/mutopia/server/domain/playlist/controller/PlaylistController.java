@@ -15,7 +15,9 @@ import site.mutopia.server.spotify.dto.playlist.SpotifyPlaylistDetails;
 import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
 import site.mutopia.server.spotify.entity.SpotifyTokenEntity;
 import site.mutopia.server.spotify.entity.SpotifyTokenType;
+import site.mutopia.server.spotify.exception.SpotifyAccessTokenExpiredException;
 import site.mutopia.server.spotify.exception.SpotifyAccessTokenNotFoundException;
+import site.mutopia.server.spotify.exception.SpotifyRefreshTokenNotFoundException;
 import site.mutopia.server.spotify.repository.SpotifyTokenRepository;
 import site.mutopia.server.spotify.service.SpotifyService;
 import site.mutopia.server.swagger.response.CreatedResponse;
@@ -108,10 +110,23 @@ public class PlaylistController {
 
         List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).toList();
 
-        String spotifyPlaylistId = spotifyService.createPlaylist(spotifyAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
-        spotifyService.addSongsToPlaylist(spotifyAccessToken, spotifyPlaylistId, songIdsInPlaylist);
+        SpotifyPlaylistDetails playlistDetails;
+        try {
+            String spotifyPlaylistId = spotifyService.createPlaylist(spotifyAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
+            spotifyService.addSongsToPlaylist(spotifyAccessToken, spotifyPlaylistId, songIdsInPlaylist);
+            playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, spotifyPlaylistId);
+        } catch (SpotifyAccessTokenExpiredException ex) {
+            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.REFRESH)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have refresh token"));
+            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
+            spotifyService.updateAccessToken(loggedInUser.getId(), accessToken);
+            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have access token"));
 
-        SpotifyPlaylistDetails playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, spotifyPlaylistId);
+            String spotifyPlaylistId = spotifyService.createPlaylist(updatedAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
+            spotifyService.addSongsToPlaylist(updatedAccessToken, spotifyPlaylistId, songIdsInPlaylist);
+            playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, spotifyPlaylistId);
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(playlistDetails);
     }
@@ -123,7 +138,21 @@ public class PlaylistController {
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
 
         List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
-        RecommendationsDto recommendations = spotifyService.getRecommendations(songIdsInPlaylist, spotifyAccessToken.getTokenValue());
+
+        RecommendationsDto recommendations;
+        try {
+            recommendations = spotifyService.getRecommendations(songIdsInPlaylist, spotifyAccessToken.getTokenValue());
+        } catch (SpotifyAccessTokenExpiredException ex) {
+            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.REFRESH)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have refresh token"));
+            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
+            spotifyService.updateAccessToken(loggedInUser.getId(), accessToken);
+            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have access token"));
+
+            recommendations = spotifyService.getRecommendations(songIdsInPlaylist, updatedAccessToken.getTokenValue());
+        }
+
 
         return ResponseEntity.ok().body(recommendations);
     }

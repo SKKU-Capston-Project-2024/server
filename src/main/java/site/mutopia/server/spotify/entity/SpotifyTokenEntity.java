@@ -43,4 +43,10 @@ public class SpotifyTokenEntity {
         this.tokenValue = tokenValue;
         this.issuedAt = issuedAt;
     }
+
+    public void updateAccessToken(String accessToken) {
+        if (this.tokenType == SpotifyTokenType.ACCESS) {
+            this.tokenValue = accessToken;
+        }
+    }
 }
