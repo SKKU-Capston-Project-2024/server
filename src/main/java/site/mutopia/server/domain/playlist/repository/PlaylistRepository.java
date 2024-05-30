@@ -13,27 +13,27 @@ import java.util.Optional;
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> {
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), (SELECT COUNT(pl) > 0 FROM PlaylistLikeEntity pl WHERE pl.user.id = :userId AND pl.playlist.id = p.id), p.title, p.content, p.createdAt)" +
+            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), false, p.title, p.content, p.createdAt)" +
             "FROM PlaylistEntity p " +
             "WHERE p.creator.id = :userId")
     Page<PlaylistInfoDto> findPlaylistInfosByUserId(@Param("userId") String userId, Pageable pageable);
 
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), (SELECT COUNT(pl) > 0 FROM PlaylistLikeEntity pl WHERE pl.user.id = :userId AND pl.playlist.id = p.id), p.title, p.content, p.createdAt)" +
+            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), false , p.title, p.content, p.createdAt)" +
             "FROM PlaylistEntity p " +
             "WHERE p.id = :playlistId")
-    Optional<PlaylistInfoDto> findPlaylistInfoById(@Param("playlistId") Long playlistId, @Param("userId") String userId);
+    Optional<PlaylistInfoDto> findPlaylistInfoById(@Param("playlistId") Long playlistId);
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), (SELECT COUNT(pl) > 0 FROM PlaylistLikeEntity pl WHERE pl.user.id = :userId AND pl.playlist.id = p.id), p.title, p.content, p.createdAt)" +
+            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), false , p.title, p.content, p.createdAt)" +
             "FROM PlaylistEntity p " +
             "ORDER BY p.createdAt DESC")
-    Page<PlaylistInfoDto> findRecentPlaylists(Pageable pageable, @Param("userId") String userId);
+    Page<PlaylistInfoDto> findRecentPlaylists(Pageable pageable);
 
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, p.creator.username, COUNT(pll), (SELECT COUNT(pl) > 0 FROM PlaylistLikeEntity pl WHERE pl.user.id = :userId AND pl.playlist.id = p.id), p.title, p.content, p.createdAt)" +
+            "p.id, p.creator.id, p.creator.username, COUNT(pll), false, p.title, p.content, p.createdAt)" +
             "FROM PlaylistLikeEntity pll " +
             "JOIN pll.playlist p " +
             "JOIN p.songs " +

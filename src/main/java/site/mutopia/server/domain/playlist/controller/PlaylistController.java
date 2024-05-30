@@ -83,23 +83,25 @@ public class PlaylistController {
 
     @Operation(summary = "유저의 플레이리스트 목록 조회하기", description = "사용자는 플레이리스트 목록을 조회할 수 있습니다.")
     @GetMapping("/user/{userId}/playlist")
-    public ResponseEntity<List<PlaylistInfoDto>> getUserPlaylists(@LoginUser UserEntity loggedInUser, @PathVariable("userId") String userId,
-                                                   @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<PlaylistInfoDto> userPlaylists = playlistService.getUserPlaylists(userId, limit);
+    public ResponseEntity<List<PlaylistInfoDto>> getUserPlaylists(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getUserPlaylists(userId, limit, loggedInUser != null ? loggedInUser.getId() : null);
         return ResponseEntity.ok().body(userPlaylists);
     }
 
     @Operation(summary = "최근에 등록된 플레이리스트 조회하기", description = "사용자는 최근에 등록된 플레이리스트 목록을 조회할 수 있습니다.")
     @GetMapping("/user/playlist/recent")
-    public ResponseEntity<List<PlaylistInfoDto>> getRecentPlaylists(@LoginUser UserEntity loggedInUser, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<PlaylistInfoDto> userPlaylists = playlistService.getRecentPlaylists(limit, loggedInUser.getId());
+    public ResponseEntity<List<PlaylistInfoDto>> getRecentPlaylists(@LoginUser(require = false) UserEntity loggedInUser, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getRecentPlaylists(limit, loggedInUser != null ? loggedInUser.getId() : null);
         return ResponseEntity.ok().body(userPlaylists);
     }
 
     @Operation(summary = "플레이리스트 ID로 플레이리스트 단건 조회하기", description = "사용자는 플레이리스트 정보를 조회할 수 있습니다.")
     @GetMapping("/user/playlist/{playlistId}")
-    public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
-        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId());
+    public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@LoginUser(require = false) UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
+        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId, loggedInUser != null ? loggedInUser.getId() : null);
         return ResponseEntity.ok().body(playlistInfo);
     }
 

@@ -11,6 +11,7 @@ import site.mutopia.server.domain.playlist.dto.PlaylistSaveReqDto;
 import site.mutopia.server.domain.playlist.entity.PlaylistEntity;
 import site.mutopia.server.domain.playlist.exception.PlaylistNotFoundException;
 import site.mutopia.server.domain.playlist.repository.PlaylistRepository;
+import site.mutopia.server.domain.playlistLike.repository.PlaylistLikeRepository;
 import site.mutopia.server.domain.playlistSong.entity.PlaylistSongEntity;
 import site.mutopia.server.domain.playlistSong.repository.PlaylistSongRepository;
 import site.mutopia.server.domain.song.entity.SongEntity;
@@ -19,7 +20,6 @@ import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
-import site.mutopia.server.spotify.service.SpotifyService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,12 +31,20 @@ public class PlaylistService {
 
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
+    private final PlaylistLikeRepository playlistLikeRepository;
     private final SongRepository songRepository;
     private final UserRepository userRepository;
 
     // TODO: 성능 개선
-    public List<PlaylistInfoDto> getUserPlaylists(String userId, int limit) {
+    public List<PlaylistInfoDto> getUserPlaylists(String userId, int limit, String loggedInUserId) {
         List<PlaylistInfoDto> playlists = playlistRepository.findPlaylistInfosByUserId(userId, PageRequest.of(0, limit)).getContent();
+        if(loggedInUserId != null) {
+            playlists.forEach(playlist -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(loggedInUserId, playlist.getPlaylistId())) {
+                    playlist.setIsLiked(true);
+                }
+            });
+        }
 
         playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
 
@@ -44,14 +52,27 @@ public class PlaylistService {
     }
 
     public PlaylistInfoDto getUserPlaylistById(Long playlistId, String userId) {
-        PlaylistInfoDto playlistInfoDto = playlistRepository.findPlaylistInfoById(playlistId, userId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
-        playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistId));
+        PlaylistInfoDto playlist = playlistRepository.findPlaylistInfoById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
+        if(userId != null) {
+            if (playlistLikeRepository.existsByUserIdAndPlaylistId(userId, playlist.getPlaylistId())) {
+                playlist.setIsLiked(true);
+            }
+        }
+        playlist.setSongs(fetchSongsForPlaylist(playlistId));
 
-        return playlistInfoDto;
+        return playlist;
     }
 
     public List<PlaylistInfoDto> getRecentPlaylists(int limit, String userId) {
-        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit), userId).getContent();
+        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit)).getContent();
+
+        if(userId != null) {
+            playlists.forEach(playlist -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(userId, playlist.getPlaylistId())) {
+                    playlist.setIsLiked(true);
+                }
+            });
+        }
 
         playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
 
