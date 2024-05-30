@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.mutopia.server.domain.song.SongNotFoundException;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.song.repository.SongRepository;
+import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songComment.entity.SongCommentEntity;
 import site.mutopia.server.domain.songComment.entity.SongCommentId;
 import site.mutopia.server.domain.songComment.exception.SongCommentNotFoundException;
@@ -57,12 +58,9 @@ public class SongCommentLikeService {
     }
 
     @Transactional(readOnly = true)
-    public List<LikeSongCommentDto> getLikedSongsByUser(String userId, Integer page, UserEntity loggedInUser) {
+    public List<SongCommentInfoResDto> getLikedSongsByUser(String userId, Integer page, UserEntity loggedInUser) {
 
-        List<LikeSongCommentDto> likedSongsByUserId = songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page), loggedInUser != null ? loggedInUser.getId() : null);
-
-        log.info("likedSongsByUserId: {}", likedSongsByUserId);
-        return likedSongsByUserId;
+        return songCommentLikeRepository.findLikedSongsByUserId(userId, Pageable.ofSize(10).withPage(page), loggedInUser != null ? loggedInUser.getId() : null);
     }
 
 }
