@@ -45,12 +45,13 @@ public class SongCommentController {
     @CreatedResponse
     @Operation(summary = "곡 한줄평 등록", description = "노래에 대한 한줄평을 생성합니다.")
     @PostMapping("/song/{songId}/comment")
-    public ResponseEntity<SongCommentEntity> createSongComment(
+    public ResponseEntity<Void> createSongComment(
             @LoginUser UserEntity userEntity,
             @PathVariable("songId") String songId,
             @RequestBody SongCommentReqDto songCommentReqDto
     ) {
-        return ResponseEntity.status(201).body(songCommentService.saveSongComment(userEntity, songId, songCommentReqDto));
+        songCommentService.saveSongComment(userEntity, songId, songCommentReqDto);
+        return ResponseEntity.status(201).build();
     }
 
     @GetMapping("/song/{songId}/comment/recent")

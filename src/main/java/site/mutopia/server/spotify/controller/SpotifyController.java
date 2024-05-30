@@ -55,7 +55,7 @@ public class SpotifyController {
         AuthResponse tokenRes = spotifyClientManager.exchangeCodeForToken(code);
         SpotifyUserProfile profile = spotifyClientManager.getCurrentUserProfile(tokenRes.getAccessToken());
 
-        spotifyService.saveSpotifyToken(userId, profile.getId(), tokenRes.getAccessToken(), tokenRes.getRefreshToken());
+        spotifyService.saveToken(userId, profile.getId(), tokenRes.getAccessToken(), tokenRes.getRefreshToken());
 
         return ResponseEntity.noContent().build();
     }
