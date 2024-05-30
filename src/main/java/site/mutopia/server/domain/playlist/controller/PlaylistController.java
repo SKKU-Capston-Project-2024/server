@@ -156,4 +156,32 @@ public class PlaylistController {
 
         return ResponseEntity.ok().body(recommendations);
     }
+
+
+    @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")
+    @GetMapping("/playlist/trending")
+    public ResponseEntity<SpotifyPlaylistDetails> getGlobalTop50() {
+
+        String spotifyUserId = "28c1be5f-41fb-49a6-b8d4-780c05cc173f";
+        String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
+
+        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "has not logged In spotify before. please log in to spotify first."));
+
+        SpotifyPlaylistDetails playlistDetails;
+        try {
+            playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, globalTop50PlaylistId);
+        } catch (SpotifyAccessTokenExpiredException ex) {
+            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.REFRESH)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have refresh token"));
+            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
+            spotifyService.updateAccessToken(spotifyUserId, accessToken);
+            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
+                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have access token"));
+
+            playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, globalTop50PlaylistId);
+        }
+
+        return ResponseEntity.ok().body(playlistDetails);
+    }
 }
