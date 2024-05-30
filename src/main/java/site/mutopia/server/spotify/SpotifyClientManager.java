@@ -3,8 +3,10 @@ package site.mutopia.server.spotify;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 import site.mutopia.server.spotify.dto.playlist.*;
 import site.mutopia.server.spotify.dto.profile.SpotifyUserProfile;
 import site.mutopia.server.spotify.dto.recommendation.RecommendationsDto;
+import site.mutopia.server.spotify.exception.SpotifyAccessTokenExpiredException;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -95,7 +98,35 @@ public class SpotifyClientManager {
         return accessToken;
     }
 
+    public String refreshAccessToken(String refreshToken) {
+        AuthResponse authResponse = WebClient.builder()
+                .baseUrl("https://accounts.spotify.com/api")
+                .defaultHeader("Authorization", getAuthorizationBasicHeader())
+                .defaultHeader("content-type", "application/x-www-form-urlencoded")
+                .build()
+                .post()
+                .uri("/token")
+                .body(BodyInserters.fromFormData("grant_type", "refresh_token")
+                        .with("refresh_token", refreshToken))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(AuthResponse.class)
+                .onErrorResume(WebClientResponseException.class, ex -> {
+                    log.error("Error refreshing access token: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    return Mono.empty();
+                })
+                .block();
+
+        if (authResponse == null || authResponse.getAccessToken() == null) {
+            throw new RuntimeException("Failed to refresh access token");
+        }
+
+        return authResponse.getAccessToken();
+    }
+
+
     @Getter
+    @ToString
     public static class AuthResponse {
         @JsonProperty("access_token")
         private String accessToken;
@@ -144,9 +175,12 @@ public class SpotifyClientManager {
                 .get()
                 .uri("/me")
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->
+                        response.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new SpotifyAccessTokenExpiredException(errorBody)))
+                )
                 .bodyToMono(SpotifyUserProfile.class)
                 .doOnError(WebClientResponseException.class, ex -> {
-                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    log.error("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 }).block();
     }
 
@@ -165,9 +199,12 @@ public class SpotifyClientManager {
                 .uri("/users/" + spotifyUserId +"/playlists")
                 .body(Mono.just(playlistRequest), SpotifyPlaylistCreateReq.class)
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->
+                        response.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new SpotifyAccessTokenExpiredException(errorBody)))
+                )
                 .bodyToMono(SpotifyPlaylist.class)
                 .doOnError(WebClientResponseException.class, ex -> {
-                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    log.error("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 })
                 .block();
     }
@@ -189,9 +226,12 @@ public class SpotifyClientManager {
                 .uri("/playlists/" + playlistId + "/tracks")
                 .body(Mono.just(addTracksRequest), SpotifyPlaylistAddTracksReq.class)
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->
+                        response.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new SpotifyAccessTokenExpiredException(errorBody)))
+                )
                 .bodyToMono(SpotifyPlaylistAddTracksRes.class)
                 .doOnError(WebClientResponseException.class, ex -> {
-                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    log.error("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 })
                 .block();
     }
@@ -207,9 +247,12 @@ public class SpotifyClientManager {
                         .path("/playlists/" + playlistId)
                         .build())
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->
+                        response.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new SpotifyAccessTokenExpiredException(errorBody)))
+                )
                 .bodyToMono(SpotifyPlaylistDetails.class)
                 .doOnError(WebClientResponseException.class, ex -> {
-                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    log.error("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 })
                 .block();
     }
@@ -226,9 +269,12 @@ public class SpotifyClientManager {
                         .queryParam("seed_tracks", String.join(",", songIds))
                         .build())
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->
+                        response.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new SpotifyAccessTokenExpiredException(errorBody)))
+                )
                 .bodyToMono(RecommendationsDto.class)
                 .doOnError(WebClientResponseException.class, ex -> {
-                    System.out.println("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
+                    log.error("Error: " + ex.getStatusCode() + " " + ex.getResponseBodyAsString());
                 })
                 .block();
     }
