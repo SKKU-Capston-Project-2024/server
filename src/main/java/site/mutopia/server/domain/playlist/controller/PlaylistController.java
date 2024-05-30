@@ -67,7 +67,7 @@ public class PlaylistController {
 
     @Operation(summary = "플레이리스트 삭제하기", description = "로그인 한 사용자는 플레이리스트를 삭제할 수 있습니다.")
     @DeleteMapping("/user/playlist/{playlistId}")
-    public ResponseEntity<Void> deletePlaylist(@PathVariable("playlistId") Long playlistId) {
+    public ResponseEntity<Void> deletePlaylist(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
         // TODO: loggedInUser가 해당 playlist를 소유하고 있는지 체크하는 로직 추가
 
         playlistService.deletePlaylist(playlistId);
@@ -77,7 +77,7 @@ public class PlaylistController {
 
     @Operation(summary = "유저의 플레이리스트 목록 조회하기", description = "사용자는 플레이리스트 목록을 조회할 수 있습니다.")
     @GetMapping("/user/{userId}/playlist")
-    public ResponseEntity<List<PlaylistInfoDto>> getUserPlaylists(@PathVariable("userId") String userId,
+    public ResponseEntity<List<PlaylistInfoDto>> getUserPlaylists(@LoginUser UserEntity loggedInUser, @PathVariable("userId") String userId,
                                                    @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
         List<PlaylistInfoDto> userPlaylists = playlistService.getUserPlaylists(userId, limit);
         return ResponseEntity.ok().body(userPlaylists);
@@ -85,15 +85,15 @@ public class PlaylistController {
 
     @Operation(summary = "최근에 등록된 플레이리스트 조회하기", description = "사용자는 최근에 등록된 플레이리스트 목록을 조회할 수 있습니다.")
     @GetMapping("/user/playlist/recent")
-    public ResponseEntity<List<PlaylistInfoDto>> getRecentPlaylists(@RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
-        List<PlaylistInfoDto> userPlaylists = playlistService.getRecentPlaylists(limit);
+    public ResponseEntity<List<PlaylistInfoDto>> getRecentPlaylists(@LoginUser UserEntity loggedInUser, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getRecentPlaylists(limit, loggedInUser.getId());
         return ResponseEntity.ok().body(userPlaylists);
     }
 
     @Operation(summary = "플레이리스트 ID로 플레이리스트 단건 조회하기", description = "사용자는 플레이리스트 정보를 조회할 수 있습니다.")
     @GetMapping("/user/playlist/{playlistId}")
-    public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@PathVariable("playlistId") Long playlistId) {
-        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId);
+    public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
+        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId());
         return ResponseEntity.ok().body(playlistInfo);
     }
 
@@ -106,7 +106,7 @@ public class PlaylistController {
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
 
-        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).toList();
+        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).toList();
 
         String spotifyPlaylistId = spotifyService.createPlaylist(spotifyAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
         spotifyService.addSongsToPlaylist(spotifyAccessToken, spotifyPlaylistId, songIdsInPlaylist);
@@ -122,7 +122,7 @@ public class PlaylistController {
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
 
-        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
+        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
         RecommendationsDto recommendations = spotifyService.getRecommendations(songIdsInPlaylist, spotifyAccessToken.getTokenValue());
 
         return ResponseEntity.ok().body(recommendations);

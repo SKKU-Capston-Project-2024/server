@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.util.List;
 
+import static site.mutopia.server.global.util.StringUtil.unixTimeToString;
+
 @Getter
 @AllArgsConstructor
 @Builder
@@ -12,10 +14,13 @@ import java.util.List;
 public class PlaylistInfoDto {
     private Long playlistId;
     private String creatorId;
+    private String creatorName;
     private Long likeCount;
+    private Boolean isLiked;
     private String title;
     private String content;
     private List<SongBriefInfo> songs;
+    private String createdAt;
 
     @Getter
     @AllArgsConstructor
@@ -30,11 +35,14 @@ public class PlaylistInfoDto {
         private String albumImgUrl;
     }
 
-    public PlaylistInfoDto(Long playlistId, String creatorId, Long likeCount, String title, String content) {
+    public PlaylistInfoDto(Long playlistId, String creatorId, String creatorName, Long likeCount, Boolean isLiked, String title, String content, Long createdAt) {
         this.playlistId = playlistId;
         this.creatorId = creatorId;
+        this.creatorName = creatorName;
         this.likeCount = likeCount;
+        this.isLiked = isLiked;
         this.title = title;
         this.content = content;
+        this.createdAt = unixTimeToString(createdAt);
     }
 }

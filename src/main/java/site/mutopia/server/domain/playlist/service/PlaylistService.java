@@ -33,7 +33,6 @@ public class PlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final SongRepository songRepository;
     private final UserRepository userRepository;
-    private final SpotifyService spotifyService;
 
     // TODO: 성능 개선
     public List<PlaylistInfoDto> getUserPlaylists(String userId, int limit) {
@@ -44,15 +43,15 @@ public class PlaylistService {
         return playlists;
     }
 
-    public PlaylistInfoDto getUserPlaylistById(Long playlistId) {
-        PlaylistInfoDto playlistInfoDto = playlistRepository.findPlaylistInfoById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
+    public PlaylistInfoDto getUserPlaylistById(Long playlistId, String userId) {
+        PlaylistInfoDto playlistInfoDto = playlistRepository.findPlaylistInfoById(playlistId, userId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
         playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistId));
 
         return playlistInfoDto;
     }
 
-    public List<PlaylistInfoDto> getRecentPlaylists(int limit) {
-        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit)).getContent();
+    public List<PlaylistInfoDto> getRecentPlaylists(int limit, String userId) {
+        List<PlaylistInfoDto> playlists = playlistRepository.findRecentPlaylists(PageRequest.of(0, limit), userId).getContent();
 
         playlists.forEach(playlist -> playlist.setSongs(fetchSongsForPlaylist(playlist.getPlaylistId())));
 
