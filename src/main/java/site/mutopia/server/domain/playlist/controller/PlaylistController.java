@@ -133,7 +133,7 @@ public class PlaylistController {
 
     @Operation(summary = "플레이리스트로 추천 곡 목록 조회하기", description = "사용자는 플레이리스트를 통해 추천 곡 목록을 조회할 수 있다. (spotify login 필요함)")
     @GetMapping("/user/playlist/{playlistId}/recommendation")
-    public ResponseEntity<RecommendationsDto> getRecommendationsByPlaylistId(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
+    public ResponseEntity<PlaylistRecommendationResDto> getRecommendationsByPlaylistId(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "has not logged In spotify before. please log in to spotify first."));
 
@@ -148,7 +148,7 @@ public class PlaylistController {
             recommendations = spotifyService.getRecommendations(songIdsInPlaylist, updatedAccessToken.getTokenValue());
         }
 
-        return ResponseEntity.ok().body(recommendations);
+        return ResponseEntity.ok().body(recommendations.toDto());
     }
 
     @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")

@@ -3,6 +3,10 @@ package site.mutopia.server.spotify.dto.recommendation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import site.mutopia.server.domain.playlist.dto.PlaylistRecommendationResDto;
+import site.mutopia.server.domain.playlist.dto.PlaylistRecommendationResDto.Image;
+import site.mutopia.server.domain.playlist.dto.PlaylistRecommendationResDto.Song;
+import site.mutopia.server.domain.playlist.dto.PlaylistRecommendationResDto.Artist;
 
 import java.util.List;
 
@@ -219,5 +223,25 @@ public class RecommendationsDto {
 
         @JsonProperty("total")
         private int total;
+    }
+
+    public PlaylistRecommendationResDto toDto() {
+        return PlaylistRecommendationResDto.builder()
+                .songs(this.tracks.stream().map(track -> {
+                    Image image = track.getAlbum().getImages().get(0) != null ? Image.builder()
+                            .url(track.getAlbum().getImages().get(0).getUrl())
+                            .height(track.getAlbum().getImages().get(0).getHeight())
+                            .width(track.getAlbum().getImages().get(0).getWidth())
+                            .build() : null;
+
+                    List<Artist> artists = track.getArtists().stream().map(artist -> Artist.builder().id(artist.getId()).name(artist.getName()).build()).toList();
+
+                    return Song.builder()
+                            .id(track.getId())
+                            .name(track.getName())
+                            .image(image)
+                            .artists(artists)
+                            .build();
+                }).toList()).build();
     }
 }
