@@ -13,14 +13,14 @@ public class AlbumTrackDto
     String id;
     String name;
     Integer trackNumber;
-    Integer rating;
+    Double rating;
     String length;
 
     public AlbumTrackDto(SongEntity songEntity) {
         this.id = songEntity.getId();
         this.name = songEntity.getTitle();
         this.trackNumber = songEntity.getTrackNumber();
-        this.rating = null;
+        this.rating = songEntity.getAverageRating();
         this.length = String.format("%d:%02d", songEntity.getDuration() / 60, songEntity.getDuration() % 60);
     }
 }

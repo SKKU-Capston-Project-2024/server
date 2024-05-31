@@ -42,6 +42,7 @@ public class AlbumDetailResDto {
                 .releaseDate(entity.getReleaseDate())
                 .totalReviewCount(entity.getTotalReviewCount())
                 .likeCount(entity.getTotalLikeCount())
+                .averageRating(entity.getAverageRating())
                 .albumTrackList(entity.getSongs().stream().map(AlbumTrackDto::new).collect(Collectors.toList()))
                 .build();
     }

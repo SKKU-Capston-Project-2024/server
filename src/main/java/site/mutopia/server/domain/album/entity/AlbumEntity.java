@@ -43,5 +43,11 @@ public class AlbumEntity {
     Long totalReviewCount;
 
     @Formula("(select count(*) from album_like l where l.album_id = id)")
+    @Basic(fetch = FetchType.LAZY)
     Long totalLikeCount;
+
+    @Formula("(select avg(r.rating) from album_review r where r.album_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    Double averageRating;
+
 }

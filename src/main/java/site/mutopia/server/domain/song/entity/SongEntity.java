@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import java.time.LocalDate;
 
@@ -35,5 +36,8 @@ public class SongEntity {
 
     @Column(name = "track_number")
     private Integer trackNumber;
+
+    @Formula("(select avg(r.rating) from song_comment r where r.song_id = song_id)")
+    private Double averageRating;
 
 }
