@@ -21,7 +21,8 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
-                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id) " +
+                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id), " +
+                "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
                 "where sc.song.id = :songId " +
                 "order by sc.createdAt desc";
@@ -44,7 +45,8 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
-                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id) " +
+                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id), " +
+                "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
                 "where sc.writer.id = :userId " +
                 "order by sc.createdAt desc";
@@ -68,7 +70,8 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
-                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id) " +
+                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id), " +
+                "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
                 "order by sc.createdAt desc";
 
@@ -90,7 +93,8 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
-                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id) " +
+                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id), " +
+                "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
                 "where sc.song.album.id = :albumId " +
                 "order by sc.createdAt desc";
@@ -113,7 +117,8 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
-                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id) " +
+                "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = sc.song.id), " +
+                "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
                 "where sc.song.id = :songId " +
                 "and sc.writer.id = :userId " +

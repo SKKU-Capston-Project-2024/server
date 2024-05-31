@@ -36,6 +36,10 @@ public class SongCommentInfoResDto {
     public static class SongInfo {
         private String id;
         private String title;
+        private String artistName;
+        private String albumId;
+        private String albumTitle;
+        private String albumCoverImgUrl;
     }
 
     @Getter
@@ -80,7 +84,8 @@ public class SongCommentInfoResDto {
     public SongCommentInfoResDto(
             String writerId, String writerName, String writerProfileImageUrl,
             String songId, String songTitle, Integer rating, String comment,
-            Long createdAt, Boolean isLiked, Long likeCount
+            Long createdAt, Boolean isLiked, Long likeCount,
+            String albumId, String albumTitle, String artistName, String albumCoverImgUrl
     ) {
 
         CommentWriterInfo writerInfo = CommentWriterInfo.builder()
@@ -93,6 +98,10 @@ public class SongCommentInfoResDto {
                 .songInfo(SongInfo.builder()
                         .id(songId)
                         .title(songTitle)
+                        .albumId(albumId)
+                        .albumTitle(albumTitle)
+                        .albumCoverImgUrl(albumCoverImgUrl)
+                        .artistName(artistName)
                         .build())
                 .rating(rating)
                 .comment(comment)

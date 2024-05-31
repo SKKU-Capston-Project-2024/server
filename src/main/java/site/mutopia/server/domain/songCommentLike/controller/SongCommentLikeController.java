@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songCommentLike.dto.LikeSongCommentDto;
 import site.mutopia.server.domain.songCommentLike.dto.SongCommentLikeStatusResDto;
 import site.mutopia.server.domain.songCommentLike.dto.SongCommentLikeStatusResDto.SongCommentLikeToggleStatus;
@@ -38,7 +39,7 @@ public class SongCommentLikeController {
 
     @Operation(summary = "특정 유저가 좋아요 한 곡 한줄평 가져오기", description = "특정 유저가 좋아요한 곡 한줄평을 가져옵니다.")
     @GetMapping("/song/comment/like/{userId}")
-    public ResponseEntity<List<LikeSongCommentDto>> getLikedSongCommentByUser(
+    public ResponseEntity<List<SongCommentInfoResDto>> getLikedSongCommentByUser(
             @PathVariable("userId") String userId, @RequestParam("page") int page, @LoginUser(require = false) UserEntity loggedInUser) {
         return ResponseEntity.ok().body(songCommentLikeService.getLikedSongsByUser(userId, page, loggedInUser));
     }
