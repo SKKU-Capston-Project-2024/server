@@ -30,7 +30,7 @@ public class SongCommentLikeCustomRepositoryImpl implements SongCommentLikeCusto
 
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "scl.songComment.writer.id, scl.songComment.writer.username , scl.songComment.writer.profile.profilePicUrl, scl.songComment.song.id, scl.songComment.song.title, scl.songComment.rating, scl.songComment.comment, scl.songComment.createdAt, " +
-                (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl2 where scl2.id.songCommentId = scl.songComment.id and scl2.id.likeUserId = :loginUserId), " : "false, ") +
+                (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl2 where scl2.songComment.song.id = scl.songComment.song.id and scl2.songComment.writer.id = scl.songComment.writer.id and scl2.id.likeUserId = :loginUserId), " : "false, ") +
                 "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.songComment.song.id = scl.songComment.song.id), " +
                 "scl.songComment.song.album.id, scl.songComment.song.album.name, scl.songComment.song.album.artistName, scl.songComment.song.album.coverImageUrl " +
                 ") from SongCommentLikeEntity scl " +
