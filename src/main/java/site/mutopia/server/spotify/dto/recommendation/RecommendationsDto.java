@@ -228,7 +228,7 @@ public class RecommendationsDto {
     public PlaylistRecommendationResDto toDto() {
         return PlaylistRecommendationResDto.builder()
                 .songs(this.tracks.stream().map(track -> {
-                    Image image = track.getAlbum().getImages().get(0) != null ? Image.builder()
+                    Image image = !track.getAlbum().getImages().isEmpty() ? Image.builder()
                             .url(track.getAlbum().getImages().get(0).getUrl())
                             .height(track.getAlbum().getImages().get(0).getHeight())
                             .width(track.getAlbum().getImages().get(0).getWidth())

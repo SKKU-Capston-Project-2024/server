@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.mutopia.server.domain.playlist.dto.PlaylistTrendingResDto;
+import site.mutopia.server.domain.playlist.dto.PlaylistTrendingResDto.Song;
 
 import java.util.List;
 
@@ -176,7 +178,13 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Track {
-        @JsonIgnore
+        @JsonProperty("id")
+        private String id;
+
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("album")
         private Album album;
 
         @JsonProperty("artists")
@@ -203,14 +211,8 @@ public class SpotifyPlaylistDetails {
         @JsonIgnore
         private String href;
 
-        @JsonProperty("id")
-        private String id;
-
         @JsonIgnore
         private boolean playable;
-
-        @JsonProperty("name")
-        private String name;
 
         @JsonIgnore
         private int popularity;
@@ -234,6 +236,9 @@ public class SpotifyPlaylistDetails {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Album {
+        @JsonProperty("artists")
+        private List<Artist> artists;
+
         @JsonIgnore
         private String albumType;
 
@@ -249,13 +254,13 @@ public class SpotifyPlaylistDetails {
         @JsonIgnore
         private String href;
 
-        @JsonIgnore
+        @JsonProperty("id")
         private String id;
 
-        @JsonIgnore
+        @JsonProperty("images")
         private List<Image> images;
 
-        @JsonIgnore
+        @JsonProperty("name")
         private String name;
 
         @JsonIgnore
@@ -272,9 +277,6 @@ public class SpotifyPlaylistDetails {
 
         @JsonIgnore
         private String uri;
-
-        @JsonIgnore
-        private List<Artist> artists;
     }
 
     @Getter
@@ -329,5 +331,20 @@ public class SpotifyPlaylistDetails {
     public static class Restrictions {
         @JsonIgnore
         private String reason;
+    }
+
+    public PlaylistTrendingResDto toDto() {
+        return PlaylistTrendingResDto.builder()
+                .songs(this.tracks.items.stream().map(trackItem -> Song.builder()
+                        .id(trackItem.getTrack().getId())
+                        .name(trackItem.getTrack().getName())
+                        .image(!trackItem.getTrack().getAlbum().getImages().isEmpty() ? PlaylistTrendingResDto.Image.builder()
+                                .url(trackItem.getTrack().getAlbum().getImages().get(0).getUrl())
+                                .height(trackItem.getTrack().getAlbum().getImages().get(0).getHeight())
+                                .width(trackItem.getTrack().getAlbum().getImages().get(0).getWidth())
+                                .build() : null)
+                        .artists(trackItem.getTrack().getAlbum().getArtists().stream().map(artist -> PlaylistTrendingResDto.Artist.builder().id(artist.getId()).name(artist.getName()).build()).toList())
+                        .build()).toList())
+                .build();
     }
 }

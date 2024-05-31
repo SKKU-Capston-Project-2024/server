@@ -153,7 +153,7 @@ public class PlaylistController {
 
     @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")
     @GetMapping("/playlist/trending")
-    public ResponseEntity<SpotifyPlaylistDetails> getGlobalTop50() {
+    public ResponseEntity<PlaylistTrendingResDto> getGlobalTop50() {
         String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
 
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
@@ -167,7 +167,7 @@ public class PlaylistController {
             playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, globalTop50PlaylistId);
         }
 
-        return ResponseEntity.ok().body(playlistDetails);
+        return ResponseEntity.ok().body(playlistDetails.toDto());
     }
 
     private SpotifyTokenEntity refreshToken() {
