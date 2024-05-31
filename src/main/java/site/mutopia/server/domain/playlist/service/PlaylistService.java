@@ -51,7 +51,7 @@ public class PlaylistService {
         return playlists;
     }
 
-    public PlaylistInfoDto getUserPlaylistById(Long playlistId, String userId) {
+    public PlaylistInfoDto getUserPlaylistByIdAndUserId(Long playlistId, String userId) {
         PlaylistInfoDto playlist = playlistRepository.findPlaylistInfoById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
         if(userId != null) {
             if (playlistLikeRepository.existsByUserIdAndPlaylistId(userId, playlist.getPlaylistId())) {
@@ -60,6 +60,12 @@ public class PlaylistService {
         }
         playlist.setSongs(fetchSongsForPlaylist(playlistId));
 
+        return playlist;
+    }
+
+    public PlaylistInfoDto getUserPlaylistById(Long playlistId) {
+        PlaylistInfoDto playlist = playlistRepository.findPlaylistInfoById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
+        playlist.setSongs(fetchSongsForPlaylist(playlistId));
         return playlist;
     }
 
