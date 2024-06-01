@@ -25,8 +25,8 @@ public class SongCommentService {
     private final SongRepository songRepository;
 
     @Transactional(readOnly = true)
-    public List<SongCommentInfoResDto> getUserSongComments(String userId, int page, UserEntity loggedInUser) {
-        return songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null);
+    public List<SongCommentInfoResDto> getUserSongComments(String userId, int page, UserEntity loggedInUser, OrderBy orderBy) {
+        return songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
 
     @Transactional(readOnly = true)

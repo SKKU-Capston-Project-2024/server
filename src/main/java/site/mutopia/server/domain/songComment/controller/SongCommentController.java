@@ -96,12 +96,22 @@ public class SongCommentController {
     }
 
     @GetMapping("/user/{userId}/song/comment/recent")
-    @Operation(summary = "사용자의 곡 한줄평 조회", description = "특정 사용자가 작성한 노래 한줄평을 최신순으로 조회합니다.")
-    public ResponseEntity<List<SongCommentInfoResDto>> getUserSongComments(
+    @Operation(summary = "사용자의 곡 한줄평 조회 (최근순 조회)", description = "특정 사용자가 작성한 노래 한줄평을 최신순으로 조회합니다.")
+    public ResponseEntity<List<SongCommentInfoResDto>> getRecentUserSongComments(
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("userId") String userId,
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, page, userEntity);
+        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, page, userEntity, OrderBy.RECENT);
+        return ResponseEntity.ok().body(userSongComments);
+    }
+
+    @GetMapping("/user/{userId}/song/comment/popular")
+    @Operation(summary = "사용자의 곡 한줄평 조회 (인기순 조회)", description = "특정 사용자가 작성한 노래 한줄평을 인기순으로 조회합니다.")
+    public ResponseEntity<List<SongCommentInfoResDto>> getPopularUserSongComments(
+            @LoginUser(require = false) UserEntity userEntity,
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+        List<SongCommentInfoResDto> userSongComments = songCommentService.getUserSongComments(userId, page, userEntity, OrderBy.POPULAR);
         return ResponseEntity.ok().body(userSongComments);
     }
 
