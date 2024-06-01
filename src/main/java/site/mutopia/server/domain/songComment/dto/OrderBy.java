@@ -1,5 +1,5 @@
 package site.mutopia.server.domain.songComment.dto;
 
-public enum SongCommentOrderBy {
+public enum OrderBy {
     RECENT, POPULAR
 }

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
-import site.mutopia.server.domain.songComment.dto.SongCommentOrderBy;
+import site.mutopia.server.domain.songComment.dto.OrderBy;
 import site.mutopia.server.domain.songComment.dto.SongCommentReqDto;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
 import site.mutopia.server.domain.user.entity.UserEntity;
@@ -57,7 +57,7 @@ public class SongCommentController {
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("songId") String songId,
             @RequestParam(value = "page", defaultValue = "0") int page){
-        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, SongCommentOrderBy.RECENT));
+        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, OrderBy.RECENT));
     }
 
     @GetMapping("/song/{songId}/comment/popular")
@@ -66,7 +66,7 @@ public class SongCommentController {
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("songId") String songId,
             @RequestParam(value = "page", defaultValue = "0") int page){
-        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, SongCommentOrderBy.POPULAR));
+        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, OrderBy.POPULAR));
     }
 
     @Operation(summary = "전체 곡 한줄평 조회", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
@@ -77,13 +77,22 @@ public class SongCommentController {
         return ResponseEntity.ok().body(songCommentService.getRecentSongComment(page, userEntity));
     }
 
-    @Operation(summary = "앨범의 곡 한줄평 조회", description = "특정 앨범의 수록곡에 대한 노래 한줄평을 최신순으로 조회합니다.")
+    @Operation(summary = "앨범의 곡 한줄평 조회 (최근순 조회)", description = "특정 앨범의 수록곡에 대한 노래 한줄평을 최신순으로 조회합니다.")
     @GetMapping("/album/{albumId}/song/comment/recent")
-    public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongCommentByAlbum(
+    public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongCommentsByAlbum(
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("albumId") String albumId,
             @RequestParam(value = "page", defaultValue = "0") int page){
-        return ResponseEntity.ok().body(songCommentService.getRecentSongCommentByAlbum(albumId, page, userEntity));
+        return ResponseEntity.ok().body(songCommentService.getSongCommentsByAlbumId(albumId, page, userEntity, OrderBy.RECENT));
+    }
+
+    @Operation(summary = "앨범의 곡 한줄평 조회 (인기순 조회)", description = "특정 앨범의 수록곡에 대한 노래 한줄평을 인기순으로 조회합니다.")
+    @GetMapping("/album/{albumId}/song/comment/popular")
+    public ResponseEntity<List<SongCommentInfoResDto>> getPopularSongCommentsByAlbum(
+            @LoginUser(require = false) UserEntity userEntity,
+            @PathVariable("albumId") String albumId,
+            @RequestParam(value = "page", defaultValue = "0") int page){
+        return ResponseEntity.ok().body(songCommentService.getSongCommentsByAlbumId(albumId, page, userEntity, OrderBy.POPULAR));
     }
 
     @GetMapping("/user/{userId}/song/comment/recent")
