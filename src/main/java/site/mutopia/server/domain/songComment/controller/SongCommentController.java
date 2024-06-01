@@ -4,21 +4,18 @@ package site.mutopia.server.domain.songComment.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
+import site.mutopia.server.domain.songComment.dto.SongCommentOrderBy;
 import site.mutopia.server.domain.songComment.dto.SongCommentReqDto;
-import site.mutopia.server.domain.songComment.entity.SongCommentEntity;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.swagger.response.CreatedResponse;
 import site.mutopia.server.swagger.response.NotFoundResponse;
 import site.mutopia.server.swagger.response.OkResponse;
 
-import java.net.URI;
 import java.util.List;
 
 
@@ -55,14 +52,22 @@ public class SongCommentController {
     }
 
     @GetMapping("/song/{songId}/comment/recent")
-    @Operation(summary = "특정 곡 한줄평 조회", description = "특정 곡에 대한 한줄평을 20개씩 조회합니다. page=1 -> 21~40번째 조회")
+    @Operation(summary = "특정 곡 한줄평 조회 (최근순 조회)", description = "특정 곡에 대한 한줄평을 20개씩 조회합니다. page=1 -> 21~40번째 조회")
     public ResponseEntity<List<SongCommentInfoResDto>> getSongCommentBySong(
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("songId") String songId,
             @RequestParam(value = "page", defaultValue = "0") int page){
-        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity));
+        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, SongCommentOrderBy.RECENT));
     }
 
+    @GetMapping("/song/{songId}/comment/popular")
+    @Operation(summary = "특정 곡 한줄평 조회 (인기순 조회)", description = "특정 곡에 대한 한줄평을 20개씩 조회합니다. page=1 -> 21~40번째 조회")
+    public ResponseEntity<List<SongCommentInfoResDto>> getSongCommentBySongIdOrderByPopular(
+            @LoginUser(require = false) UserEntity userEntity,
+            @PathVariable("songId") String songId,
+            @RequestParam(value = "page", defaultValue = "0") int page){
+        return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, SongCommentOrderBy.POPULAR));
+    }
 
     @Operation(summary = "전체 곡 한줄평 조회", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
     @GetMapping("/song/comment/recent")
