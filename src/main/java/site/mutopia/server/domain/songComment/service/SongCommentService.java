@@ -1,7 +1,6 @@
 package site.mutopia.server.domain.songComment.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,10 +8,9 @@ import site.mutopia.server.domain.song.SongNotFoundException;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
+import site.mutopia.server.domain.songComment.dto.OrderBy;
 import site.mutopia.server.domain.songComment.dto.SongCommentReqDto;
 import site.mutopia.server.domain.songComment.entity.SongCommentEntity;
-import site.mutopia.server.domain.songComment.entity.SongCommentId;
-import site.mutopia.server.domain.songComment.exception.SongCommentNotFoundException;
 import site.mutopia.server.domain.songComment.repository.SongCommentRepository;
 import site.mutopia.server.domain.user.entity.UserEntity;
 
@@ -27,10 +25,11 @@ public class SongCommentService {
     private final SongRepository songRepository;
 
     @Transactional(readOnly = true)
-    public List<SongCommentInfoResDto> getUserSongComments(String userId, int page, UserEntity loggedInUser) {
-        return songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null);
+    public List<SongCommentInfoResDto> getUserSongComments(String userId, int page, UserEntity loggedInUser, OrderBy orderBy) {
+        return songCommentRepository.findCommentsByUserId(userId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
 
+    @Transactional(readOnly = true)
     public SongCommentInfoResDto getSongComment(String userId, String songId, UserEntity loggedInUser) {
         return songCommentRepository.findSongCommentByUserIdAndSongId(userId, songId, loggedInUser != null ? loggedInUser.getId() : null);
     }
@@ -50,20 +49,19 @@ public class SongCommentService {
         return songCommentRepository.save(comment);
     }
 
-    public List<SongCommentInfoResDto> getSongCommentBySongId(String songId, int offset, UserEntity loggedInUser) {
-
-
-        return songCommentRepository.findSongCommentsBySongId(songId, PageRequest.of(offset, 20),null);
-
+    @Transactional(readOnly = true)
+    public List<SongCommentInfoResDto> getSongCommentBySongId(String songId, int offset, UserEntity loggedInUser, OrderBy orderBy) {
+        return songCommentRepository.findSongCommentsBySongId(songId, PageRequest.of(offset, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
 
+    @Transactional(readOnly = true)
     public List<SongCommentInfoResDto> getRecentSongComment(int page, UserEntity loggedInUser) {
         return songCommentRepository.findCommentsOrderByCreatedAtDesc(PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null);
     }
 
-    public List<SongCommentInfoResDto> getRecentSongCommentByAlbum(String albumId, int page, UserEntity loggedInUser) {
-        return songCommentRepository.findCommentsByAlbumIdOrderByCreatedAtDesc(albumId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null);
+    @Transactional(readOnly = true)
+    public List<SongCommentInfoResDto> getSongCommentsByAlbumId(String albumId, int page, UserEntity loggedInUser, OrderBy orderBy) {
+        return songCommentRepository.findCommentsByAlbumId(albumId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
-
 
 }
