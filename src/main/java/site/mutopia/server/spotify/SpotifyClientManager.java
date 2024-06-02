@@ -245,6 +245,7 @@ public class SpotifyClientManager {
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/playlists/" + playlistId)
+                        .queryParam("fields", "tracks.items(track(id,name,album(artists,images),artists)")
                         .build())
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus == HttpStatus.UNAUTHORIZED, response ->

@@ -101,20 +101,19 @@ public class PlaylistController {
     @Operation(summary = "플레이리스트 ID로 플레이리스트 단건 조회하기", description = "사용자는 플레이리스트 정보를 조회할 수 있습니다.")
     @GetMapping("/user/playlist/{playlistId}")
     public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@LoginUser(require = false) UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
-        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistById(playlistId, loggedInUser != null ? loggedInUser.getId() : null);
+        PlaylistInfoDto playlistInfo = playlistService.getUserPlaylistByIdAndUserId(playlistId, loggedInUser != null ? loggedInUser.getId() : null);
         return ResponseEntity.ok().body(playlistInfo);
     }
 
-    @Operation(summary = "플레이리스트 Spotify로 export 하기", description = "로그인 한 사용자는 자신의 플레이리스트를 Spotify에 export 할 수 있습니다. (spotify login 필요함)")
+    @Operation(summary = "플레이리스트 Spotify로 export 하기", description = "로그인 한 사용자는 자신 또는 다른 사용자의 플레이리스트를 Spotify에 export 할 수 있습니다. (spotify login 필요함)")
     @PostMapping("/user/playlist/{playlistId}/export/spotify")
     @CreatedResponse
-    public ResponseEntity<SpotifyPlaylistDetails> exportPlaylistToSpotify(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId, @RequestBody ExportPlaylistToSpotifyReqDto req) {
-        // TODO: loggedInUser가 해당 playlist를 소유하고 있는지 체크하는 로직 추가
+    public ResponseEntity<ExportPlaylistToSpotifyResDto> exportPlaylistToSpotify(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId, @RequestBody ExportPlaylistToSpotifyReqDto req) {
 
-        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
-                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("userId: " + loggedInUser.getId() + "has not logged In spotify before. please log in to spotify first."));
+        SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
+                .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "has not logged In spotify before. please log in to spotify first."));
 
-        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).toList();
+        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId).getSongs().stream().map(song -> song.getSongId()).toList();
 
         SpotifyPlaylistDetails playlistDetails;
         try {
@@ -122,28 +121,23 @@ public class PlaylistController {
             spotifyService.addSongsToPlaylist(spotifyAccessToken, spotifyPlaylistId, songIdsInPlaylist);
             playlistDetails = spotifyService.getPlaylistDetails(spotifyAccessToken, spotifyPlaylistId);
         } catch (SpotifyAccessTokenExpiredException ex) {
-            SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.REFRESH)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have refresh token"));
-            String accessToken = spotifyService.refreshAccessToken(refreshToken.getTokenValue());
-            spotifyService.updateAccessToken(loggedInUser.getId(), accessToken);
-            SpotifyTokenEntity updatedAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(loggedInUser.getId(), SpotifyTokenType.ACCESS)
-                    .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("userId: " + loggedInUser.getId() + "doesn't have access token"));
+            SpotifyTokenEntity updatedAccessToken = refreshToken();
 
             String spotifyPlaylistId = spotifyService.createPlaylist(updatedAccessToken, req.getPlaylist().getName(), req.getPlaylist().getDescription());
             spotifyService.addSongsToPlaylist(updatedAccessToken, spotifyPlaylistId, songIdsInPlaylist);
             playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, spotifyPlaylistId);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(playlistDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ExportPlaylistToSpotifyResDto.builder().url("https://open.spotify.com/playlist/" + playlistDetails.getId()).build());
     }
 
     @Operation(summary = "플레이리스트로 추천 곡 목록 조회하기", description = "사용자는 플레이리스트를 통해 추천 곡 목록을 조회할 수 있다. (spotify login 필요함)")
     @GetMapping("/user/playlist/{playlistId}/recommendation")
-    public ResponseEntity<RecommendationsDto> getRecommendationsByPlaylistId(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
+    public ResponseEntity<PlaylistRecommendationResDto> getRecommendationsByPlaylistId(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
                 .orElseThrow(() -> new SpotifyAccessTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "has not logged In spotify before. please log in to spotify first."));
 
-        List<String> songIdsInPlaylist = playlistService.getUserPlaylistById(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
+        List<String> songIdsInPlaylist = playlistService.getUserPlaylistByIdAndUserId(playlistId, loggedInUser.getId()).getSongs().stream().map(song -> song.getSongId()).limit(5).toList();
 
         RecommendationsDto recommendations;
 
@@ -154,12 +148,12 @@ public class PlaylistController {
             recommendations = spotifyService.getRecommendations(songIdsInPlaylist, updatedAccessToken.getTokenValue());
         }
 
-        return ResponseEntity.ok().body(recommendations);
+        return ResponseEntity.ok().body(recommendations.toDto());
     }
 
     @Operation(summary = "Trending API", description = "Global top 50 플레이리스트 가져오기")
     @GetMapping("/playlist/trending")
-    public ResponseEntity<SpotifyPlaylistDetails> getGlobalTop50() {
+    public ResponseEntity<PlaylistTrendingResDto> getGlobalTop50() {
         String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
 
         SpotifyTokenEntity spotifyAccessToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.ACCESS)
@@ -173,7 +167,7 @@ public class PlaylistController {
             playlistDetails = spotifyService.getPlaylistDetails(updatedAccessToken, globalTop50PlaylistId);
         }
 
-        return ResponseEntity.ok().body(playlistDetails);
+        return ResponseEntity.ok().body(playlistDetails.toDto());
     }
 
     private SpotifyTokenEntity refreshToken() {
