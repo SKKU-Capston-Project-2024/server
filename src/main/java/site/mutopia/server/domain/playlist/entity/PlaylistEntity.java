@@ -43,4 +43,9 @@ public class PlaylistEntity {
         this.content = content;
         this.creator = creator;
     }
+
+    public void modify(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
