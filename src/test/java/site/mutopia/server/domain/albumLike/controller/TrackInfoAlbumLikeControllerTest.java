@@ -46,7 +46,7 @@ import static site.mutopia.server.util.ReflectionUtil.setFieldValue;
 })
 @Import({AlbumLikeService.class, TestSecurityConfig.class})
 @MockBean(JpaMetamodelMappingContext.class)
-class AlbumLikeControllerTest {
+class TrackInfoAlbumLikeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,7 +78,7 @@ class AlbumLikeControllerTest {
     }
 
     @Nested
-    class ToggleLikeToAlbum {
+    class ToggleLikeToTrackInfoAlbum {
 
         @Test
         void 원래_좋아요가_꺼져_있었는데_좋아요를_누른_경우() throws Exception {
@@ -138,7 +138,7 @@ class AlbumLikeControllerTest {
 
 
     @Nested
-    class GetAlbumLikeStatus {
+    class GetTrackInfoAlbumLikeStatus {
 
         @Test
         void 로그인한_사용자에_대한_앨범_좋아요_상태를_반환해야한다_좋아요_눌린_경우() throws Exception {

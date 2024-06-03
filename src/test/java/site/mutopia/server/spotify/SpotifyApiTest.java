@@ -46,4 +46,11 @@ class SpotifyApiTest {
         assertNotNull(tracks);
     }
 
+    @Test
+    void getTrackInfo() {
+        var trackInfo = spotifyApi.getTrackInfo("6bvZRLLkBKkmgpBJTTj3QK");
+        log.info("trackInfo: {}", trackInfo);
+        assertNotNull(trackInfo);
+    }
+
 }

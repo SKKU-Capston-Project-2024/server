@@ -50,7 +50,7 @@ import static site.mutopia.server.util.ReflectionUtil.setFieldValue;
 })
 @Import({AlbumReviewService.class, TestSecurityConfig.class})
 @MockBean(JpaMetamodelMappingContext.class)
-class AlbumReviewControllerTest {
+class TrackInfoAlbumReviewControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,7 +85,7 @@ class AlbumReviewControllerTest {
     }
 
     @Nested
-    class SaveAlbumReview {
+    class SaveTrackInfoAlbumReview {
 
         @Test
         void shouldCreateAlbumReviewWhenRequestIsValid() throws Exception {
@@ -196,7 +196,7 @@ class AlbumReviewControllerTest {
     }
 
     @Nested
-    class GetAlbumReviewByAlbumReviewId {
+    class GetAlbumReviewByTrackInfoAlbumReviewId {
 
         @Test
         void shouldReturnAlbumReviewWhenUserLoggedInAndUserLikesOwnReview() throws Exception {

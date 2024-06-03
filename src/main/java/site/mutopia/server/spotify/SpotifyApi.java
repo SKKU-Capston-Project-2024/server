@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import site.mutopia.server.global.error.exception.EntityNotFoundException;
 import site.mutopia.server.spotify.dto.PagedTracks;
 import site.mutopia.server.spotify.dto.SearchAlbumsDto;
 import site.mutopia.server.spotify.dto.item.Albums;
 import site.mutopia.server.spotify.dto.track.SearchTracksDto;
 import site.mutopia.server.spotify.dto.track.Tracks;
+import site.mutopia.server.spotify.dto.trackinfo.TrackInfo;
 
 @Slf4j
 @Component
@@ -73,6 +76,18 @@ public class SpotifyApi {
                         .build(albumId))
                 .retrieve()
                 .bodyToMono(PagedTracks.class)
+                .block();
+    }
+
+    public TrackInfo getTrackInfo(String trackId){
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/tracks/{id}")
+                        .queryParam("market", "KR")
+                        .queryParam("locale", "ko_KR")
+                        .build(trackId))
+                .retrieve()
+                .bodyToMono(TrackInfo.class)
+                .onErrorResume(sub -> Mono.empty())
                 .block();
     }
 
