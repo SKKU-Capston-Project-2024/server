@@ -1,11 +1,9 @@
 package site.mutopia.server.domain.song.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
-import site.mutopia.server.domain.album.repository.AlbumRepository;
 import site.mutopia.server.domain.song.SongNotFoundException;
 import site.mutopia.server.domain.song.dto.SongInfoDto;
 import site.mutopia.server.domain.song.dto.SongSearchResDto;
@@ -15,10 +13,9 @@ import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.spotify.SpotifyApi;
 import site.mutopia.server.spotify.convertor.DomainConvertor;
 import site.mutopia.server.spotify.dto.track.Tracks;
+import site.mutopia.server.spotify.dto.trackinfo.TrackInfo;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -43,8 +40,22 @@ public class SongService {
     }
 
     public SongInfoDto getSong(UserEntity user,String songId) {
-        return songRepository.findInfoById(user == null ? null : user.getId(), songId)
-                .orElseThrow(() -> new SongNotFoundException(songId));
+        SongInfoDto songInfoDto = songRepository.findInfoById(user == null ? null : user.getId(), songId)
+                .orElse(null);
+
+        if(songInfoDto == null) {
+            TrackInfo trackInfo = spotifyApi.getTrackInfo(songId);
+            if(trackInfo == null) {
+                throw new SongNotFoundException(songId);
+            }
+            AlbumEntity albumEntity = albumRepository.findById(trackInfo.album.id).orElseGet(() ->
+                    albumRepository.save(DomainConvertor.toDomain(trackInfo.album)));
+            SongEntity entity = songRepository.save(DomainConvertor.toDomain(trackInfo, albumEntity.getId()));
+            entity.setAlbum(albumEntity);
+            return SongInfoDto.fromEntity(entity);
+        }
+
+        return songInfoDto;
     }
 
 

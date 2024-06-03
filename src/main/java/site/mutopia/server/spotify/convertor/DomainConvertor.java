@@ -6,6 +6,8 @@ import site.mutopia.server.spotify.dto.item.Item;
 import site.mutopia.server.spotify.dto.item.Track;
 import site.mutopia.server.spotify.dto.track.TrackAlbumInfo;
 import site.mutopia.server.spotify.dto.track.TrackSearch;
+import site.mutopia.server.spotify.dto.trackinfo.TrackInfo;
+import site.mutopia.server.spotify.dto.trackinfo.TrackInfoAlbum;
 
 
 public class DomainConvertor {
@@ -47,6 +49,26 @@ public class DomainConvertor {
                 .coverImageUrl(item.images.get(0).url)
                 .releaseDate(item.release_date)
                 .length(null)
+                .build();
+    }
+
+    public static AlbumEntity toDomain(TrackInfoAlbum album){
+        return AlbumEntity.builder()
+                .id(album.id)
+                .name(album.name)
+                .artistName(album.artists.get(0).name)
+                .coverImageUrl(album.images.get(0).url)
+                .releaseDate(album.release_date)
+                .length(null)
+                .build();
+    }
+
+    public static SongEntity toDomain(TrackInfo trackInfo, String albumId) {
+        return SongEntity.builder()
+                .id(trackInfo.id)
+                .title(trackInfo.name)
+                .trackNumber(0)
+                .duration(trackInfo.duration_ms / 1000)
                 .build();
     }
 
