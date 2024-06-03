@@ -176,7 +176,7 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
     }
 
     @Override
-    public List<AlbumReviewInfoDto> findAllByFollowingOrderByCreatedAt(String userId, Pageable pageable) {
+    public List<AlbumReviewInfoDto> findAllByFollowingOrderByCreatedAt(String userId, Pageable pageable){
         String jpql = "SELECT new site.mutopia.server.domain.albumReview.dto.AlbumReviewInfoDto(" +
                 commonSelectClause(userId) +
                 ") FROM FollowEntity fe " +
@@ -188,8 +188,10 @@ public class AlbumReviewCustomRepositoryImpl implements AlbumReviewCustomReposit
 
         TypedQuery<AlbumReviewInfoDto> query = em.createQuery(jpql, AlbumReviewInfoDto.class)
                 .setParameter("userId", userId)
+                .setParameter("loginUserId", userId)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+
 
         return query.getResultList();
     }
