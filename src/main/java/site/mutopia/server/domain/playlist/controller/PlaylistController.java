@@ -81,6 +81,16 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Operation(summary = "플레이리스트 수정하기", description = "로그인 한 사용자는 플레이리스트를 수정할 수 있습니다.")
+    @PatchMapping("/user/playlist/{playlistId}")
+    public ResponseEntity<Void> modifyPlaylist(@LoginUser UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId, @RequestBody PlaylistSaveReqDto dto) {
+        // TODO: loggedInUser가 해당 playlist를 소유하고 있는지 체크하는 로직 추가
+
+        playlistService.modifyPlaylist(playlistId, dto.getTitle(), dto.getContent());
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @Operation(summary = "유저의 플레이리스트 목록 조회하기", description = "사용자는 플레이리스트 목록을 조회할 수 있습니다.")
     @GetMapping("/user/{userId}/playlist")
     public ResponseEntity<List<PlaylistInfoDto>> getUserPlaylists(

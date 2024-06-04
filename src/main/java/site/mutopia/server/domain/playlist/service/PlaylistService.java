@@ -143,6 +143,11 @@ public class PlaylistService {
         playlistRepository.deleteById(playlistId);
     }
 
+    public void modifyPlaylist(Long playlistId, String title, String content) {
+        PlaylistEntity playlist = playlistRepository.findById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
+        playlist.modify(title, content);
+    }
+
     public List<PlaylistInfoDto> getLikedPlaylistsByUserId(String userId, int page) {
         List<PlaylistInfoDto> info = playlistRepository.findLikedPlayList(userId, Pageable.ofSize(20).withPage(page)).getContent();
         info.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
