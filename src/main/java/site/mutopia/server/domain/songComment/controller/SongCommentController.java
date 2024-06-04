@@ -123,4 +123,14 @@ public class SongCommentController {
         return ResponseEntity.ok().body(userSongComments);
     }
 
+    @DeleteMapping("/song/{songId}/comment")
+    @Operation(summary = "곡 한줄평 삭제", description = "특정 곡에 대한 한줄평을 삭제합니다.")
+    public ResponseEntity<Void> deleteSongComment(
+            @LoginUser UserEntity userEntity,
+            @PathVariable("songId") String songId
+    ) {
+        songCommentService.deleteSongComment(songId, userEntity.getId());
+        return ResponseEntity.noContent().build();
+    }
+
 }
