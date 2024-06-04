@@ -98,6 +98,13 @@ public class PlaylistController {
         return ResponseEntity.ok().body(userPlaylists);
     }
 
+    @Operation(summary = "인기 플레이리스트 조회하기", description = "사용자는 좋아요 순으로 플레이리스트 목록을 조회할 수 있습니다.")
+    @GetMapping("/user/playlist/recent")
+    public ResponseEntity<List<PlaylistInfoDto>> getPopularPlaylists(@LoginUser(require = false) UserEntity loggedInUser, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit) {
+        List<PlaylistInfoDto> userPlaylists = playlistService.getPopularPlaylist(limit, loggedInUser != null ? loggedInUser.getId() : null);
+        return ResponseEntity.ok().body(userPlaylists);
+    }
+
     @Operation(summary = "플레이리스트 ID로 플레이리스트 단건 조회하기", description = "사용자는 플레이리스트 정보를 조회할 수 있습니다.")
     @GetMapping("/user/playlist/{playlistId}")
     public ResponseEntity<PlaylistInfoDto> getUserPlaylistById(@LoginUser(require = false) UserEntity loggedInUser, @PathVariable("playlistId") Long playlistId) {
