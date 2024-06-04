@@ -63,14 +63,14 @@ public class SongCommentCustomRepositoryImpl implements SongCommentCustomReposit
     }
 
     @Override
-    public List<SongCommentInfoResDto> findCommentsOrderByCreatedAtDesc(Pageable pageable, String loginUserId) {
+    public List<SongCommentInfoResDto> findComments(Pageable pageable, String loginUserId, OrderBy orderBy) {
         String jpql = "select new site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto(" +
                 "sc.writer.id, sc.writer.username , sc.writer.profile.profilePicUrl, sc.song.id, sc.song.title, sc.rating, sc.comment, sc.createdAt, " +
                 (loginUserId != null ? "exists(select 1 from SongCommentLikeEntity scl where scl.id.songCommentId = sc.id and scl.id.likeUserId = :loginUserId), " : "false, ") +
                 "(select count(scl2) from SongCommentLikeEntity scl2 where scl2.id.songCommentId = sc.id), " +
                 "sc.song.album.id, sc.song.album.name, sc.song.album.artistName, sc.song.album.coverImageUrl " +
                 ") from SongCommentEntity sc " +
-                "order by sc.createdAt desc";
+                (orderBy == OrderBy.RECENT ? "order by sc.createdAt desc" : "order by (select count(scl3) from SongCommentLikeEntity scl3 where scl3.id.songCommentId = sc.id) desc");
 
         TypedQuery<SongCommentInfoResDto> query = em.createQuery(jpql, SongCommentInfoResDto.class);
 

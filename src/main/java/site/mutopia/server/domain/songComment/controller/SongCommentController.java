@@ -29,14 +29,14 @@ public class SongCommentController {
 
     @NotFoundResponse
     @OkResponse
-    @Operation(summary = "노래 한줄평 조회", description = "노래에 대한 한줄평을 조회합니다.")
+    @Operation(summary = "노래 한줄평 조회", description = "특정 유저의 특정 곡에 대한 한줄평을 조회합니다.")
     @GetMapping("/user/{userId}/song/{songId}/comment/recent")
     public ResponseEntity<SongCommentInfoResDto> getSongComment(
             @LoginUser(require = false) UserEntity userEntity,
             @PathVariable("userId") String userId,
             @PathVariable("songId") String songId
     ) {
-        return ResponseEntity.ok().body(songCommentService.getSongComment(userId, songId, userEntity));
+        return ResponseEntity.ok().body(songCommentService.getSongComments(userId, songId, userEntity));
     }
 
     @CreatedResponse
@@ -69,12 +69,20 @@ public class SongCommentController {
         return ResponseEntity.ok().body(songCommentService.getSongCommentBySongId(songId, page, userEntity, OrderBy.POPULAR));
     }
 
-    @Operation(summary = "전체 곡 한줄평 조회", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
+    @Operation(summary = "전체 곡 한줄평 조회 (최신순)", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
     @GetMapping("/song/comment/recent")
     public ResponseEntity<List<SongCommentInfoResDto>> getRecentSongComment(
             @LoginUser(require = false) UserEntity userEntity,
             @RequestParam(value = "page", defaultValue = "0") int page){
-        return ResponseEntity.ok().body(songCommentService.getRecentSongComment(page, userEntity));
+        return ResponseEntity.ok().body(songCommentService.getSongComments(page, userEntity, OrderBy.RECENT));
+    }
+
+    @Operation(summary = "전체 곡 한줄평 조회 (인기순)", description = "전체 사용자가 작성한 곡 한줄평을 최신순으로 조회합니다.")
+    @GetMapping("/song/comment/popular")
+    public ResponseEntity<List<SongCommentInfoResDto>> getPopularSongComment(
+            @LoginUser(require = false) UserEntity userEntity,
+            @RequestParam(value = "page", defaultValue = "0") int page){
+        return ResponseEntity.ok().body(songCommentService.getSongComments(page, userEntity, OrderBy.POPULAR));
     }
 
     @Operation(summary = "앨범의 곡 한줄평 조회 (최근순 조회)", description = "특정 앨범의 수록곡에 대한 노래 한줄평을 최신순으로 조회합니다.")

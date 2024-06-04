@@ -30,7 +30,7 @@ public class SongCommentService {
     }
 
     @Transactional(readOnly = true)
-    public SongCommentInfoResDto getSongComment(String userId, String songId, UserEntity loggedInUser) {
+    public SongCommentInfoResDto getSongComments(String userId, String songId, UserEntity loggedInUser) {
         return songCommentRepository.findSongCommentByUserIdAndSongId(userId, songId, loggedInUser != null ? loggedInUser.getId() : null);
     }
 
@@ -55,8 +55,8 @@ public class SongCommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<SongCommentInfoResDto> getRecentSongComment(int page, UserEntity loggedInUser) {
-        return songCommentRepository.findCommentsOrderByCreatedAtDesc(PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null);
+    public List<SongCommentInfoResDto> getSongComments(int page, UserEntity loggedInUser, OrderBy orderBy) {
+        return songCommentRepository.findComments(PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
 
     @Transactional(readOnly = true)

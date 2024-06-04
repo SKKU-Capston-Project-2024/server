@@ -11,7 +11,7 @@ import java.util.List;
 public interface SongCommentCustomRepository {
     List<SongCommentInfoResDto> findSongCommentsBySongId(String songId, Pageable page, String loginUserId, OrderBy orderBy);
     List<SongCommentInfoResDto> findCommentsByUserId(String userId, Pageable pageable, String loginUserId, OrderBy orderBy);
-    List<SongCommentInfoResDto> findCommentsOrderByCreatedAtDesc(Pageable pageable, String loginUserId);
+    List<SongCommentInfoResDto> findComments(Pageable pageable, String loginUserId, OrderBy orderBy);
     List<SongCommentInfoResDto> findCommentsByAlbumId(String albumId, Pageable pageable, String loginUserId, OrderBy orderBy);
     SongCommentInfoResDto findSongCommentByUserIdAndSongId(String userId, String songId, String loginUserId);
 
