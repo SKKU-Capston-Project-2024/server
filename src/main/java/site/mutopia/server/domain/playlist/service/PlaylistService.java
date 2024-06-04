@@ -132,4 +132,59 @@ public class PlaylistService {
         info.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
         return info;
     }
+
+    public List<PlaylistInfoDto> getPlaylistsByAlbumId(String albumId, int page, String loginUserId) {
+        List<PlaylistInfoDto> content = playlistRepository.findByAlbumId(albumId, Pageable.ofSize(20).withPage(page)).getContent();
+        content.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
+        if (loginUserId != null) {
+            content.forEach(playlistInfoDto -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(loginUserId, playlistInfoDto.getPlaylistId())) {
+                    playlistInfoDto.setIsLiked(true);
+                }
+            });
+        }
+        return content;
+    }
+
+    public List<PlaylistInfoDto> getPlaylistsBySongId(String songId, int page, String loginUserId) {
+        List<PlaylistInfoDto> content = playlistRepository.findBySongId(songId, Pageable.ofSize(20).withPage(page)).getContent();
+        content.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
+        if (loginUserId != null) {
+            content.forEach(playlistInfoDto -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(loginUserId, playlistInfoDto.getPlaylistId())) {
+                    playlistInfoDto.setIsLiked(true);
+                }
+            });
+        }
+        return content;
+    }
+
+    public List<PlaylistInfoDto> getPopularPlaylistsByAlbumId(String albumId, int page, String loginUserId) {
+        List<PlaylistInfoDto> content = playlistRepository.findByAlbumIdDescPopular(albumId, Pageable.ofSize(20).withPage(page)).getContent();
+        content.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
+        if (loginUserId != null) {
+            content.forEach(playlistInfoDto -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(loginUserId, playlistInfoDto.getPlaylistId())) {
+                    playlistInfoDto.setIsLiked(true);
+                }
+            });
+        }
+        return content;
+    }
+
+    public List<PlaylistInfoDto> getPopularPlaylistsBySongId(String songId, int page, String loginUserId) {
+        List<PlaylistInfoDto> content = playlistRepository.findBySongIdDescPopular(songId, Pageable.ofSize(20).withPage(page)).getContent();
+        content.forEach(playlistInfoDto -> playlistInfoDto.setSongs(fetchSongsForPlaylist(playlistInfoDto.getPlaylistId())));
+        if (loginUserId != null) {
+            content.forEach(playlistInfoDto -> {
+                if (playlistLikeRepository.existsByUserIdAndPlaylistId(loginUserId, playlistInfoDto.getPlaylistId())) {
+                    playlistInfoDto.setIsLiked(true);
+                }
+            });
+        }
+        return content;
+    }
+
+
+
 }

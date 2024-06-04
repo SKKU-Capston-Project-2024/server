@@ -170,6 +170,47 @@ public class PlaylistController {
         return ResponseEntity.ok().body(playlistDetails.toDto());
     }
 
+    @Operation(summary = "특정 앨범이 포함된 플레이리스트가져오기 (최신순)")
+    @GetMapping("/user/playlist/album/{albumId}/recent")
+    public ResponseEntity<List<PlaylistInfoDto>> getPlaylistsByAlbumId(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @PathVariable("albumId") String albumId) {
+        List<PlaylistInfoDto> playlists = playlistService.getPlaylistsByAlbumId(albumId, page, loggedInUser != null ? loggedInUser.getId() : null);
+        return ResponseEntity.ok().body(playlists);
+    }
+
+    @Operation(summary = "특정 트랙이 포함된 플레이리스트가져오기 (최신순)")
+    @GetMapping("/user/playlist/song/{songId}/recent")
+    public ResponseEntity<List<PlaylistInfoDto>> getPlaylistsBySongId(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @PathVariable("songId") String songId) {
+        List<PlaylistInfoDto> playlists = playlistService.getPlaylistsBySongId(songId, page, loggedInUser != null ? loggedInUser.getId() : null);
+        return ResponseEntity.ok().body(playlists);
+    }
+
+    @Operation(summary = "특정 앨범이 포함된 플레이리스트가져오기 (인기순)")
+    @GetMapping("/user/playlist/album/{albumId}/popular")
+    public ResponseEntity<List<PlaylistInfoDto>> getPopularPlaylistsByAlbumId(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @PathVariable("albumId") String albumId) {
+        List<PlaylistInfoDto> playlists = playlistService.getPopularPlaylistsByAlbumId(albumId, page, loggedInUser != null ? loggedInUser.getId() : null);
+        return ResponseEntity.ok().body(playlists);
+    }
+
+    @Operation(summary = "특정 트랙이 포함된 플레이리스트가져오기 (인기순)")
+    @GetMapping("/user/playlist/song/{songId}/popular")
+    public ResponseEntity<List<PlaylistInfoDto>> getPopularPlaylistsBySongId(
+            @LoginUser(require = false) UserEntity loggedInUser,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @PathVariable("songId") String songId) {
+        List<PlaylistInfoDto> playlists = playlistService.getPopularPlaylistsBySongId(songId, page, loggedInUser != null ? loggedInUser.getId() : null);
+        return ResponseEntity.ok().body(playlists);
+    }
+
+
     private SpotifyTokenEntity refreshToken() {
         SpotifyTokenEntity refreshToken = spotifyTokenRepository.findByUserIdAndTokenType(spotifyUserId, SpotifyTokenType.REFRESH)
                 .orElseThrow(() -> new SpotifyRefreshTokenNotFoundException("(spotify user) userId: " + spotifyUserId + "doesn't have refresh token"));
