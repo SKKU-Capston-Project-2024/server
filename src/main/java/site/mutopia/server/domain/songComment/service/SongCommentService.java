@@ -64,4 +64,8 @@ public class SongCommentService {
         return songCommentRepository.findCommentsByAlbumId(albumId, PageRequest.of(page, 20), loggedInUser != null ? loggedInUser.getId() : null, orderBy);
     }
 
+    public void deleteSongComment(String songId, String writerId) {
+        songCommentRepository.deleteBySongId(songId, writerId);
+    }
+
 }

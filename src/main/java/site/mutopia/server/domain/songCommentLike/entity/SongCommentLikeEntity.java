@@ -2,6 +2,8 @@ package site.mutopia.server.domain.songCommentLike.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.parameters.P;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.songComment.entity.SongCommentEntity;
@@ -12,6 +14,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "comment_like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@OnDelete(action = OnDeleteAction.CASCADE)
 @AllArgsConstructor
 @Getter
 @Setter
