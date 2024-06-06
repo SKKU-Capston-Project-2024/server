@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
@@ -53,6 +52,11 @@ public class AlbumReviewService {
         return albumReviewRepository.findAlbumReviewInfoDto(albumReviewId, user == null ? null : user.getId())
                 .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
 
+    }
+
+    public void deleteAlbumReviewById(Long albumReviewId) {
+        reviewLikeRepository.deleteByAlbumReviewId(albumReviewId);
+        albumReviewRepository.deleteById(albumReviewId);
     }
 
     public AlbumReviewEntity getMyAlbumReview(String writerId, String albumId) {
