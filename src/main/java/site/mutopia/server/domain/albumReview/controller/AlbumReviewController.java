@@ -40,6 +40,16 @@ public class AlbumReviewController {
         return ResponseEntity.ok().body(albumReviewService.getAlbumReviewInfoById(loggedInUser,albumReviewId));
     }
 
+    @Operation(summary = "앨범 리뷰 제거하기", description = "로그인 한 사용자는 자신의 리뷰를 삭제할 수 있다.")
+    @DeleteMapping("/album/review/{albumReviewId}")
+    public ResponseEntity<Void> deleteAlbumReview(@LoginUser UserEntity loggedInUser, @PathVariable("albumReviewId") Long albumReviewId) {
+        // TODO: loggedInUser가 해당 리뷰를 썻는지 체크 하는 로직
+
+        albumReviewService.deleteAlbumReviewById(albumReviewId);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "유저가 어떤 앨범에 대해 리뷰를 썼는지 체크하기", description = "로그인 한 사용자는 어떤 앨범에 대해 자신이 리뷰를 썼는지 여부를 체크할 수 있습니다.")
     @GetMapping("/album/{albumId}/review/check")
     public ResponseEntity<AlbumReviewCheckResDto> checkUserHasWrittenReview(@LoginUser UserEntity loggedInUser, @PathVariable("albumId") String albumId) {
