@@ -30,8 +30,11 @@ public class SongService {
         List<SongSearchResDto> songs = tracks.items.stream().map(item -> {
             AlbumEntity albumEntity = albumRepository.findById(item.album.id).orElseGet(() ->
                     albumRepository.save(DomainConvertor.toDomain(item.album)));
-            SongEntity entity = songRepository.save(DomainConvertor.toDomain(item));
-            entity.setAlbum(albumEntity);
+
+            SongEntity song = DomainConvertor.toDomain(item);
+            song.setAlbum(albumEntity);
+            SongEntity entity = songRepository.save(song);
+
             return new SongSearchResDto(entity, item.album.images.get(0).url, item.artists.get(0).name);
         }).toList();
 
@@ -50,8 +53,11 @@ public class SongService {
             }
             AlbumEntity albumEntity = albumRepository.findById(trackInfo.album.id).orElseGet(() ->
                     albumRepository.save(DomainConvertor.toDomain(trackInfo.album)));
-            SongEntity entity = songRepository.save(DomainConvertor.toDomain(trackInfo, albumEntity.getId()));
-            entity.setAlbum(albumEntity);
+
+            SongEntity song = DomainConvertor.toDomain(trackInfo, albumEntity.getId());
+            song.setAlbum(albumEntity);
+            SongEntity entity = songRepository.save(song);
+
             return SongInfoDto.fromEntity(entity);
         }
 
