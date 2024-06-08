@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import site.mutopia.server.domain.album.entity.AlbumEntity;
 import site.mutopia.server.domain.playlist.dto.AddSongToPlaylistReqDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistSaveReqDto;
@@ -102,16 +103,22 @@ public class PlaylistService {
     }
 
     private List<PlaylistInfoDto.SongBriefInfo> fetchSongsForPlaylist(Long playlistId) {
+
         return playlistSongRepository.findByPlaylistId(playlistId).stream()
-                .map(playlistSong ->
-                        PlaylistInfoDto.SongBriefInfo.builder()
-                                .songId(playlistSong.getSong().getId())
-                                .title(playlistSong.getSong().getTitle())
-                                .trackOrder(playlistSong.getListTrackOrder())
-                                .artistName(playlistSong.getSong().getAlbum().getArtistName())
-                                .albumName(playlistSong.getSong().getAlbum().getName())
-                                .albumImgUrl(playlistSong.getSong().getAlbum().getCoverImageUrl())
-                                .build())
+                .map(playlistSong -> {
+                    AlbumEntity album = playlistSong.getSong().getAlbum();
+
+                    PlaylistInfoDto.SongBriefInfo songBriefInfo = PlaylistInfoDto.SongBriefInfo.builder()
+                            .songId(playlistSong.getSong().getId())
+                            .title(playlistSong.getSong().getTitle())
+                            .trackOrder(playlistSong.getListTrackOrder())
+                            .artistName(album != null ? album.getArtistName() : null)
+                            .albumName(album != null ? album.getName() : null)
+                            .albumImgUrl(album != null ? album.getCoverImageUrl(): null)
+                            .build();
+
+                    return songBriefInfo;
+                })
                 .collect(Collectors.toList());
     }
 

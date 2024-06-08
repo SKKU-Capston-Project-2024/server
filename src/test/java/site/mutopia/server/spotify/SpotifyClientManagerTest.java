@@ -41,14 +41,14 @@ class SpotifyClientManagerTest {
 
     @Test
     void getPlaylistDetails() {
-        String globalTop50PlaylistId = "37i9dQZEVXbMDoHDwVN2tF";
-        SpotifyPlaylistDetails playlistDetails = client.getPlaylistDetails(globalTop50PlaylistId, "BQD7caoiVaynBDiQvErI-VCT2kFSkKPy4JsyiqEQhHouT7Lp7E5ttUZUcbq0qw-pC72X4LVAe4G-0ZSgdyDAUTOQYHtKLxpPEDrIMIDJQFs7MkEa4vy9u13LyvKiM5Mfo_lKjhF0Pj1n_K5pJ8tni504ZKdliynGxfKoaSD1YK9v_Lcvwqv074CGZJnUftRIdhDoA-3QBr3wsg1E0dkBW9ucLzWZtEuSd2cpcN6GZHoNnJJ94mfrYRHpfLmHN6kfnzYYSPCym3TN3gazGVBRDK9inLwLMxIIIw");
-        System.out.println(playlistDetails);
+        String accessToken = client.refreshAccessToken("AQAdDZxJHV78ScnHqAXiZ4451OQiC69CGyG5Hrosh738ylQQNAYwtUQL3l68j82PfBmzS4m9_1Q5xmbD54wWpmGn1DUgg14nwvN3gJiX3GUoUiNrnzTW_qLdmFVLkyrhpxg");
+        String globalTop50PlaylistId = "5ssxwcYNsfIcxkbWPsGAcX";
+        SpotifyPlaylistDetails playlistDetails = client.getPlaylistDetails(globalTop50PlaylistId, accessToken);
     }
 
     @Test
     void getRecommendations() {
-        RecommendationsDto recommendations = client.getRecommendations(List.of("03rcC8SVxCa9UdY5qgkITe", "08dz3ygXyFur6bL7Au8u8J", "1BpKJw4RZxaFB88NE5uxXf", "1e1JKLEDKP7hEQzJfNAgPl", "1eMNW1HQjF1dbb4GtnmpaX"), "BQD7caoiVaynBDiQvErI-VCT2kFSkKPy4JsyiqEQhHouT7Lp7E5ttUZUcbq0qw-pC72X4LVAe4G-0ZSgdyDAUTOQYHtKLxpPEDrIMIDJQFs7MkEa4vy9u13LyvKiM5Mfo_lKjhF0Pj1n_K5pJ8tni504ZKdliynGxfKoaSD1YK9v_Lcvwqv074CGZJnUftRIdhDoA-3QBr3wsg1E0dkBW9ucLzWZtEuSd2cpcN6GZHoNnJJ94mfrYRHpfLmHN6kfnzYYSPCym3TN3gazGVBRDK9inLwLMxIIIw");
+        RecommendationsDto recommendations = client.getRecommendations(List.of("03rcC8SVxCa9UdY5qgkITe", "08dz3ygXyFur6bL7Au8u8J", "1BpKJw4RZxaFB88NE5uxXf", "1e1JKLEDKP7hEQzJfNAgPl", "1eMNW1HQjF1dbb4GtnmpaX"), "BQA2LdGkj36vIANvcTPImJXhbDWPISTQ_Z-0la05orlTlZT-YGvmnQZx9-pSpIkFKMc6xtgs9kW_fAekQ86g0lQ9yj69UYuZqa8CKP60c3ybm1UB3IlRS7LD1Jo6GyJU2GyYNWkL-wQIdnzn_LBAvXn1-yGMwln1-q5kmt4-kxxCC1mFFQWSgZN5j6JyEuvdPMA5zKgWnJ_EjLG7qnHmBb9luBZJe-enzszsvQuXsQB6vcVRroDHQVEqu8ikT7w40j2TbNU9thV0qK49-UTG9stlYIFFpz0EMw");
         recommendations.getTracks().forEach(t -> {
             System.out.println("id: " + t.getId());
             System.out.println("name: " + t.getName());
@@ -64,5 +64,16 @@ class SpotifyClientManagerTest {
     void refreshAccessToken() {
         String newAccessToken = client.refreshAccessToken("AQAdDZxJHV78ScnHqAXiZ4451OQiC69CGyG5Hrosh738ylQQNAYwtUQL3l68j82PfBmzS4m9_1Q5xmbD54wWpmGn1DUgg14nwvN3gJiX3GUoUiNrnzTW_qLdmFVLkyrhpxg");
         System.out.println(newAccessToken);
+    }
+
+    @Test
+    void createPlaylistAndAddSongsToIt() {
+        String accessToken = client.refreshAccessToken("AQAdDZxJHV78ScnHqAXiZ4451OQiC69CGyG5Hrosh738ylQQNAYwtUQL3l68j82PfBmzS4m9_1Q5xmbD54wWpmGn1DUgg14nwvN3gJiX3GUoUiNrnzTW_qLdmFVLkyrhpxg");
+
+        SpotifyPlaylist playlist = client.createPlaylist("31smzwkd4b4zk5lq74buj6n6lpf4", accessToken, "test-playlist-06-08", "test-description", true);
+        List<String> songIds = List.of("5AJ9hqTS2wcFQCELCFRO7A", "2HYFX63wP3otVIvopRS99Z");
+        SpotifyPlaylistAddTracksRes res = client.addTracksToPlaylist(playlist.getId(), accessToken, songIds, 0);
+        SpotifyPlaylistDetails playlistDetails = client.getPlaylistDetails(playlist.getId(), accessToken);
+        System.out.println(playlistDetails);
     }
 }
