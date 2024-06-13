@@ -40,7 +40,7 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long> 
 
 
     @Query("SELECT new site.mutopia.server.domain.playlist.dto.PlaylistInfoDto(" +
-            "p.id, p.creator.id, p.creator.username, COUNT(pll), false, p.title, p.content, p.createdAt)" +
+            "p.id, p.creator.id, p.creator.username, CAST((SELECT COUNT(pl) FROM PlaylistLikeEntity pl WHERE pl.playlist.id = p.id) AS long), false, p.title, p.content, p.createdAt)" +
             "FROM PlaylistLikeEntity pll " +
             "JOIN pll.playlist p " +
             "JOIN p.songs " +
