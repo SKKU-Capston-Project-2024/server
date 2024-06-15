@@ -26,7 +26,7 @@ public class ProfileEntity {
     private String profilePicUrl;
 
     public void modifyBio(String bio) {
-        this.biography = biography;
+        this.biography = bio;
     }
 
     public void modifyProfilePicUrl(String profilePicUrl) {

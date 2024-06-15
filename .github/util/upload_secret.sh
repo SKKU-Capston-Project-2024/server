@@ -4,7 +4,7 @@
 cd ./src/main/resources
 
 # List files starting with 'application-' and ending with '.yml'
-for file in application-spotify.yml; do
+for file in application-oauth.yml; do
     # Check if the file actually exists to avoid errors with gh command if no files match
     if [[ -f "$file" ]]; then
         # Encode the file content to base64
