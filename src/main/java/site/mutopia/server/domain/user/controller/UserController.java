@@ -11,6 +11,7 @@ import site.mutopia.server.domain.auth.annotation.LoginUser;
 import site.mutopia.server.domain.songComment.dto.SongCommentInfoResDto;
 import site.mutopia.server.domain.songComment.service.SongCommentService;
 import site.mutopia.server.domain.user.entity.UserEntity;
+import site.mutopia.server.domain.user.service.UserService;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserController {
 
     private final AlbumReviewService albumReviewService;
+    private final UserService userService;
     private final SongCommentService songCommentService;
 
     @GetMapping("/info")
@@ -48,6 +50,12 @@ public class UserController {
         return ResponseEntity.ok(reviews);
     }
 
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
+    @PostMapping("/withdraw")
+    public ResponseEntity<Void> withdraw(@LoginUser UserEntity userEntity) {
+        userService.withdrawUser(userEntity);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
