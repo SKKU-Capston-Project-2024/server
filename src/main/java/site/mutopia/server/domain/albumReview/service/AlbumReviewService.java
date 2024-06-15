@@ -115,5 +115,17 @@ public class AlbumReviewService {
 
     }
 
+    public void modifyAlbumReview(String writerId, Long albumReviewId, AlbumReviewSaveReqDto saveDto) {
+         AlbumReviewEntity albumReview = albumReviewRepository.findById(albumReviewId)
+                .orElseThrow(() -> new AlbumReviewNotFoundException("Album Review not found. albumReviewId: " + albumReviewId + " does not exist."));
+         if(!albumReview.getWriter().getId().equals(writerId)){
+             throw new IllegalArgumentException("User does not have permission to modify this review");
+         }
+         albumReview.setTitle(saveDto.getTitle());
+         albumReview.setContent(saveDto.getContent());
+         albumReview.setRating(saveDto.getRating());
+         albumReviewRepository.save(albumReview);
+    }
+
 
 }
