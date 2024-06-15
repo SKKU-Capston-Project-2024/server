@@ -11,6 +11,7 @@ import site.mutopia.server.domain.album.entity.AlbumEntity;
 @Entity
 @Table(name = "album_review")
 @Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

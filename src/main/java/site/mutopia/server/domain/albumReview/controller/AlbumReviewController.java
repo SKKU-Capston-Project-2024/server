@@ -77,4 +77,12 @@ public class AlbumReviewController {
             @LoginUser UserEntity loggedInUser, @RequestParam("page") int page){
         return ResponseEntity.ok().body(albumReviewService.getFollowingRecentAlbumReview(loggedInUser, page));
     }
+
+    @Operation(summary= "앨범 리뷰 수정하기", description = "로그인 한 사용자는 자신의 리뷰를 수정할 수 있습니다.")
+    @PutMapping("/album/review/{albumReviewId}")
+    public ResponseEntity<Void> modifyAlbumReview(@LoginUser UserEntity loggedInUser, @PathVariable("albumReviewId") Long albumReviewId, @RequestBody AlbumReviewSaveReqDto saveDto){
+        albumReviewService.modifyAlbumReview(loggedInUser.getId(), albumReviewId, saveDto);
+        return ResponseEntity.noContent().build();
+    }
+
 }
