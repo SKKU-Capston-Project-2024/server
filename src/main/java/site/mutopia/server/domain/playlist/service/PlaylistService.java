@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.mutopia.server.domain.album.entity.AlbumEntity;
+import site.mutopia.server.domain.album.repository.AlbumEntityRepository;
 import site.mutopia.server.domain.playlist.dto.AddSongToPlaylistReqDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistInfoDto;
 import site.mutopia.server.domain.playlist.dto.PlaylistSaveReqDto;
@@ -15,15 +16,17 @@ import site.mutopia.server.domain.playlist.repository.PlaylistRepository;
 import site.mutopia.server.domain.playlistLike.repository.PlaylistLikeRepository;
 import site.mutopia.server.domain.playlistSong.entity.PlaylistSongEntity;
 import site.mutopia.server.domain.playlistSong.repository.PlaylistSongRepository;
+import site.mutopia.server.domain.song.SongNotFoundException;
 import site.mutopia.server.domain.song.dto.SongInfoDto;
 import site.mutopia.server.domain.song.entity.SongEntity;
-import site.mutopia.server.domain.song.exception.SongNotFoundException;
 import site.mutopia.server.domain.song.repository.SongRepository;
 import site.mutopia.server.domain.song.service.SongService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
 import site.mutopia.server.spotify.SpotifyApi;
+import site.mutopia.server.spotify.convertor.DomainConvertor;
+import site.mutopia.server.spotify.dto.trackinfo.TrackInfo;
 import site.mutopia.server.spotify.service.SpotifyService;
 
 import java.util.List;
@@ -39,6 +42,8 @@ public class PlaylistService {
     private final PlaylistLikeRepository playlistLikeRepository;
     private final SongRepository songRepository;
     private final SongService songService;
+    private final SpotifyApi spotifyApi;
+    private final AlbumEntityRepository albumRepository;
     private final UserRepository userRepository;
 
     // TODO: 성능 개선
@@ -136,9 +141,17 @@ public class PlaylistService {
         PlaylistEntity playlist = playlistRepository.findById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
         SongEntity song = songRepository.findById(dto.getSongId()).orElse(null);
 
-        if (song == null) {
-            songService.getSong(null, dto.getSongId());
-            song = songRepository.findById(dto.getSongId()).orElseThrow(() -> new SongNotFoundException("Song not found. songId: " + dto.getSongId() + " does not exist."));
+        if(song == null) {
+            TrackInfo trackInfo = spotifyApi.getTrackInfo(dto.getSongId());
+            if(trackInfo == null) {
+                throw new SongNotFoundException(dto.getSongId());
+            }
+            AlbumEntity albumEntity = albumRepository.findById(trackInfo.album.id).orElseGet(() ->
+                    albumRepository.save(DomainConvertor.toDomain(trackInfo.album)));
+
+            song = DomainConvertor.toDomain(trackInfo, albumEntity.getId());
+            song.setAlbum(albumEntity);
+            songRepository.save(song);
         }
 
         PlaylistSongEntity playlistSong = PlaylistSongEntity
