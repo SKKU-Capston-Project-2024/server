@@ -63,7 +63,7 @@ public class TopsterController {
     @Operation(summary = "탑스터에 앨범 추가", description = "로그인한 유저는 탑스터에 앨범을 추가할 수 있다.")
     @PostMapping("/user/profile/topster/album")
     public ResponseEntity<?> appendAlbumsInTopster(@LoginUser UserEntity loggedInUser, @RequestBody TopsterAlbumAppendReqDto dto) {
-        List<String> remainAlbumIds = topsterService.appendAlbumsInTopster(loggedInUser.getId(), dto.getAlbumIds());
+        List<String> remainAlbumIds = topsterService.appendAlbumsInTopster(loggedInUser, dto.getAlbumIds());
 
         return ResponseEntity.ok().body(
                 TopsterAlbumAppendResDto.builder()

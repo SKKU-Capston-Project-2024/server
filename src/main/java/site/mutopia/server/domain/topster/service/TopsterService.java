@@ -52,7 +52,7 @@ public class TopsterService {
                         .album(album)
                         .topster(savedTopster)
                         .build())
-                .forEach(topsterAlbum -> topsterAlbumRepository.save(topsterAlbum));
+                .forEach(topsterAlbumRepository::save);
 
         return savedTopster;
     }
@@ -95,15 +95,22 @@ public class TopsterService {
         return topsterAlbumRepository.findByTopsterId(topster.getId()).stream().map(topsterAlbum -> topsterAlbum.getAlbum().getId()).toList();
     }
 
-    public List<String> appendAlbumsInTopster(String userId, List<String> albumIds) {
-        TopsterEntity topster = topsterRepository.findByUserId(userId)
-                .orElseThrow(() -> new TopsterNotFoundException("user: " + userId + " doesn't have topster"));
+    public List<String> appendAlbumsInTopster(UserEntity user, List<String> albumIds) {
+        TopsterEntity topster = topsterRepository.findByUserId(user.getId())
+                .orElse(null);
+
+        if (topster == null) {
+            TopsterEntity newTopster = TopsterEntity.builder().user(user).build();
+            topster = topsterRepository.save(newTopster);
+        }
 
         List<AlbumEntity> albums = albumRepository.findAllById(albumIds);
 
+        TopsterEntity finalTopster = topster;
+
         List<TopsterAlbumEntity> topsterAlbums = albums.stream().map(album -> TopsterAlbumEntity.builder()
                 .album(album)
-                .topster(topster)
+                .topster(finalTopster)
                 .build()).toList();
 
         topsterAlbumRepository.saveAll(topsterAlbums);
