@@ -15,12 +15,16 @@ import site.mutopia.server.domain.playlist.repository.PlaylistRepository;
 import site.mutopia.server.domain.playlistLike.repository.PlaylistLikeRepository;
 import site.mutopia.server.domain.playlistSong.entity.PlaylistSongEntity;
 import site.mutopia.server.domain.playlistSong.repository.PlaylistSongRepository;
+import site.mutopia.server.domain.song.dto.SongInfoDto;
 import site.mutopia.server.domain.song.entity.SongEntity;
 import site.mutopia.server.domain.song.exception.SongNotFoundException;
 import site.mutopia.server.domain.song.repository.SongRepository;
+import site.mutopia.server.domain.song.service.SongService;
 import site.mutopia.server.domain.user.entity.UserEntity;
 import site.mutopia.server.domain.user.exception.UserNotFoundException;
 import site.mutopia.server.domain.user.repository.UserRepository;
+import site.mutopia.server.spotify.SpotifyApi;
+import site.mutopia.server.spotify.service.SpotifyService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +38,7 @@ public class PlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
     private final SongRepository songRepository;
+    private final SongService songService;
     private final UserRepository userRepository;
 
     // TODO: 성능 개선
@@ -129,7 +134,12 @@ public class PlaylistService {
 
     public PlaylistSongEntity addSongToPlaylist(Long playlistId, AddSongToPlaylistReqDto dto) {
         PlaylistEntity playlist = playlistRepository.findById(playlistId).orElseThrow(() -> new PlaylistNotFoundException("Playlist not found. playlistId: " + playlistId + " does not exist."));
-        SongEntity song = songRepository.findById(dto.getSongId()).orElseThrow(() -> new SongNotFoundException("Song not found. songId: " + dto.getSongId() + " does not exist."));
+        SongEntity song = songRepository.findById(dto.getSongId()).orElse(null);
+
+        if (song == null) {
+            songService.getSong(null, dto.getSongId());
+            song = songRepository.findById(dto.getSongId()).orElseThrow(() -> new SongNotFoundException("Song not found. songId: " + dto.getSongId() + " does not exist."));
+        }
 
         PlaylistSongEntity playlistSong = PlaylistSongEntity
                 .builder()
