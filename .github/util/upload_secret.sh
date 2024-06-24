@@ -10,7 +10,6 @@ for file in application-oauth.yml; do
         # Encode the file content to base64
         content=$(base64 < "$file")
 
-
         secret_name="${file%.yml}"
         secret_name="${secret_name//-/_}"
 
