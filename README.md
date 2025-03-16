@@ -1,5 +1,13 @@
 # SKKU 캡스톤 프로젝트 2024: 서버
 
+# 서비스 소개
+
+좋아하는 음악을 기록하고, 공유하는 SNS 서비스입니다.
+
+| ![E8803C2E-AC52-47F5-8833-5197198CBB93_1_201_a](https://github.com/user-attachments/assets/dcdae114-bd18-41f8-a703-69294f5c993d)| ![29D759BE-CEC8-4190-B75A-676B55BAA975_1_201_a](https://github.com/user-attachments/assets/36d109dd-7f56-4e23-ac49-aa4152528e8b) | ![4277FDD2-B605-46E0-8301-2E608FC1F077_1_201_a](https://github.com/user-attachments/assets/3639e7bb-4fb9-42f0-9b1e-e1843aeeda88) | ![CE2C9B22-D8B7-4296-8CF2-9760F56CE47F_1_201_a](https://github.com/user-attachments/assets/35c7fea1-c342-4674-a134-5f840a6990cf) |
+|---------|---------|---------|---------|
+
+
 ## 개요
 이 프로젝트는 SKKU 캡스톤 프로젝트 2024의 서버 애플리케이션입니다. Java와 Spring Boot로 개발되었으며, 웹 서비스, 보안, 데이터 영속성 등의 기능을 지원하기 위해 다양한 의존성을 포함하고 있습니다.
 
